@@ -3,61 +3,69 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Inscriptions Journée APA</title>
+<title>APAESENCA · Inscriptions</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout : bandeau d'en-tête, onglets, puis une colonne de travail. Couleurs par lieu (P1/P2/P3) reprises partout. */
+/* Design sobre inspiré des tableaux de bord « développeur » : fond neutre, bordures fines,
+   un seul accent vert, libellés en police mono. Clair et sombre suivent le système. */
 :root {
-  --bg: #f6f7fb; --surface: #ffffff; --fg: #18203a; --muted: #5b6480; --line: #dde1ec;
-  --accent: #2343c9; --accent-ink: #ffffff; --accent-soft: #e5eaff;
-  --p1: #d9572b; --p1-soft: #fde9e0; --p2: #1d8a5b; --p2-soft: #dcf3e8; --p3: #7a3fc4; --p3-soft: #eee3fb;
-  --ok: #1d8a5b; --warn: #b7791f; --warn-soft: #fdf3dc; --full: #c0392b; --full-soft: #fbe2df;
-  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
-  --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --bg: #f8f8f8; --surface: #ffffff; --surface-2: #f3f3f3; --fg: #171717; --muted: #6b6b6b; --line: #e2e2e2; --line-strong: #cfcfcf;
+  --accent: #0f7a4a; --accent-ink: #ffffff; --accent-soft: #e3f6ec;
+  --btn: #3ecf8e; --btn-ink: #0b2a1b; --btn-line: #2bb877; --btn-hover: #52d89b;
+  --l0: #b4530f; --l0-soft: #fdecdc; --l1: #0f7a4a; --l1-soft: #ddf5e9; --l2: #6d3fc4; --l2-soft: #eee5fb; --l3: #0b6aa8; --l3-soft: #def0fb;
+  --ok: #0f7a4a; --warn: #9a6200; --warn-soft: #fdf2d8; --full: #c42b2b; --full-soft: #fde4e2;
+  --f-display: "Inter", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Inter", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --radius: 6px;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #10142a; --surface: #181d36; --fg: #e8ebf7; --muted: #9aa2c0; --line: #2b3256;
-  --accent: #8ea2ff; --accent-ink: #10142a; --accent-soft: #232c5c;
-  --p1: #ff9a74; --p1-soft: #3a2420; --p2: #5fd3a0; --p2-soft: #173329; --p3: #c39bff; --p3-soft: #2c2145;
-  --ok: #5fd3a0; --warn: #f2c063; --warn-soft: #3a3020; --full: #ff8a7d; --full-soft: #3d2022;
+  --bg: #121212; --surface: #1c1c1c; --surface-2: #232323; --fg: #ededed; --muted: #a0a0a0; --line: #2e2e2e; --line-strong: #3e3e3e;
+  --accent: #3ecf8e; --accent-ink: #0b2a1b; --accent-soft: rgba(62, 207, 142, .12);
+  --btn: #006239; --btn-ink: #fafafa; --btn-line: rgba(62, 207, 142, .45); --btn-hover: #00744a;
+  --l0: #f5a65b; --l0-soft: rgba(245, 166, 91, .14); --l1: #3ecf8e; --l1-soft: rgba(62, 207, 142, .14); --l2: #b794ff; --l2-soft: rgba(183, 148, 255, .14); --l3: #5cb8f0; --l3-soft: rgba(92, 184, 240, .14);
+  --ok: #3ecf8e; --warn: #f1b84a; --warn-soft: rgba(241, 184, 74, .13); --full: #ff7a6e; --full-soft: rgba(255, 122, 110, .14);
   color-scheme: dark; } }
 :root[data-theme="dark"] {
-  --bg: #10142a; --surface: #181d36; --fg: #e8ebf7; --muted: #9aa2c0; --line: #2b3256;
-  --accent: #8ea2ff; --accent-ink: #10142a; --accent-soft: #232c5c;
-  --p1: #ff9a74; --p1-soft: #3a2420; --p2: #5fd3a0; --p2-soft: #173329; --p3: #c39bff; --p3-soft: #2c2145;
-  --ok: #5fd3a0; --warn: #f2c063; --warn-soft: #3a3020; --full: #ff8a7d; --full-soft: #3d2022;
+  --bg: #121212; --surface: #1c1c1c; --surface-2: #232323; --fg: #ededed; --muted: #a0a0a0; --line: #2e2e2e; --line-strong: #3e3e3e;
+  --accent: #3ecf8e; --accent-ink: #0b2a1b; --accent-soft: rgba(62, 207, 142, .12);
+  --btn: #006239; --btn-ink: #fafafa; --btn-line: rgba(62, 207, 142, .45); --btn-hover: #00744a;
+  --l0: #f5a65b; --l0-soft: rgba(245, 166, 91, .14); --l1: #3ecf8e; --l1-soft: rgba(62, 207, 142, .14); --l2: #b794ff; --l2-soft: rgba(183, 148, 255, .14); --l3: #5cb8f0; --l3-soft: rgba(92, 184, 240, .14);
+  --ok: #3ecf8e; --warn: #f1b84a; --warn-soft: rgba(241, 184, 74, .13); --full: #ff7a6e; --full-soft: rgba(255, 122, 110, .14);
   color-scheme: dark; }
 
 * { box-sizing: border-box; }
-body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 15px; line-height: 1.5; }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 14px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
 .wrap { max-width: 1100px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 header { padding-block: 28px 8px; }
-.eyebrow { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
-h1 { font-family: var(--f-display); font-weight: 800; font-size: clamp(26px, 5vw, 38px); line-height: 1.1; margin: 4px 0 6px; text-wrap: balance; }
-h2 { font-family: var(--f-display); font-weight: 600; font-size: 20px; margin: 0; text-wrap: balance; }
+#restricted:not(:empty) { margin-top: 10px; }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 400; }
+h1 { font-family: var(--f-display); font-weight: 500; font-size: clamp(26px, 5vw, 36px); letter-spacing: -.025em; line-height: 1.15; margin: 6px 0 8px; text-wrap: balance; }
+h2 { font-family: var(--f-display); font-weight: 500; font-size: 18px; letter-spacing: -.01em; margin: 0; text-wrap: balance; }
 .sub { color: var(--muted); margin: 0; max-width: 65ch; }
 .stats { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 14px; font-variant-numeric: tabular-nums; }
-.stats b { font-family: var(--f-display); font-size: 20px; }
+.stats b { font-family: var(--f-mono); font-weight: 500; font-size: 18px; }
 .stats span { color: var(--muted); font-size: 13px; }
 
 nav.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-top: 18px; overflow-x: auto; }
-nav.tabs button { background: none; border: 0; border-bottom: 3px solid transparent; padding: 10px 14px; font: 700 15px var(--f-body); color: var(--muted); cursor: pointer; white-space: nowrap; }
-nav.tabs button[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+nav.tabs button { background: none; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; padding: 10px 12px; font: 500 14px var(--f-body); color: var(--muted); cursor: pointer; white-space: nowrap; }
+nav.tabs button:hover { color: var(--fg); }
+nav.tabs button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
 button:focus-visible, input:focus-visible, select:focus-visible, .cell:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
 main { padding-block: 20px 60px; }
-.notice { padding: 10px 14px; border-radius: 8px; background: var(--warn-soft); color: var(--fg); margin-bottom: 16px; }
-.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+.notice { padding: 10px 14px; border-radius: var(--radius); background: var(--warn-soft); color: var(--fg); margin-bottom: 16px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px; }
 .stack { display: flex; flex-direction: column; gap: 16px; }
 
 .fields { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
 @media (max-width: 560px) { .fields { grid-template-columns: 1fr; } }
-label.f { display: flex; flex-direction: column; gap: 4px; font-weight: 700; font-size: 14px; min-width: 0; }
-input[type=text], select { font: 400 15px var(--f-body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; width: 100%; min-width: 0; }
+label.f { display: flex; flex-direction: column; gap: 6px; font-weight: 500; font-size: 13px; color: var(--muted); min-width: 0; }
+input[type=text], input[type=password], input[type=email], input[type=tel], input[type=number], select { font: 400 14px var(--f-body); color: var(--fg); background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 8px 10px; width: 100%; min-width: 0; }
 
 .half-title { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin: 6px 0 4px; }
-.half-title h3 { font-family: var(--f-display); font-weight: 600; font-size: 16px; margin: 0; }
+.half-title h3 { font-family: var(--f-display); font-weight: 500; font-size: 16px; margin: 0; }
 .half-title small { color: var(--muted); }
 .rot { display: grid; grid-template-columns: 110px 1fr; gap: 10px; align-items: center; padding: 6px 0; border-top: 1px dashed var(--line); }
 .rot:first-of-type { border-top: 0; }
@@ -68,29 +76,32 @@ input[type=text], select { font: 400 15px var(--f-body); color: var(--fg); backg
 @media (max-width: 480px) { .rot { grid-template-columns: 1fr; gap: 4px; } .rot .t b { display: inline; margin-right: 6px; } .rot .hint { grid-column: 1; } }
 
 .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-.btn { font: 700 15px var(--f-body); border-radius: 8px; padding: 10px 16px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; }
-.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn { font: 500 14px var(--f-body); border-radius: var(--radius); padding: 8px 14px; border: 1px solid var(--line-strong); background: var(--surface-2); color: var(--fg); cursor: pointer; transition: background-color .12s, border-color .12s; }
+.btn:hover:not([disabled]) { border-color: var(--muted); }
+.btn.primary { background: var(--btn); color: var(--btn-ink); border-color: var(--btn-line); }
+.btn.primary:hover:not([disabled]) { background: var(--btn-hover); border-color: var(--btn-line); }
 .btn.small { padding: 5px 10px; font-size: 13px; }
-.btn.danger { color: var(--full); border-color: var(--full); }
+.btn.danger { color: var(--full); border-color: color-mix(in srgb, var(--full) 45%, transparent); }
 .btn[disabled] { opacity: .5; cursor: not-allowed; }
 .msg { font-size: 14px; }
 .msg.ok { color: var(--ok); } .msg.err { color: var(--full); }
 
-.lieu { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .05em; padding: 1px 6px; border-radius: 4px; }
-.lieu.P1 { background: var(--p1-soft); color: var(--p1); }
-.lieu.P2 { background: var(--p2-soft); color: var(--p2); }
-.lieu.P3 { background: var(--p3-soft); color: var(--p3); }
+.lieu { display: inline-block; font-family: var(--f-mono); font-size: 11px; font-weight: 500; letter-spacing: .03em; padding: 1px 6px; border-radius: 4px; background: var(--surface-2); color: var(--muted); }
+.lieu.l0 { background: var(--l0-soft); color: var(--l0); }
+.lieu.l1 { background: var(--l1-soft); color: var(--l1); }
+.lieu.l2 { background: var(--l2-soft); color: var(--l2); }
+.lieu.l3 { background: var(--l3-soft); color: var(--l3); }
 
-.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
 table.grid { border-collapse: separate; border-spacing: 0; font-variant-numeric: tabular-nums; font-size: 13px; }
 table.grid th, table.grid td { padding: 0; border-bottom: 1px solid var(--line); }
 table.grid thead th { position: sticky; top: 0; background: var(--surface); font-weight: 700; padding: 6px 4px; text-align: center; white-space: nowrap; }
-table.grid thead tr.halves th { font-family: var(--f-display); font-size: 13px; color: var(--muted); }
+table.grid thead tr.halves th { font-family: var(--f-mono); font-weight: 400; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
 table.grid th.act { position: sticky; left: 0; background: var(--surface); text-align: left; padding: 6px 10px; min-width: 170px; z-index: 1; border-right: 1px solid var(--line); }
-table.grid th.act button { background: none; border: 0; padding: 0; font: 700 13px var(--f-body); color: var(--fg); cursor: pointer; text-align: left; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+table.grid th.act button { background: none; border: 0; padding: 0; font: 500 13px var(--f-body); color: var(--fg); cursor: pointer; text-align: left; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
 table.grid th.act small { display: block; color: var(--muted); font-weight: 400; }
 td.sep, th.sep { border-left: 2px solid var(--line); }
-.cell { display: block; width: 100%; min-width: 46px; padding: 8px 4px; border: 0; background: transparent; font: 700 13px var(--f-body); color: var(--muted); cursor: pointer; text-align: center; }
+.cell { display: block; width: 100%; min-width: 46px; padding: 8px 4px; border: 0; background: transparent; font: 400 12px var(--f-mono); color: var(--muted); cursor: pointer; text-align: center; }
 .cell.some { background: var(--accent-soft); color: var(--accent); }
 .cell.full { background: var(--full-soft); color: var(--full); }
 .cell.over { background: var(--full); color: var(--surface); }
@@ -108,9 +119,9 @@ td.sep, th.sep { border-left: 2px solid var(--line); }
 .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .toolbar input { max-width: 280px; }
 .people { display: flex; flex-direction: column; gap: 8px; }
-.person { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; }
+.person { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; }
 .person .who { min-width: 0; }
-.person .who b { font-size: 16px; }
+.person .who b { font-size: 15px; font-weight: 500; }
 .person .who span { color: var(--muted); font-size: 13px; margin-left: 6px; }
 .person .plan { grid-column: 1 / -1; font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 10px; }
 .person .plan em { font-style: normal; color: var(--fg); }
@@ -128,64 +139,141 @@ body { margin: 0; }
 
 /* Par institution */
 .insts { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
-.inst { text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; cursor: pointer; font: inherit; color: var(--fg); display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.inst { text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; cursor: pointer; font: inherit; color: var(--fg); display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .inst[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
-.inst b { font-size: 15px; }
+.inst b { font-size: 14px; font-weight: 500; }
+.inst:hover { border-color: var(--line-strong); }
 .inst .bar { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
 .inst .bar i { display: block; height: 100%; background: var(--ok); }
 .inst small { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
-.pill { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 999px; background: var(--line); color: var(--muted); }
-.pill.ok { background: var(--p2-soft); color: var(--ok); }
-.pill.todo { background: var(--full-soft); color: var(--full); }
-.pill.warn { background: var(--warn-soft); color: var(--warn); }
-.pill.draft { background: var(--accent-soft); color: var(--accent); }
+.pill { display: inline-block; font-family: var(--f-mono); font-size: 11px; font-weight: 500; padding: 1px 7px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); color: var(--muted); }
+.pill.ok { background: var(--accent-soft); border-color: transparent; color: var(--ok); }
+.pill.todo { background: var(--full-soft); border-color: transparent; color: var(--full); }
+.pill.warn { background: var(--warn-soft); border-color: transparent; color: var(--warn); }
+.pill.draft { background: var(--l3-soft); border-color: transparent; color: var(--l3); }
 .checks { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 14px; }
 .checks span { display: inline-flex; gap: 6px; align-items: center; }
-.sticky-actions { position: sticky; bottom: 0; background: var(--surface); border-top: 1px solid var(--line); padding-block: 10px; margin: 0 -18px -18px; padding-left: 18px; padding-right: 18px; border-radius: 0 0 12px 12px; z-index: 3; }
+.sticky-actions { position: sticky; bottom: 0; background: var(--surface); border-top: 1px solid var(--line); padding-block: 10px; margin: 0 -18px -18px; padding-left: 18px; padding-right: 18px; border-radius: 0 0 8px 8px; z-index: 3; }
 
 table.inst-grid { border-collapse: separate; border-spacing: 0; font-size: 13px; }
 table.inst-grid th, table.inst-grid td { border-bottom: 1px solid var(--line); padding: 4px 3px; }
 table.inst-grid thead th { position: sticky; top: 0; background: var(--surface); z-index: 2; font-weight: 700; text-align: center; white-space: nowrap; font-variant-numeric: tabular-nums; }
-table.inst-grid thead tr.halves th { font-family: var(--f-display); color: var(--muted); }
+table.inst-grid thead tr.halves th { font-family: var(--f-mono); font-weight: 400; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
 table.inst-grid .who { position: sticky; left: 0; background: var(--surface); z-index: 1; min-width: 210px; border-right: 1px solid var(--line); text-align: left; }
 table.inst-grid thead .who { z-index: 3; }
 .who-in { display: flex; gap: 6px; align-items: center; }
 .who-in input { padding: 6px 8px; font-size: 14px; }
 .who-meta { display: flex; gap: 6px; align-items: center; margin-top: 3px; }
-.x { background: none; border: 0; color: var(--muted); cursor: pointer; font: 700 12px var(--f-body); padding: 2px 4px; border-radius: 4px; }
+.x { background: none; border: 0; color: var(--muted); cursor: pointer; font: 500 12px var(--f-body); padding: 2px 4px; border-radius: 4px; }
 .x:hover, .x.confirm { color: var(--full); }
 table.inst-grid select { width: 128px; padding: 5px 4px; font-size: 12px; border-radius: 6px; }
 table.inst-grid select.missing { border: 1px dashed var(--full); background: var(--full-soft); }
 table.inst-grid select.dup { border-color: var(--warn); background: var(--warn-soft); }
 table.inst-grid select.pause { color: var(--muted); }
 table.inst-grid .sep { border-left: 2px solid var(--line); }
-table.inst-grid select.auto { border-color: var(--accent); }
+table.inst-grid select.auto { border-color: var(--l3); box-shadow: inset 0 0 0 1px var(--l3); }
 table.inst-grid select:disabled, table.inst-grid input:disabled { appearance: none; -webkit-appearance: none; opacity: 1; color: var(--fg); background: transparent; border-color: transparent; cursor: default; }
-.lockbar { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; padding: 10px 14px; border-radius: 10px; background: var(--accent-soft); }
-.lockbar b { font-size: 15px; }
+.lockbar { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; padding: 10px 14px; border-radius: 8px; background: var(--surface-2); border: 1px solid var(--line); }
+.lockbar b { font-size: 14px; font-weight: 500; }
 .lockbar form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .lockbar input { width: 200px; }
-.pill.lock { background: var(--accent-soft); color: var(--accent); }
+.pill.lock { background: var(--surface-2); color: var(--fg); }
 .hint-auto { font-size: 13px; color: var(--muted); }
+/* Groupes (≈ 8 résidents par éducateur) */
+table.inst-grid tr.grp-row > * { background: var(--surface-2); border-top: 1px solid var(--line-strong); }
+table.inst-grid tr.grp-row .who { background: var(--surface-2); }
+.grp-head { display: flex; flex-direction: column; gap: 2px; }
+.grp-head input { font-weight: 600; background: transparent; border-color: transparent; padding: 4px 6px; }
+.grp-head input:hover:not(:disabled), .grp-head input:focus { border-color: var(--line-strong); background: var(--surface); }
+.grp-head small { font-family: var(--f-mono); font-size: 11px; color: var(--muted); padding-left: 6px; }
+.grp-none { font-family: var(--f-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); padding: 4px 6px; display: block; }
+table.inst-grid select.gsel { font-weight: 600; border-color: var(--accent); }
+table.inst-grid select.gsel.mixed { border-style: dashed; border-color: var(--line-strong); font-weight: 400; color: var(--muted); }
+table.inst-grid select.mini { width: auto; max-width: 130px; padding: 1px 4px; font-size: 11px; border-radius: 999px; }
+
+/* Barre du haut + menu des journées */
+.brandbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding-block: 14px; border-bottom: 1px solid var(--line); }
+.brand { display: inline-flex; align-items: center; gap: 8px; font-family: var(--f-mono); font-weight: 500; font-size: 13px; letter-spacing: .04em; color: var(--fg); text-decoration: none; }
+.brand i { width: 10px; height: 10px; border-radius: 3px; background: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.brandbar nav { display: flex; gap: 8px; align-items: center; }
+a.back { color: var(--muted); text-decoration: none; font-size: 13px; }
+a.back:hover { color: var(--fg); }
+.events { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 12px; }
+.event { display: flex; flex-direction: column; gap: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px; color: var(--fg); text-decoration: none; min-width: 0; transition: border-color .12s, background-color .12s; }
+a.event:hover { border-color: var(--line-strong); background: var(--surface-2); }
+a.event:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.event.closed { opacity: .72; }
+.event .top { display: flex; gap: 14px; align-items: flex-start; }
+.event .date { flex: none; width: 64px; text-align: center; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--surface-2); }
+.event .date small { display: block; font-family: var(--f-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 3px 0; border-bottom: 1px solid var(--line); background: var(--surface); }
+.event .date b { display: block; font-size: 24px; font-weight: 500; letter-spacing: -.02em; padding: 4px 0 0; font-variant-numeric: tabular-nums; }
+.event .date span { display: block; font-family: var(--f-mono); font-size: 10px; text-transform: uppercase; color: var(--muted); padding-bottom: 5px; }
+.event h3 { margin: 0; font-size: 16px; font-weight: 500; letter-spacing: -.01em; line-height: 1.3; }
+.event p { margin: 3px 0 0; color: var(--muted); font-size: 13px; }
+.event .foot { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 12px; border-top: 1px solid var(--line); }
+.status { display: inline-flex; align-items: center; gap: 6px; font-family: var(--f-mono); font-size: 11px; color: var(--muted); }
+.status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--line-strong); }
+.status.open { color: var(--ok); } .status.open::before { background: var(--ok); box-shadow: 0 0 0 3px var(--accent-soft); }
+.event .go { font-size: 13px; color: var(--muted); }
+a.event:hover .go { color: var(--fg); }
+.restricted { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; color: var(--warn); background: var(--warn-soft); border-radius: 999px; padding: 2px 9px; }
+.home-note { color: var(--muted); font-size: 13px; margin-top: 16px; }
+.insts .empty-state { grid-column: 1 / -1; text-align: left; padding: 14px 0; }
+.places { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+.places.full { color: var(--full); }
+.places.low { color: var(--warn); }
+
+/* Inscription d'une institution */
+.reg-bar { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 14px; }
+.form-grid .wide { grid-column: 1 / -1; }
+.form-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 600px) { .form-grid, .form-grid.three { grid-template-columns: 1fr; } }
+label.f .req { color: var(--full); }
+label.f small { font-weight: 400; color: var(--muted); }
+.resa { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font-size: 13px; color: var(--muted); }
+.resa b { color: var(--fg); font-weight: 500; font-family: var(--f-mono); }
+#resa-form { padding: 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); }
+#resa-form input { background: var(--surface); }
+
+/* Organisateur */
+table.list { border-collapse: collapse; width: 100%; font-size: 13px; }
+table.list th, table.list td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.list th { font-family: var(--f-mono); font-weight: 400; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); white-space: nowrap; }
+table.list td.n, table.list th.n { text-align: right; font-variant-numeric: tabular-nums; }
+table.list tfoot td { font-weight: 500; border-bottom: 0; }
+table.list a { color: var(--accent); text-decoration: none; }
+table.list a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div class="topline">
-      <div class="eyebrow">Journée APA · mardi 17 novembre</div>
+  <div class="brandbar">
+    <a class="brand" href="#" id="brand"><i aria-hidden="true"></i>APAESENCA</a>
+    <nav>
+      <a class="back" href="#" id="back" hidden>← Toutes les journées</a>
       <button class="btn small" id="logout" type="button" hidden>Se déconnecter</button>
-    </div>
-    <h1>Inscriptions aux activités</h1>
-    <p class="sub">15 tournantes de 15 minutes, avec 5 minutes de changement en musique entre chaque. Accueil des bénéficiaires dès 9h30.</p>
+    </nav>
+  </div>
+  <header>
+    <div class="eyebrow" id="eyebrow">Journées APA</div>
+    <h1 id="title">Inscriptions aux journées APA</h1>
+    <p class="sub" id="subtitle">Choisis une journée. Chaque journée a son propre code d'accès, donné par l'organisateur.</p>
+    <div id="restricted"></div>
     <div class="stats" id="stats"></div>
   </header>
 
-  <form id="login" class="panel stack login" autocomplete="off">
-    <h2>Code d'équipe</h2>
-    <p class="sub">Entre le code donné par l'organisateur pour voir et modifier les inscriptions.</p>
+  <!-- ======== Menu des journées ======== -->
+  <section id="home" hidden>
+    <div class="events" id="events"><div class="empty-state">Chargement des journées…</div></div>
+    <p class="home-note">Les noms des participants ne sont visibles qu'avec le code d'accès de la journée.</p>
+  </section>
+
+  <form id="login" class="panel stack login" autocomplete="off" hidden>
+    <h2>Code d'accès</h2>
+    <p class="sub" id="login-sub">Entre le code donné par l'organisateur pour voir et modifier les inscriptions de cette journée.</p>
     <label class="f" for="code">Code
-      <input type="text" id="code" required autocomplete="current-password">
+      <input type="password" id="code" required autocomplete="current-password">
     </label>
     <div class="actions">
       <button class="btn primary" type="submit" id="login-btn">Entrer</button>
@@ -199,6 +287,7 @@ table.inst-grid select:disabled, table.inst-grid input:disabled { appearance: no
       <button role="tab" id="tab-inscrire" aria-selected="false" data-view="inscrire">Inscription individuelle</button>
       <button role="tab" id="tab-planning" aria-selected="false" data-view="planning">Planning des places</button>
       <button role="tab" id="tab-inscrits" aria-selected="false" data-view="inscrits">Tous les inscrits</button>
+      <button role="tab" id="tab-orga" aria-selected="false" data-view="orga">Organisateur</button>
     </nav>
     <main>
       <div id="notice" class="notice" hidden></div>
@@ -206,19 +295,65 @@ table.inst-grid select:disabled, table.inst-grid input:disabled { appearance: no
       <!-- ======== Par institution ======== -->
       <section id="view-institution" class="stack">
         <div>
-          <p class="sub" style="margin-bottom:10px">Choisis ton institution : tes participants s'affichent, tu leur attribues une activité (ou une pause) pour chaque tournante.</p>
+          <div class="reg-bar">
+            <p class="sub">Choisis ton institution : tes participants s'affichent, tu leur attribues une activité (ou une pause) pour chaque tournante. Pas encore dans la liste ? Inscris-la.</p>
+            <div class="actions"><span class="places" id="reg-places"></span><button class="btn primary small" type="button" id="reg-open">+ Inscrire mon institution</button></div>
+          </div>
           <div class="insts" id="insts"></div>
         </div>
+        <form class="panel stack" id="reg-form" hidden autocomplete="on" novalidate>
+          <div class="topline"><h2>Inscrire mon institution</h2><button class="btn small" type="button" id="reg-cancel">Fermer</button></div>
+          <p class="sub" id="reg-intro"></p>
+          <div class="form-grid">
+            <label class="f wide" for="reg-nom"><span>Nom de votre institution <span class="req">*</span></span>
+              <input type="text" id="reg-nom" required maxlength="120" autocomplete="organization"></label>
+            <label class="f" for="reg-resp"><span>Nom de la personne responsable <span class="req">*</span></span>
+              <input type="text" id="reg-resp" required maxlength="120" autocomplete="name"></label>
+            <label class="f" for="reg-tel"><span>Téléphone de la personne responsable <span class="req">*</span></span>
+              <input type="tel" id="reg-tel" required maxlength="40" autocomplete="tel"></label>
+            <label class="f wide" for="reg-email"><span>Adresse e-mail <span class="req">*</span></span>
+              <input type="email" id="reg-email" required maxlength="200" autocomplete="email"></label>
+          </div>
+          <div class="form-grid three">
+            <label class="f" for="reg-places-n"><span>Nombre de participants <span class="req">*</span> <small id="reg-max"></small></span>
+              <input type="number" id="reg-places-n" required min="1" max="300" inputmode="numeric"></label>
+            <label class="f" for="reg-educ"><span>Nombre d'éducateurs · éducatrices présents <span class="req">*</span></span>
+              <input type="number" id="reg-educ" required min="0" max="100" inputmode="numeric"></label>
+            <label class="f" for="reg-pmr"><span>Nombre de PMR <small>(parmi les participants)</small></span>
+              <input type="number" id="reg-pmr" min="0" max="300" value="0" inputmode="numeric"></label>
+          </div>
+          <div class="actions">
+            <button class="btn primary" type="submit" id="reg-save">Inscrire l'institution</button>
+            <span class="msg" id="reg-msg" role="status"></span>
+          </div>
+        </form>
         <div class="panel stack" id="inst-panel" hidden>
           <div class="topline">
             <h2 id="inst-title"></h2>
             <div class="actions">
               <button class="btn small" type="button" id="inst-add">+ Ajouter un participant</button>
+              <button class="btn small" type="button" id="inst-groups">Former des groupes de 8</button>
               <button class="btn small" type="button" id="inst-auto">Remplir automatiquement les cases vides</button>
               <button class="btn small danger" type="button" id="inst-clear">Tout vider</button>
               <button class="btn small primary" type="button" id="inst-pdf">Télécharger et verrouiller (PDF)</button>
             </div>
           </div>
+          <div class="resa" id="inst-resa"></div>
+          <form class="stack" id="resa-form" hidden autocomplete="off">
+            <div class="form-grid three">
+              <label class="f" for="resa-places"><span>Places réservées (participants)</span>
+              <input type="number" id="resa-places" min="1" max="300" required inputmode="numeric"></label>
+              <label class="f" for="resa-educ"><span>Éducateurs · éducatrices</span>
+              <input type="number" id="resa-educ" min="0" max="100" required inputmode="numeric"></label>
+              <label class="f" for="resa-pmr"><span>Dont PMR</span>
+              <input type="number" id="resa-pmr" min="0" max="300" required inputmode="numeric"></label>
+            </div>
+            <div class="actions">
+              <button class="btn primary small" type="submit" id="resa-save">Enregistrer la réservation</button>
+              <button class="btn small" type="button" id="resa-cancel">Annuler</button>
+              <span class="places" id="resa-hint"></span>
+            </div>
+          </form>
           <div class="lockbar" id="inst-lock" hidden>
             <span>🔒 <b>Planning verrouillé</b> <span id="inst-lock-when"></span>. Il ne peut plus être modifié.</span>
             <button class="btn small" type="button" id="unlock-open">Déverrouiller (organisateur)</button>
@@ -292,6 +427,28 @@ table.inst-grid select:disabled, table.inst-grid input:disabled { appearance: no
         </div>
         <div class="people" id="people"></div>
       </section>
+      <!-- ======== Organisateur ======== -->
+      <section id="view-orga" class="stack" hidden>
+        <form class="panel stack login" id="orga-login" autocomplete="off" style="margin-top:0">
+          <h2>Espace organisateur</h2>
+          <p class="sub">Coordonnées des institutions inscrites (remplace les réponses du Google Form). Réservé à l'organisateur.</p>
+          <label class="f" for="orga-code">Code organisateur <input type="password" id="orga-code" required autocomplete="off"></label>
+          <div class="actions"><button class="btn primary" type="submit" id="orga-btn">Ouvrir</button><span class="msg" id="orga-msg" role="status"></span></div>
+        </form>
+        <div id="orga-panel" class="stack" hidden>
+          <div class="toolbar">
+            <div class="actions"><h2>Institutions inscrites</h2><span class="places" id="orga-places"></span></div>
+            <div class="actions">
+              <button class="btn small" type="button" id="orga-refresh">Actualiser</button>
+              <button class="btn small" type="button" id="orga-mails">Copier toutes les adresses e-mail</button>
+              <button class="btn small" type="button" id="orga-csv">Exporter (CSV)</button>
+              <button class="btn small" type="button" id="orga-close">Fermer l'espace</button>
+            </div>
+          </div>
+          <span class="msg" id="orga-msg2" role="status"></span>
+          <div class="scroll"><table class="list" id="orga-table"></table></div>
+        </div>
+      </section>
       <p class="sync" id="sync"></p>
     </main>
   </div>
@@ -308,6 +465,9 @@ const RAFRAICHISSEMENT_MS = 5000;
 /* =================================================== */
 
 const PAUSE = "pause";
+// Journée choisie : dans l'adresse, ex. …/APAESENCA/#marcinelle-2027 (lien à envoyer aux éducateurs).
+const JOURNEE_ID = decodeURIComponent(location.hash.slice(1)).trim() || null;
+let J = null, leaving = false;
 let ACTIVITES = [], ACT = {}, ROTS = [], INSTS = [], INST = {};
 let people = [];
 let editingId = null, code = null, loaded = false, busy = false;
@@ -320,6 +480,16 @@ const plage = r => hm(r.debut) + "–" + hm(r.fin);
 const byName = (a, b) => a.nom.localeCompare(b.nom, "fr", { numeric: true, sensitivity: "base" });
 const instName = id => INST[id]?.nom || "";
 const label = p => p.nom + (p.institution ? " · " + instName(p.institution) : "");
+const jDate = (d, opts) => new Date(d + "T12:00:00").toLocaleDateString("fr-BE", opts);
+const dateLong = d => jDate(d, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+const minutes = t => +t.slice(0, 2) * 60 + +t.slice(3, 5);
+let LIEUX = [];
+const plural = (n, w, ws) => `${n} ${n > 1 ? (ws || w + "s") : w}`;
+// Places de la journée (null = pas de limite).
+const placesInfo = j => j && j.places_max ? { max: j.places_max, reste: Math.max(0, j.places_max - (j.places_prises || 0)) } : null;
+const placesTxt = pi => !pi ? "" : pi.reste ? `${plural(pi.reste, "place restante", "places restantes")} sur ${pi.max}` : "Journée complète";
+const placesCls = pi => "places" + (pi && !pi.reste ? " full" : pi && pi.reste <= 5 ? " low" : "");
+const lieuCls = l => { const i = LIEUX.indexOf(l); return i < 0 ? "" : "l" + (i % 4); };
 
 /* ---------- Appels Supabase (fonctions SQL uniquement) ---------- */
 const API = SUPABASE_URL.trim().replace(/\/+$/, "").replace(/\/rest\/v1$/, "");
@@ -339,8 +509,9 @@ async function rpc(fn, args) {
 }
 
 /* ---------- Connexion ---------- */
-function getSaved() { try { return localStorage.getItem("apa-code"); } catch { return null; } }
-function setSaved(v) { try { v ? localStorage.setItem("apa-code", v) : localStorage.removeItem("apa-code"); } catch {} }
+const KEY = k => "apa-" + k + ":" + JOURNEE_ID;
+function getSaved() { try { return localStorage.getItem(KEY("code")); } catch { return null; } }
+function setSaved(v) { try { v ? localStorage.setItem(KEY("code"), v) : localStorage.removeItem(KEY("code")); } catch {} }
 
 $("login").addEventListener("submit", async e => {
   e.preventDefault();
@@ -348,17 +519,17 @@ $("login").addEventListener("submit", async e => {
   if (!c) return;
   $("login-btn").disabled = true; $("login-msg").textContent = "Vérification…"; $("login-msg").className = "msg";
   try {
-    await rpc("apa_connexion", { p_code: c });
+    await rpc("apa_connexion", { p_journee: JOURNEE_ID, p_code: c });
     code = c; setSaved(c); enterApp();
   } catch (err) {
-    $("login-msg").textContent = err.code === "28000" ? "Code incorrect." : err.message;
+    $("login-msg").textContent = err.code === "28000" ? "Code incorrect pour cette journée." : err.message;
     $("login-msg").className = "msg err";
   } finally { $("login-btn").disabled = false; }
 });
-$("logout").addEventListener("click", () => { setSaved(null); location.reload(); });
 
 function enterApp() {
   $("login").hidden = true; $("app").hidden = false; $("logout").hidden = false;
+  $("logout").textContent = "Changer de code";
   try { const t = localStorage.getItem("apa-tab"); if (t && $("view-" + t)) show(t); } catch {}
   refresh();
   setInterval(() => { if (!document.hidden) refresh(); }, RAFRAICHISSEMENT_MS);
@@ -369,7 +540,7 @@ async function refresh() {
   if (busy) return;
   busy = true;
   try {
-    const etat = await rpc("apa_etat", { p_code: code });
+    const etat = await rpc("apa_etat", { p_journee: JOURNEE_ID, p_code: code });
     const sig = JSON.stringify(etat);
     $("sync").textContent = "À jour à " + new Date().toLocaleTimeString("fr-BE", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
     $("sync").className = "sync";
@@ -378,19 +549,21 @@ async function refresh() {
     const firstLoad = !ROTS.length;
     ACT = Object.fromEntries(etat.activites.map(a => [a.id, a]));
     ACTIVITES = etat.activites.filter(a => a.id !== PAUSE);
+    LIEUX = [...new Set(ACTIVITES.map(a => a.lieu))];
     ROTS = etat.tournantes.map((t, i, all) => ({ ...t, key: String(t.id), n: t.id, sep: i === 0 || t.demi !== all[i - 1].demi }));
     INSTS = etat.institutions || []; INST = Object.fromEntries(INSTS.map(i => [i.id, i]));
     people = etat.beneficiaires;
+    if (etat.journee) setHeader(J = { ...J, ...etat.journee });
     if (firstLoad) {
       buildRotations();
-      try { const s = localStorage.getItem("apa-inst"); if (s && INST[s]) currentInst = s; } catch {}
+      try { const s = localStorage.getItem(KEY("inst")); if (s && INST[s]) currentInst = s; } catch {}
     }
     loaded = true;
     $("sync").textContent = "À jour à " + new Date().toLocaleTimeString("fr-BE", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
     $("sync").className = "sync";
     renderAll();
   } catch (err) {
-    if (err.code === "28000") { setSaved(null); location.reload(); return; }
+    if (err.code === "28000" || err.code === "P0005") { setSaved(null); leaving = true; location.reload(); return; }
     $("sync").textContent = "Mise à jour impossible : " + err.message;
     $("sync").className = "sync err";
   } finally { busy = false; }
@@ -436,7 +609,7 @@ function optionsHtml(rkey, cur, c, short) {
 function instRows(id) {
   if (drafts[id]) return drafts[id].rows;
   return people.filter(p => p.institution === id).sort(byName)
-    .map(p => ({ key: p.id, id: p.id, nom: p.nom, maj: p.maj, plan: { ...(p.plan || {}) }, changed: false, auto: new Set() }));
+    .map(p => ({ key: p.id, id: p.id, nom: p.nom, equipe: p.equipe || "", maj: p.maj, plan: { ...(p.plan || {}) }, changed: false, auto: new Set() }));
 }
 function ensureDraft(id) { if (!drafts[id]) drafts[id] = { rows: instRows(id) }; return drafts[id]; }
 const isDirty = id => !!drafts[id];
@@ -445,7 +618,7 @@ const fmtDate = d => new Date(d).toLocaleString("fr-BE", { day: "2-digit", month
 
 function renderInstCards() {
   const box = $("insts");
-  if (!INSTS.length) { box.innerHTML = `<div class="empty-state">${loaded ? "Aucune institution pour l'instant. Utilise l'onglet « Inscription individuelle »." : "Chargement…"}</div>`; return; }
+  if (!INSTS.length) { box.innerHTML = `<div class="empty-state">${loaded ? "Aucune institution inscrite pour l'instant. Clique « + Inscrire mon institution »." : "Chargement…"}</div>`; return; }
   box.innerHTML = INSTS.map(i => {
     const rows = instRows(i.id), done = rows.filter(r => isComplete(r.plan)).length;
     const pct = rows.length ? Math.round(done / rows.length * 100) : 0;
@@ -454,7 +627,7 @@ function renderInstCards() {
       locked(i.id) ? `<span class="pill lock">🔒 verrouillé</span>` : "",
       isDirty(i.id) ? `<span class="pill draft">non enregistré</span>` : "",
       rows.length && done === rows.length ? `<span class="pill ok">complet</span>` : "",
-      i.nb_attendu && diff !== 0 ? `<span class="pill warn">${rows.length}/${i.nb_attendu} attendus</span>` : "",
+      i.nb_attendu && diff !== 0 ? `<span class="pill warn">${rows.length}/${i.nb_attendu} places</span>` : "",
     ].join(" ");
     return `<button type="button" class="inst" data-inst="${i.id}" aria-pressed="${i.id === currentInst}">
       <b>${esc(i.nom)}</b>
@@ -466,10 +639,38 @@ function renderInstCards() {
 $("insts").addEventListener("click", e => {
   const b = e.target.closest("[data-inst]"); if (!b) return;
   currentInst = b.dataset.inst; variantNo = 0;
-  try { localStorage.setItem("apa-inst", currentInst); } catch {}
+  $("resa-form").hidden = true;
+  try { localStorage.setItem(KEY("inst"), currentInst); } catch {}
   instMsg("");
   renderInstCards(); renderInstPanel(true);
 });
+
+/* ---------- Groupes ---------- */
+const TAILLE_GROUPE = 8;
+const byNatural = (a, b) => a.localeCompare(b, "fr", { numeric: true, sensitivity: "base" });
+const groupsOf = rows => [...new Set(rows.map(r => r.equipe || "").filter(Boolean))].sort(byNatural);
+let GRP_LIST = [];   // groupes affichés dans le tableau (l'index sert d'identifiant dans le HTML)
+// Menu « tout le groupe » : une activité n'est proposée que s'il reste assez de places pour tout le groupe.
+function groupOptionsHtml(rkey, members, c) {
+  const vals = members.map(m => m.plan[rkey] || ""), same = vals.every(v => v === vals[0]) ? vals[0] : null;
+  let h = `<option value="">${same === null ? "· mixte ·" : same ? "· vider le groupe ·" : "· tout le groupe ·"}</option><option value="${PAUSE}">Pause / repos</option>`;
+  for (const lieu of LIEUX) {
+    h += `<optgroup label="Lieu ${esc(lieu)}">`;
+    for (const a of ACTIVITES.filter(x => x.lieu === lieu)) {
+      const reste = a.cap - (c[rkey + "|" + a.id] || 0) + members.filter(m => m.plan[rkey] === a.id).length;
+      const ok = reste >= members.length;
+      h += `<option value="${a.id}"${!ok && same !== a.id ? " disabled" : ""}>${esc(a.nom)} (${reste > 0 ? reste : "complet"})</option>`;
+    }
+    h += `</optgroup>`;
+  }
+  return { html: h, value: same || "", mixed: same === null };
+}
+function paintGroupCell(sel, i, rkey, rows, c) {
+  const members = rows.filter(r => r.equipe === GRP_LIST[i]); if (!members.length) return;
+  const o = groupOptionsHtml(rkey, members, c);
+  sel.innerHTML = o.html; sel.value = o.value; sel.classList.toggle("mixed", o.mixed);
+  sel.title = o.mixed ? "Les résidents de ce groupe n'ont pas tous la même activité" : "";
+}
 
 let instPending = false;
 function renderInstPanel(force) {
@@ -483,10 +684,14 @@ function renderInstPanel(force) {
   if (lk && drafts[currentInst]) { delete drafts[currentInst]; instMsg("Ce planning vient d'être verrouillé : tes modifications non enregistrées ont été abandonnées.", "err"); }
   const rows = instRows(currentInst), dis = lk ? " disabled" : "";
   $("inst-title").textContent = inst.nom;
+  $("inst-resa").innerHTML = `<span><b>${inst.nb_attendu}</b> place${inst.nb_attendu > 1 ? "s" : ""} réservée${inst.nb_attendu > 1 ? "s" : ""}</span>
+    <span><b>${inst.nb_educateurs || 0}</b> éducateur${(inst.nb_educateurs || 0) > 1 ? "s" : ""} · éducatrice${(inst.nb_educateurs || 0) > 1 ? "s" : ""}</span>
+    <span><b>${inst.nb_pmr || 0}</b> PMR</span>` + (lk ? "" : ` <button class="btn small" type="button" id="resa-open">Modifier la réservation</button>`);
+  if (lk) $("resa-form").hidden = true;
   $("inst-lock").hidden = !lk;
   if (lk) $("inst-lock-when").textContent = "le " + fmtDate(inst.verrouille_le) + " (PDF téléchargé)";
   else { $("unlock-form").hidden = true; $("unlock-open").hidden = false; }
-  for (const id of ["inst-add", "inst-auto", "inst-clear"]) $(id).hidden = lk;
+  for (const id of ["inst-add", "inst-groups", "inst-auto", "inst-clear"]) $(id).hidden = lk;
   $("inst-pdf").textContent = lk ? "Télécharger le planning (PDF)" : "Télécharger et verrouiller (PDF)";
   resetPdfConfirm();
   let h = `<thead><tr class="halves"><th class="who"></th>`;
@@ -495,12 +700,23 @@ function renderInstPanel(force) {
   for (const r of ROTS) h += `<th class="${r.sep ? "sep" : ""}">T${r.n}<br><small style="font-weight:400">${plage(r)}</small></th>`;
   h += `</tr></thead><tbody>`;
   if (!rows.length) h += `<tr><td class="who" colspan="${ROTS.length + 1}"><span class="sub">Aucun participant. Clique « + Ajouter un participant ».</span></td></tr>`;
-  for (const row of rows) {
+  GRP_LIST = groupsOf(rows);
+  const sections = GRP_LIST.length ? [...GRP_LIST.map((g, i) => ({ i, g, members: rows.filter(r => r.equipe === g) })),
+    { i: -1, g: "", members: rows.filter(r => !r.equipe) }].filter(x => x.members.length) : [{ i: -1, g: "", members: rows }];
+  for (const sec of sections) {
+    if (sec.i >= 0) {
+      h += `<tr class="grp-row"><th class="who"><div class="grp-head"><input type="text" value="${esc(sec.g)}" maxlength="60" data-gname="${sec.i}" aria-label="Nom du groupe ${esc(sec.g)}" title="Mets par exemple le nom de l'éducateur·rice"${dis}><small>${plural(sec.members.length, "résident")} · tout le groupe →</small></div></th>`;
+      for (const r of ROTS) h += `<td class="${r.sep ? "sep" : ""}"><select class="gsel" data-gcell="${sec.i}|${r.key}" aria-label="Tout le groupe ${esc(sec.g)}, tournante ${r.n}"${dis}></select></td>`;
+      h += `</tr>`;
+    } else if (GRP_LIST.length) h += `<tr class="grp-row"><th class="who"><span class="grp-none">Sans groupe</span></th><td colspan="${ROTS.length}"></td></tr>`;
+    for (const row of sec.members) {
     h += `<tr data-row="${row.key}"><th class="who"><div class="who-in"><input type="text" value="${esc(row.nom)}" maxlength="120" aria-label="Nom du participant" data-name="${row.key}"${dis}>${lk ? "" : `<button type="button" class="x" data-remove="${row.key}" title="Retirer ce participant" aria-label="Retirer ${esc(row.nom)}">✕</button>`}</div><div class="who-meta" data-meta="${row.key}"></div></th>`;
     for (const r of ROTS) h += `<td class="${r.sep ? "sep" : ""}"><select data-cell="${row.key}|${r.key}" aria-label="${esc(row.nom)}, tournante ${r.n}"${dis}>${optionsHtml(r.key, row.plan[r.key] || "", c, true)}</select></td>`;
     h += `</tr>`;
+    }
   }
   $("inst-grid").innerHTML = h + `</tbody>`;
+  for (const sel of $("inst-grid").querySelectorAll("[data-gcell]")) { const [i, rk] = sel.dataset.gcell.split("|"); paintGroupCell(sel, +i, rk, rows, c); }
   for (const row of rows) for (const r of ROTS) $("inst-grid").querySelector(`[data-cell="${row.key}|${r.key}"]`).value = row.plan[r.key] || "";
   rows.forEach(paintRow);
   renderInstChecks();
@@ -515,7 +731,11 @@ function paintRow(row) {
     s.title = d.has(r.key) ? "Activité déjà prévue à une autre tournante" : "";
   }
   const meta = $("inst-grid").querySelector(`[data-meta="${row.key}"]`);
-  if (meta) meta.innerHTML = `<span class="pill ${n === ROTS.length ? "ok" : "todo"}">${n}/${ROTS.length}</span>${d.size ? `<span class="pill warn">activité en double</span>` : ""}${row.id ? "" : `<span class="pill draft">nouveau</span>`}`;
+  if (meta) {
+    const lk = locked(currentInst);
+    const grp = !GRP_LIST.length || lk ? "" : `<select class="mini" data-grp-of="${row.key}" aria-label="Groupe de ${esc(row.nom)}">${GRP_LIST.map(g => `<option${g === row.equipe ? " selected" : ""}>${esc(g)}</option>`).join("")}<option value=""${row.equipe ? "" : " selected"}>Sans groupe</option><option value="__new">+ Nouveau groupe</option></select>`;
+    meta.innerHTML = `<span class="pill ${n === ROTS.length ? "ok" : "todo"}">${n}/${ROTS.length}</span>${grp}${d.size ? `<span class="pill warn">activité en double</span>` : ""}${row.id ? "" : `<span class="pill draft">nouveau</span>`}`;
+  }
 }
 function refreshColumn(rkey) {
   const c = counts(null);
@@ -523,7 +743,10 @@ function refreshColumn(rkey) {
     const s = $("inst-grid").querySelector(`[data-cell="${row.key}|${rkey}"]`); if (!s) continue;
     const v = row.plan[rkey] || ""; s.innerHTML = optionsHtml(rkey, v, c, true); s.value = v;
   }
+  const rows = instRows(currentInst);
+  for (const sel of $("inst-grid").querySelectorAll(`[data-gcell$="|${rkey}"]`)) paintGroupCell(sel, +sel.dataset.gcell.split("|")[0], rkey, rows, c);
 }
+function nextGroupName(rows) { const used = new Set(groupsOf(rows)); let k = used.size + 1; while (used.has("Groupe " + k)) k++; return "Groupe " + k; }
 function renderInstChecks() {
   if (!currentInst) return;
   const rows = instRows(currentInst), inst = INST[currentInst];
@@ -533,7 +756,7 @@ function renderInstChecks() {
   const names = rows.map(r => r.nom.trim().toLowerCase()), sameName = names.filter((n, i) => n && names.indexOf(n) !== i).length;
   const ok = (b, t) => `<span><span class="pill ${b ? "ok" : "todo"}">${b ? "✓" : "!"}</span>${t}</span>`;
   $("inst-checks").innerHTML = [
-    ok(!inst.nb_attendu || rows.length === inst.nb_attendu, `${rows.length} participant${rows.length > 1 ? "s" : ""}${inst.nb_attendu ? ` sur ${inst.nb_attendu} annoncés` : ""}`),
+    ok(!inst.nb_attendu || rows.length === inst.nb_attendu, `${rows.length} participant${rows.length > 1 ? "s" : ""}${inst.nb_attendu ? ` pour ${plural(inst.nb_attendu, "place réservée", "places réservées")}` : ""}`),
     ok(missing === 0, missing ? `${missing} case${missing > 1 ? "s" : ""} à remplir (en rouge)` : "aucune case oubliée"),
     ok(dups === 0, dups ? `${dups} participant${dups > 1 ? "s font" : " fait"} deux fois la même activité (en orange)` : "pas d'activité en double"),
     ok(sameName === 0, sameName ? `${sameName} nom${sameName > 1 ? "s" : ""} en double` : "pas de nom en double"),
@@ -550,6 +773,29 @@ function renderInstChecks() {
 function instMsg(t, kind) { const m = $("inst-msg"); m.textContent = t; m.className = "msg " + (kind || ""); }
 
 $("inst-grid").addEventListener("change", e => {
+  const gs = e.target.closest("[data-gcell]");
+  if (gs) {   // inscrire tout le groupe d'un coup
+    const [i, rkey] = gs.dataset.gcell.split("|"), d = ensureDraft(currentInst), g = GRP_LIST[+i];
+    const members = d.rows.filter(r => r.equipe === g);
+    for (const m of members) { if (gs.value) m.plan[rkey] = gs.value; else delete m.plan[rkey]; m.changed = true; m.auto?.delete(rkey); }
+    refreshColumn(rkey); members.forEach(paintRow); renderInstChecks(); renderInstCards(); renderStats();
+    const a = ACT[gs.value];
+    instMsg(gs.value ? `${g} (${plural(members.length, "résident")}) : ${a?.nom || "?"} à la tournante ${rkey}.` : `${g} : tournante ${rkey} vidée.`, "ok");
+    return;
+  }
+  const gn = e.target.closest("[data-gname]");
+  if (gn) {   // renommer un groupe (ex. nom de l'éducateur)
+    const old = GRP_LIST[+gn.dataset.gname], nv = gn.value.trim().slice(0, 60);
+    if (!nv) { gn.value = old; return; }
+    if (nv !== old) for (const m of ensureDraft(currentInst).rows) if (m.equipe === old) { m.equipe = nv; m.changed = true; }
+    renderInstPanel(true); renderInstCards(); return;
+  }
+  const go = e.target.closest("[data-grp-of]");
+  if (go) {   // changer un participant de groupe
+    const d = ensureDraft(currentInst), row = d.rows.find(r => r.key === go.dataset.grpOf); if (!row) return;
+    row.equipe = go.value === "__new" ? nextGroupName(d.rows) : go.value; row.changed = true;
+    renderInstPanel(true); renderInstCards(); return;
+  }
   const s = e.target.closest("[data-cell]"); if (!s) return;
   const [rowKey, rkey] = s.dataset.cell.split("|");
   const row = ensureDraft(currentInst).rows.find(r => r.key === rowKey); if (!row) return;
@@ -571,24 +817,45 @@ $("inst-grid").addEventListener("click", async e => {
   if (!row.id) { const d = ensureDraft(currentInst); d.rows = d.rows.filter(r => r !== row); renderInstPanel(true); renderInstCards(); return; }
   b.disabled = true;
   try {
-    await rpc("apa_supprimer", { p_code: code, p_id: row.id });
+    await rpc("apa_supprimer", { p_journee: JOURNEE_ID, p_code: code, p_id: row.id });
     if (drafts[currentInst]) drafts[currentInst].rows = drafts[currentInst].rows.filter(r => r.id !== row.id);
     instMsg(row.nom + " a été retiré·e.", "ok");
     await refresh(); renderInstPanel(true);
   } catch (err) { b.disabled = false; instMsg(err.message, "err"); }
 });
 $("inst-add").addEventListener("click", () => {
+  const res = INST[currentInst]?.nb_attendu || 0;
+  if (res && instRows(currentInst).length >= res) { instMsg(`Les ${res} places réservées sont toutes utilisées. Clique « Modifier la réservation » pour en ajouter.`, "err"); return; }
   const d = ensureDraft(currentInst);
   let n = d.rows.length + 1;
   while (d.rows.some(r => r.nom.toLowerCase() === ("participant " + n))) n++;
-  d.rows.push({ key: "new" + (++newKey), id: null, nom: "Participant " + n, plan: {}, changed: true, auto: new Set() });
+  const libre = groupsOf(d.rows).find(g => d.rows.filter(r => r.equipe === g).length < TAILLE_GROUPE) || "";
+  d.rows.push({ key: "new" + (++newKey), id: null, nom: "Participant " + n, equipe: libre, plan: {}, changed: true, auto: new Set() });
   renderInstPanel(true); renderInstCards();
   const inputs = $("inst-grid").querySelectorAll("[data-name]"); const last = inputs[inputs.length - 1];
   if (last) { last.focus(); last.select(); }
 });
 $("inst-discard").addEventListener("click", () => { delete drafts[currentInst]; variantNo = 0; instMsg("Modifications annulées."); renderAll(); renderInstPanel(true); });
 
+// Former des groupes : les participants sans groupe sont répartis en groupes équilibrés
+// d'au plus 8 (ex. 12 → 6 + 6, 20 → 7 + 7 + 6). Les groupes existants ne bougent pas.
+$("inst-groups").addEventListener("click", () => {
+  if (locked(currentInst)) return;
+  const d = ensureDraft(currentInst), libres = d.rows.filter(r => !r.equipe);
+  if (!libres.length) { instMsg("Tout le monde a déjà un groupe. Utilise le petit menu sous chaque nom pour changer quelqu'un de groupe.", "ok"); return; }
+  const nb = Math.ceil(libres.length / TAILLE_GROUPE), base = Math.floor(libres.length / nb), extra = libres.length % nb;
+  let k = 0;
+  for (let g = 0; g < nb; g++) {
+    const name = nextGroupName(d.rows), size = base + (g < extra ? 1 : 0);
+    for (const r of libres.slice(k, k + size)) { r.equipe = name; r.changed = true; }
+    k += size;
+  }
+  renderInstPanel(true); renderInstCards();
+  instMsg(`${plural(nb, "groupe formé", "groupes formés")} (${plural(libres.length, "résident")}). Clique sur le nom d'un groupe pour mettre celui de l'éducateur·rice, puis choisis une activité dans la ligne du groupe pour inscrire tout le groupe d'un coup.`, "ok");
+});
+
 // Remplissage automatique. Chaque clic propose une nouvelle variante :
+// - les groupes restent ensemble quand il y a assez de places pour tout le groupe ;
 // - les cases choisies à la main et le planning déjà enregistré ne bougent pas ;
 // - les cases proposées au clic précédent (bordure bleue) sont tirées à nouveau ;
 // - respecte les places restantes et évite de refaire une activité déjà faite.
@@ -606,11 +873,21 @@ $("inst-auto").addEventListener("click", () => {
   let rerolled = 0;
   for (const row of d.rows) { row.auto ||= new Set(); for (const k of row.auto) { delete row.plan[k]; rerolled++; } row.auto.clear(); }
   const c = counts(null);
-  let n = 0, repeats = 0, impossible = 0;
+  let n = 0, repeats = 0, impossible = 0, splits = 0;
   const reste = (rk, a) => a.cap - (c[rk + "|" + a.id] || 0);
+  const put = (row, r, a) => { row.plan[r.key] = a.id; row.auto.add(r.key); row.changed = true; c[r.key + "|" + a.id] = (c[r.key + "|" + a.id] || 0) + 1; n++; };
+  const groups = groupsOf(d.rows);
   for (const r of shuffle(ROTS)) {
-    for (const row of shuffle(d.rows)) {
-      if (row.plan[r.key]) continue;
+    // Unités : chaque groupe (ses résidents dont la case est vide) ou chaque participant sans groupe.
+    const units = [...groups.map(g => d.rows.filter(x => x.equipe === g && !x.plan[r.key])), ...d.rows.filter(x => !x.equipe && !x.plan[r.key]).map(x => [x])].filter(u => u.length);
+    for (const unit of shuffle(units)) {
+      if (unit.length > 1) {
+        const doneG = new Set(unit.flatMap(m => Object.values(m.plan)));
+        const fit = ACTIVITES.filter(a => reste(r.key, a) >= unit.length && !doneG.has(a.id));
+        if (fit.length) { const a = pickWeighted(fit, x => reste(r.key, x)); for (const m of unit) put(m, r, a); continue; }
+        splits++;   // pas d'activité avec assez de places pour tout le groupe : chacun séparément
+      }
+      for (const row of unit) {
       const done = Object.values(row.plan);
       const libres = ACTIVITES.filter(a => reste(r.key, a) > 0);
       // 1) une activité pas encore faite, tirée au sort (plus de chances là où il reste plus de places) ;
@@ -624,14 +901,15 @@ $("inst-auto").addEventListener("click", () => {
         repeats++;
       }
       if (!a) { impossible++; continue; }
-      row.plan[r.key] = a.id; row.auto.add(r.key); row.changed = true;
-      c[r.key + "|" + a.id] = (c[r.key + "|" + a.id] || 0) + 1; n++;
+      put(row, r, a);
+      }
     }
   }
   renderInstPanel(true); renderInstCards(); renderStats();
   let m = n ? (rerolled ? `Variante ${++variantNo} : ${n} case${n > 1 ? "s" : ""} proposée${n > 1 ? "s" : ""}.` : (variantNo = 1, `${n} case${n > 1 ? "s" : ""} remplie${n > 1 ? "s" : ""}.`)) + " Vérifie, ajuste si besoin, puis clique « Enregistrer »."
     : (impossible ? "" : "Aucune case vide à remplir. Pour tout repartir de zéro, clique « Tout vider ».");
   if (repeats) m += ` ${repeats} fois, il ne restait que des activités déjà faites : elles sont en orange, change-les si tu préfères une pause.`;
+  if (splits) m += ` ${splits} fois, aucune activité n'avait assez de places pour tout un groupe : ses résidents ont été répartis séparément.`;
   if (impossible) m += ` ${impossible} case${impossible > 1 ? "s" : ""} sans aucune place disponible.`;
   instMsg(m.trim(), impossible ? "err" : "ok");
 });
@@ -649,12 +927,12 @@ $("inst-clear").addEventListener("click", () => {
 $("inst-save").addEventListener("click", async () => {
   const d = drafts[currentInst]; if (!d) return;
   if (d.rows.some(r => !r.nom.trim())) { instMsg("Un participant n'a pas de nom.", "err"); return; }
-  const lignes = d.rows.filter(r => r.changed || !r.id).map(r => ({ id: r.id, nom: r.nom.trim(), ...(r.id ? { maj: r.maj } : {}), plan: r.plan }));
+  const lignes = d.rows.filter(r => r.changed || !r.id).map(r => ({ id: r.id, nom: r.nom.trim(), equipe: (r.equipe || "").trim(), ...(r.id ? { maj: r.maj } : {}), plan: r.plan }));
   if (!lignes.length) { delete drafts[currentInst]; renderAll(); return; }
   $("inst-save").disabled = true; instMsg("Enregistrement…");
   try {
     // Le serveur revérifie toutes les places sous verrou : tout passe ou rien ne passe.
-    await rpc("apa_enregistrer_lot", { p_code: code, p_institution: currentInst, p_lignes: lignes });
+    await rpc("apa_enregistrer_lot", { p_journee: JOURNEE_ID, p_code: code, p_institution: currentInst, p_lignes: lignes });
     delete drafts[currentInst];
     instMsg(`${INST[currentInst].nom} : ${lignes.length} participant${lignes.length > 1 ? "s" : ""} enregistré${lignes.length > 1 ? "s" : ""}.`, "ok");
   } catch (err) {
@@ -665,7 +943,126 @@ $("inst-save").addEventListener("click", async () => {
     await refresh(); renderInstPanel(true);
   }
 });
-window.addEventListener("beforeunload", e => { if (Object.keys(drafts).length) { e.preventDefault(); e.returnValue = ""; } });
+window.addEventListener("beforeunload", e => { if (!leaving && Object.keys(drafts).length) { e.preventDefault(); e.returnValue = ""; } });
+
+/* ---------- Inscription d'une institution (remplace le Google Form) ---------- */
+function renderRegBar() {
+  const pi = placesInfo(J);
+  $("reg-places").textContent = placesTxt(pi); $("reg-places").className = placesCls(pi);
+  $("reg-open").disabled = !!pi && !pi.reste;
+  $("reg-max").textContent = pi && pi.reste ? `(${pi.reste} max)` : "";
+  $("reg-places-n").max = pi ? Math.max(1, pi.reste) : 300;
+  $("reg-intro").textContent = "Une seule inscription par institution. Les lignes « Participant 1, 2… » sont créées tout de suite : tu pourras ensuite mettre les vrais noms et choisir les activités."
+    + (pi ? ` Il reste ${plural(pi.reste, "place")} pour cette journée.` : "");
+  if (pi && !pi.reste) $("reg-form").hidden = true;
+}
+function regMsg(t, kind) { const m = $("reg-msg"); m.textContent = t; m.className = "msg " + (kind || ""); }
+$("reg-open").addEventListener("click", () => { $("reg-form").hidden = false; regMsg(""); $("reg-form").scrollIntoView({ block: "nearest" }); $("reg-nom").focus(); });
+$("reg-cancel").addEventListener("click", () => { $("reg-form").hidden = true; });
+$("reg-form").addEventListener("submit", async e => {
+  e.preventDefault();
+  const v = id => $(id).value.trim(), n = id => $(id).value === "" ? NaN : Number($(id).value);
+  const nom = v("reg-nom"), places = n("reg-places-n"), educ = n("reg-educ"), pmr = $("reg-pmr").value === "" ? 0 : n("reg-pmr");
+  const same = INSTS.find(i => i.nom.trim().toLowerCase() === nom.toLowerCase());
+  if (same) { regMsg(`« ${same.nom} » est déjà inscrite : choisis-la dans la liste au-dessus.`, "err"); return; }
+  const miss = [["reg-nom", nom], ["reg-resp", v("reg-resp")], ["reg-tel", v("reg-tel")], ["reg-email", v("reg-email")]].find(([, x]) => !x);
+  if (miss) { regMsg("Complète tous les champs marqués d'une étoile.", "err"); $(miss[0]).focus(); return; }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v("reg-email"))) { regMsg("Adresse e-mail invalide.", "err"); $("reg-email").focus(); return; }
+  if (!Number.isInteger(places) || places < 1) { regMsg("Indique le nombre de participants.", "err"); $("reg-places-n").focus(); return; }
+  if (!Number.isInteger(educ) || educ < 0) { regMsg("Indique le nombre d'éducateurs · éducatrices.", "err"); $("reg-educ").focus(); return; }
+  if (!Number.isInteger(pmr) || pmr < 0 || pmr > places) { regMsg("Le nombre de PMR doit être entre 0 et le nombre de participants.", "err"); $("reg-pmr").focus(); return; }
+  $("reg-save").disabled = true; regMsg("Inscription…");
+  try {
+    const id = await rpc("apa_inscrire_institution", { p_journee: JOURNEE_ID, p_code: code, p_nom: nom, p_responsable: v("reg-resp"),
+      p_email: v("reg-email"), p_telephone: v("reg-tel"), p_places: places, p_educateurs: educ, p_pmr: pmr });
+    $("reg-form").reset(); $("reg-form").hidden = true; regMsg("");
+    currentInst = id; try { localStorage.setItem(KEY("inst"), id); } catch {}
+    lastSig = null; await refresh(); renderInstPanel(true);
+    instMsg(`${nom} est inscrite avec ${plural(places, "place")}. Remplace « Participant 1, 2… » par les vrais noms, choisis les activités, puis clique « Enregistrer ».`, "ok");
+    $("inst-panel").scrollIntoView({ block: "start" });
+  } catch (err) {
+    regMsg(err.message, "err");
+    if (err.code === "P0007") { lastSig = null; refresh(); }
+  } finally { $("reg-save").disabled = false; }
+});
+
+/* ---------- Modifier la réservation ---------- */
+$("inst-resa").addEventListener("click", e => {
+  if (!e.target.closest("#resa-open")) return;
+  const inst = INST[currentInst]; if (!inst) return;
+  $("resa-places").value = inst.nb_attendu; $("resa-educ").value = inst.nb_educateurs || 0; $("resa-pmr").value = inst.nb_pmr || 0;
+  const pi = placesInfo(J), n = people.filter(p => p.institution === currentInst).length;
+  $("resa-hint").textContent = pi ? `Maximum ${pi.reste + Math.max(inst.nb_attendu, n)} pour cette institution` : "";
+  $("resa-form").hidden = false; $("resa-places").focus();
+});
+$("resa-cancel").addEventListener("click", () => { $("resa-form").hidden = true; });
+$("resa-form").addEventListener("submit", async e => {
+  e.preventDefault();
+  const places = Number($("resa-places").value), educ = Number($("resa-educ").value), pmr = Number($("resa-pmr").value);
+  const rows = instRows(currentInst).length;
+  if (isDirty(currentInst)) { instMsg("Enregistre ou annule d'abord tes modifications du planning.", "err"); return; }
+  if (places < rows) { instMsg(`Il y a déjà ${rows} participants : retire d'abord des participants (✕) avant de réduire la réservation.`, "err"); return; }
+  $("resa-save").disabled = true;
+  try {
+    await rpc("apa_modifier_reservation", { p_journee: JOURNEE_ID, p_code: code, p_institution: currentInst, p_places: places, p_educateurs: educ, p_pmr: pmr });
+    $("resa-form").hidden = true;
+    lastSig = null; await refresh(); renderInstPanel(true);
+    instMsg("Réservation mise à jour." + (places > rows ? ` Clique « + Ajouter un participant » pour ${places - rows > 1 ? `les ${places - rows} places` : "la place"} en plus.` : ""), "ok");
+  } catch (err) { instMsg(err.message, "err"); }
+  finally { $("resa-save").disabled = false; }
+});
+
+/* ---------- Espace organisateur (coordonnées des institutions) ---------- */
+let adminCode = null, orgaList = [];
+function orgaMsg(t, kind) { const m = $("orga-msg2"); m.textContent = t; m.className = "msg " + (kind || ""); }
+async function loadOrga() {
+  try {
+    orgaList = await rpc("apa_admin_institutions", { p_code_admin: adminCode, p_journee: JOURNEE_ID });
+    $("orga-login").hidden = true; $("orga-panel").hidden = false; $("orga-msg").textContent = "";
+    renderOrga();
+  } catch (err) {
+    adminCode = null; $("orga-login").hidden = false; $("orga-panel").hidden = true;
+    $("orga-msg").textContent = err.code === "28000" ? "Code organisateur incorrect." : err.message; $("orga-msg").className = "msg err";
+  }
+}
+function renderOrga() {
+  const pi = placesInfo(J);
+  $("orga-places").textContent = placesTxt(pi) || "Pas de limite de places"; $("orga-places").className = placesCls(pi);
+  if (!orgaList.length) { $("orga-table").innerHTML = `<tbody><tr><td class="empty-state">Aucune institution inscrite.</td></tr></tbody>`; return; }
+  const sum = k => orgaList.reduce((s, i) => s + (i[k] || 0), 0);
+  $("orga-table").innerHTML = `<thead><tr><th>Institution</th><th>Responsable</th><th>Contact</th><th class="n">Places</th><th class="n">Noms encodés</th><th class="n">Éduc.</th><th class="n">PMR</th><th>Inscrite le</th><th></th></tr></thead><tbody>` +
+    orgaList.map(i => `<tr><td><b>${esc(i.nom)}</b>${i.verrouille_le ? ` <span class="pill lock">🔒 PDF</span>` : ""}</td><td>${esc(i.responsable)}</td>
+      <td>${i.email ? `<a href="mailto:${esc(i.email)}">${esc(i.email)}</a>` : ""}${i.telephone ? `<br><a href="tel:${esc(i.telephone.replace(/[^+\d]/g, ""))}">${esc(i.telephone)}</a>` : ""}</td>
+      <td class="n">${i.places}</td><td class="n">${i.participants}</td><td class="n">${i.educateurs}</td><td class="n">${i.pmr}</td>
+      <td>${esc(fmtDate(i.inscrite_le))}</td><td><button class="btn small danger" type="button" data-orga-del="${i.id}">Supprimer</button></td></tr>`).join("") +
+    `</tbody><tfoot><tr><td>${plural(orgaList.length, "institution")}</td><td></td><td></td><td class="n">${sum("places")}</td><td class="n">${sum("participants")}</td><td class="n">${sum("educateurs")}</td><td class="n">${sum("pmr")}</td><td></td><td></td></tr></tfoot>`;
+}
+$("orga-login").addEventListener("submit", e => { e.preventDefault(); adminCode = $("orga-code").value; $("orga-code").value = ""; if (adminCode) loadOrga(); });
+$("orga-refresh").addEventListener("click", () => { orgaMsg(""); loadOrga(); });
+$("orga-close").addEventListener("click", () => { adminCode = null; orgaList = []; $("orga-table").innerHTML = ""; $("orga-panel").hidden = true; $("orga-login").hidden = false; });
+$("orga-csv").addEventListener("click", () => {
+  const rows = [["Institution", "Responsable", "E-mail", "Téléphone", "Places", "Noms encodés", "Éducateurs", "PMR", "Inscrite le", "PDF téléchargé le"]];
+  for (const i of orgaList) rows.push([i.nom, i.responsable, i.email, i.telephone, i.places, i.participants, i.educateurs, i.pmr, fmtDate(i.inscrite_le), i.verrouille_le ? fmtDate(i.verrouille_le) : ""]);
+  downloadCsv(`${JOURNEE_ID}-institutions.csv`, rows);
+});
+$("orga-mails").addEventListener("click", async () => {
+  const mails = [...new Set(orgaList.map(i => i.email).filter(Boolean))].join("; ");
+  if (!mails) { orgaMsg("Aucune adresse e-mail.", "err"); return; }
+  try { await navigator.clipboard.writeText(mails); orgaMsg(`${plural(mails.split("; ").length, "adresse copiée", "adresses copiées")} : colle-les dans le champ « Cci » de ton e-mail.`, "ok"); }
+  catch { orgaMsg(mails); }
+});
+$("orga-table").addEventListener("click", async e => {
+  const b = e.target.closest("[data-orga-del]"); if (!b) return;
+  const id = b.dataset.orgaDel, inst = orgaList.find(i => i.id === id);
+  if (b.dataset.confirm !== "1") { b.dataset.confirm = "1"; b.textContent = `Supprimer ${inst?.participants || 0} participant(s) aussi ?`; return; }
+  b.disabled = true;
+  try {
+    await rpc("apa_admin_supprimer_institution", { p_code_admin: adminCode, p_institution: id });
+    delete drafts[id]; if (currentInst === id) currentInst = null;
+    orgaMsg(`${inst?.nom || "L'institution"} a été supprimée.`, "ok");
+    lastSig = null; await refresh(); await loadOrga();
+  } catch (err) { b.disabled = false; orgaMsg(err.message, "err"); }
+});
 
 /* ---------- Déverrouillage (organisateur uniquement) ---------- */
 $("unlock-open").addEventListener("click", () => { $("unlock-open").hidden = true; $("unlock-form").hidden = false; $("unlock-code").focus(); });
@@ -692,15 +1089,17 @@ async function loadPdfLib() {
   if (!window.jspdf.jsPDF.API.autoTable) await loadScript("vendor/jspdf.plugin.autotable.min.js");
   return window.jspdf.jsPDF;
 }
-const LIEU_RGB = { P1: [253, 233, 224], P2: [220, 243, 232], P3: [238, 227, 251] };
-const INK = [24, 32, 58], MUTED = [91, 100, 128], RED = [192, 57, 43], REDSOFT = [251, 226, 223];
+const LIEU_PAL = [[253, 236, 220], [221, 245, 233], [238, 229, 251], [222, 240, 251]];
+const lieuRgb = l => { const i = LIEUX.indexOf(l); return i < 0 ? [255, 255, 255] : LIEU_PAL[i % 4]; };
+const INK = [23, 23, 23], MUTED = [107, 107, 107], RED = [196, 43, 43], REDSOFT = [253, 228, 226], HEAD = [0, 98, 57];
 const slug = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase();
 
 function resetPdfConfirm() { const b = $("inst-pdf"); if (b.dataset.confirm) { delete b.dataset.confirm; b.textContent = locked(currentInst) ? "Télécharger le planning (PDF)" : "Télécharger et verrouiller (PDF)"; } }
 $("inst-pdf").addEventListener("click", async () => {
   const id = currentInst, inst = INST[id]; if (!inst) return;
   if (isDirty(id)) { instMsg("Enregistre d'abord tes modifications : le PDF reprend le planning enregistré.", "err"); return; }
-  const rows = people.filter(p => p.institution === id).sort(byName);
+  // Triés par groupe puis par nom (sans groupe en dernier).
+  const rows = people.filter(p => p.institution === id).sort((a, b) => (!a.equipe - !b.equipe) || byNatural(a.equipe || "", b.equipe || "") || byName(a, b));
   if (!rows.length) { instMsg("Aucun participant à mettre dans le planning.", "err"); return; }
   const btn = $("inst-pdf");
   // Premier clic : on explique que le planning sera verrouillé. Deuxième clic : on verrouille puis on télécharge.
@@ -715,7 +1114,7 @@ $("inst-pdf").addEventListener("click", async () => {
   try {
     if (!locked(id)) {
       instMsg("Verrouillage…");
-      await rpc("apa_verrouiller", { p_code: code, p_institution: id });
+      await rpc("apa_verrouiller", { p_journee: JOURNEE_ID, p_code: code, p_institution: id });
       lastSig = null; await refresh(); renderInstPanel(true);
     }
   } catch (err) { btn.disabled = false; instMsg(err.message, "err"); return; }
@@ -726,16 +1125,16 @@ $("inst-pdf").addEventListener("click", async () => {
     const genere = new Date().toLocaleString("fr-BE", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
     const missing = rows.reduce((s, p) => s + (ROTS.length - filled(p.plan)), 0);
     const cellTxt = a => !a ? "—" : a === PAUSE ? "Pause" : `${ACT[a]?.nom || "?"}\n${ACT[a]?.lieu || ""}`;
-    const fillFor = a => !a ? REDSOFT : a === PAUSE ? [240, 241, 245] : LIEU_RGB[ACT[a]?.lieu] || [255, 255, 255];
+    const fillFor = a => !a ? REDSOFT : a === PAUSE ? [240, 241, 245] : lieuRgb(ACT[a]?.lieu);
     const header = (title, sub) => {
       doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.setTextColor(...MUTED);
-      doc.text("JOURNÉE APA · MARDI 17 NOVEMBRE", 10, 10);
+      doc.text(`${J.nom} · ${dateLong(J.date)}`.toUpperCase(), 10, 10);
       doc.setFontSize(16); doc.setTextColor(...INK); doc.text(title, 10, 18);
       doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(...MUTED); doc.text(sub, 10, 24);
     };
 
     // 1) Vue d'ensemble : participants × tournantes
-    header(`Planning · ${inst.nom}`, `${rows.length} participant${rows.length > 1 ? "s" : ""} · 15 min d'activité, 5 min de changement · généré le ${genere}`);
+    header(`Planning · ${inst.nom}`, [`${rows.length} participant${rows.length > 1 ? "s" : ""}`, rythme(), `généré le ${genere}`].filter(Boolean).join(" · "));
     let y0 = 28;
     if (missing) { doc.setTextColor(...RED); doc.setFont("helvetica", "bold"); doc.text(`Attention : ${missing} case${missing > 1 ? "s" : ""} pas encore remplie${missing > 1 ? "s" : ""} (en rouge).`, 10, 29); y0 = 32; }
     const demis = [...new Set(ROTS.map(r => r.demi))];
@@ -745,18 +1144,17 @@ $("inst-pdf").addEventListener("click", async () => {
         [{ content: "", styles: { fillColor: [255, 255, 255] } }, ...demis.map(d => ({ content: d, colSpan: ROTS.filter(r => r.demi === d).length, styles: { halign: "center" } }))],
         ["Participant", ...ROTS.map(r => `T${r.n}\n${hm(r.debut)}`)],
       ],
-      body: rows.map(p => [p.nom, ...ROTS.map(r => cellTxt(p.plan?.[r.key]))]),
+      body: rows.map(p => [p.equipe ? `${p.nom}\n${p.equipe}` : p.nom, ...ROTS.map(r => cellTxt(p.plan?.[r.key]))]),
       styles: { fontSize: 6.3, cellPadding: 0.9, valign: "middle", halign: "center", textColor: INK, lineColor: [221, 225, 236], lineWidth: 0.2, overflow: "linebreak" },
-      headStyles: { fillColor: [35, 67, 201], textColor: [255, 255, 255], fontStyle: "bold", fontSize: 7 },
+      headStyles: { fillColor: HEAD, textColor: [255, 255, 255], fontStyle: "bold", fontSize: 7 },
       columnStyles: { 0: { halign: "left", fontStyle: "bold", cellWidth: 30, fontSize: 7 } },
       didParseCell: d => { if (d.section === "body" && d.column.index > 0) d.cell.styles.fillColor = fillFor(rows[d.row.index].plan?.[ROTS[d.column.index - 1].key]); },
     });
     const ly = doc.lastAutoTable.finalY + 5;
     doc.setFontSize(7.5); doc.setFont("helvetica", "normal"); doc.setTextColor(...MUTED);
-    [["P1", LIEU_RGB.P1], ["P2", LIEU_RGB.P2], ["P3", LIEU_RGB.P3], ["Pause", [240, 241, 245]]].forEach(([t, c], i) => {
-      doc.setFillColor(...c); doc.rect(10 + i * 26, ly - 3, 4, 4, "F"); doc.text(t === "Pause" ? "Pause" : "Lieu " + t, 16 + i * 26, ly);
-    });
-    doc.text("Dîner pour tous à 12h05 · reprise à 12h50", 120, ly);
+    const leg = [...LIEUX.map(l => ["Lieu " + l, lieuRgb(l)]), ["Pause", [240, 241, 245]]];
+    leg.forEach(([t, c], i) => { doc.setFillColor(...c); doc.rect(10 + i * 26, ly - 3, 4, 4, "F"); doc.text(t, 16 + i * 26, ly); });
+    if (J.pause_midi) doc.text(J.pause_midi, 16 + leg.length * 26, ly);
 
     // 2) Où sont mes participants ? (pour les accompagnants)
     doc.addPage("a4", "landscape");
@@ -772,10 +1170,37 @@ $("inst-pdf").addEventListener("click", async () => {
       body: ROTS.map(r => [`T${r.n}\n${plage(r)}`, ...lieux.map(l => where(r, l)),
         [rows.filter(p => p.plan?.[r.key] === PAUSE).map(p => p.nom).join(", "), rows.filter(p => !p.plan?.[r.key]).map(p => p.nom + " (?)").join(", ")].filter(Boolean).join("\n")]),
       styles: { fontSize: 7, cellPadding: 1.2, valign: "top", textColor: INK, lineColor: [221, 225, 236], lineWidth: 0.2 },
-      headStyles: { fillColor: [35, 67, 201], textColor: [255, 255, 255] },
+      headStyles: { fillColor: HEAD, textColor: [255, 255, 255] },
       columnStyles: { 0: { cellWidth: 24, fontStyle: "bold" } },
-      didParseCell: d => { if (d.section === "head" && d.column.index > 0 && d.column.index <= lieux.length) { d.cell.styles.fillColor = LIEU_RGB[lieux[d.column.index - 1]] || [35, 67, 201]; d.cell.styles.textColor = INK; } },
+      didParseCell: d => { if (d.section === "head" && d.column.index > 0 && d.column.index <= lieux.length) { d.cell.styles.fillColor = lieuRgb(lieux[d.column.index - 1]); d.cell.styles.textColor = INK; } },
     });
+
+    // 2 bis) Planning par groupe : pour chaque éducateur·rice, où est son groupe à chaque tournante.
+    const grps = groupsOf(rows);
+    if (grps.length) {
+      doc.addPage("a4", "landscape");
+      header(`Planning par groupe · ${inst.nom}`, "Pour chaque éducateur·rice : l'activité de son groupe à chaque tournante.");
+      const grpCell = (g, r) => {
+        const ms = rows.filter(p => p.equipe === g), by = {};
+        for (const m of ms) (by[m.plan?.[r.key] || ""] ||= []).push(m.nom);
+        const keys = Object.keys(by);
+        if (keys.length === 1) return cellTxt(keys[0]);   // tout le groupe ensemble
+        return keys.map(a => `${a ? (a === PAUSE ? "Pause" : `${ACT[a]?.nom || "?"} (${ACT[a]?.lieu || ""})`) : "À compléter"} : ${by[a].join(", ")}`).join("\n");
+      };
+      doc.autoTable({
+        startY: 28, margin: { left: 8, right: 8 }, theme: "grid",
+        head: [["Tournante", ...grps.map(g => `${g}\n${plural(rows.filter(p => p.equipe === g).length, "résident")}`)]],
+        body: ROTS.map(r => [`T${r.n}\n${plage(r)}`, ...grps.map(g => grpCell(g, r))]),
+        styles: { fontSize: 7, cellPadding: 1.2, valign: "middle", textColor: INK, lineColor: [221, 225, 236], lineWidth: 0.2 },
+        headStyles: { fillColor: HEAD, textColor: [255, 255, 255] },
+        columnStyles: { 0: { cellWidth: 24, fontStyle: "bold" } },
+        didParseCell: d => {
+          if (d.section !== "body" || d.column.index === 0) return;
+          const ms = rows.filter(p => p.equipe === grps[d.column.index - 1]), vals = new Set(ms.map(m => m.plan?.[ROTS[d.row.index].key] || ""));
+          if (vals.size === 1) { d.cell.styles.fillColor = fillFor([...vals][0]); d.cell.styles.halign = "center"; d.cell.styles.fontStyle = "bold"; }
+        },
+      });
+    }
 
     // 3) Une fiche par participant (4 par page, à découper)
     const W = 210, H = 297, cw = 91, ch = 134, gx = (W - 2 * cw) / 3, gy = (H - 2 * ch) / 3;
@@ -783,12 +1208,12 @@ $("inst-pdf").addEventListener("click", async () => {
       if (i % 4 === 0) doc.addPage("a4", "portrait");
       const x = gx + (i % 2) * (cw + gx), y = gy + (Math.floor(i / 2) % 2) * (ch + gy);
       doc.setDrawColor(190, 196, 214); doc.setLineDashPattern([1.5, 1.5], 0); doc.rect(x, y, cw, ch); doc.setLineDashPattern([], 0);
-      doc.setFont("helvetica", "bold"); doc.setFontSize(7); doc.setTextColor(...MUTED); doc.text("JOURNÉE APA · 17 NOVEMBRE", x + 4, y + 6);
+      doc.setFont("helvetica", "bold"); doc.setFontSize(7); doc.setTextColor(...MUTED); doc.text(`${J.nom} · ${jDate(J.date, { day: "numeric", month: "long" })}`.toUpperCase(), x + 4, y + 6);
       doc.setFontSize(12); doc.setTextColor(...INK); doc.text(doc.splitTextToSize(p.nom, cw - 8)[0], x + 4, y + 12);
-      doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(...MUTED); doc.text(inst.nom, x + 4, y + 16.5);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(...MUTED); doc.text([inst.nom, p.equipe].filter(Boolean).join(" · "), x + 4, y + 16.5);
       const body = [];
       ROTS.forEach((r, k) => {
-        if (k > 0 && r.demi !== ROTS[k - 1].demi) body.push([{ content: "Dîner pour tous · 12h05", colSpan: 4, styles: { halign: "center", fontStyle: "italic", textColor: MUTED, fillColor: [255, 255, 255] } }]);
+        if (k > 0 && r.demi !== ROTS[k - 1].demi) body.push([{ content: J.pause_midi || "Pause de midi", colSpan: 4, styles: { halign: "center", fontStyle: "italic", textColor: MUTED, fillColor: [255, 255, 255] } }]);
         const a = p.plan?.[r.key];
         body.push([`T${r.n}`, plage(r), !a ? "À compléter" : a === PAUSE ? "Pause / repos" : ACT[a]?.nom || "?", a && a !== PAUSE ? ACT[a]?.lieu || "" : ""]);
       });
@@ -811,8 +1236,9 @@ $("inst-pdf").addEventListener("click", async () => {
       const pw = doc.internal.pageSize.getWidth(), ph = doc.internal.pageSize.getHeight();
       doc.text(`${inst.nom} · page ${i}/${n}`, pw - 8, ph - 4, { align: "right" });
     }
-    doc.save(`planning-apa-${slug(inst.nom)}.pdf`);
-    instMsg(`PDF téléchargé : planning-apa-${slug(inst.nom)}.pdf. Le planning est verrouillé.`, "ok");
+    const fichier = `planning-${JOURNEE_ID}-${slug(inst.nom)}.pdf`;
+    doc.save(fichier);
+    instMsg(`PDF téléchargé : ${fichier}. Le planning est verrouillé.`, "ok");
   } catch (err) {
     instMsg("Le PDF n'a pas pu être créé. Recharge la page et réessaie.", "err");
   } finally { btn.disabled = false; }
@@ -901,7 +1327,7 @@ $("form").addEventListener("submit", async e => {
   delete $("save").dataset.confirm;
   $("save").disabled = true; setMsg("Enregistrement…");
   try {
-    await rpc("apa_enregistrer", { p_code: code, p_id: editingId, p_nom: nom, p_groupe: $("groupe").value.trim(), p_plan: plan, p_institution: inst });
+    await rpc("apa_enregistrer", { p_journee: JOURNEE_ID, p_code: code, p_id: editingId, p_nom: nom, p_groupe: $("groupe").value.trim(), p_plan: plan, p_institution: inst });
     const wasEdit = !!editingId;
     resetForm();
     setMsg((wasEdit ? "Modifications enregistrées pour " : "Inscription enregistrée pour ") + nom + ".", "ok");
@@ -922,7 +1348,7 @@ function renderGrid() {
   for (const r of ROTS) h += `<th class="${r.sep ? "sep" : ""}" title="${plage(r)}">T${r.n}<br><small style="font-weight:400">${hm(r.debut)}</small></th>`;
   h += `</tr></thead><tbody>`;
   for (const a of ACTIVITES) {
-    h += `<tr><th class="act"><button type="button" data-sheet="${a.id}">${esc(a.nom)}</button><small><span class="lieu ${a.lieu}">${a.lieu}</span> · ${a.cap} places</small></th>`;
+    h += `<tr><th class="act"><button type="button" data-sheet="${a.id}">${esc(a.nom)}</button><small><span class="lieu ${lieuCls(a.lieu)}">${esc(a.lieu)}</span> · ${a.cap} places</small></th>`;
     for (const r of ROTS) {
       const n = c[r.key + "|" + a.id] || 0;
       const cls = n >= a.cap ? "full" : n > 0 ? "some" : "";
@@ -944,7 +1370,7 @@ function renderDetail() {
   const d = $("detail");
   if (detailSel.sheet) {
     const a = ACT[detailSel.sheet]; if (!a) return;
-    let h = `<h2>${esc(a.nom)}</h2><p class="sub"><span class="lieu ${a.lieu}">${a.lieu}</span> · ${a.cap} places par tournante · fiche pour les parrains et marraines</p><div class="sheet">`;
+    let h = `<h2>${esc(a.nom)}</h2><p class="sub"><span class="lieu ${lieuCls(a.lieu)}">${esc(a.lieu)}</span> · ${a.cap} places par tournante · fiche pour les parrains et marraines</p><div class="sheet">`;
     for (const r of ROTS) {
       const ns = namesAt(r.key, a.id);
       h += `<div><h4><span>T${r.n} · ${plage(r)}</span><span>${ns.length}/${a.cap}</span></h4>${ns.length ? "<ul>" + ns.map(n => `<li>${esc(n)}</li>`).join("") + "</ul>" : `<div class="empty">Personne</div>`}</div>`;
@@ -994,7 +1420,7 @@ $("people").addEventListener("click", async e => {
     if (del.dataset.confirm !== "1") { del.dataset.confirm = "1"; del.textContent = "Confirmer ?"; return; }
     del.disabled = true;
     try {
-      await rpc("apa_supprimer", { p_code: code, p_id: del.dataset.del });
+      await rpc("apa_supprimer", { p_journee: JOURNEE_ID, p_code: code, p_id: del.dataset.del });
       for (const d of Object.values(drafts)) d.rows = d.rows.filter(r => r.id !== del.dataset.del);
       if (editingId === del.dataset.del) resetForm();
       await refresh();
@@ -1013,16 +1439,16 @@ function downloadCsv(name, rows) {
 }
 const sortedPeople = () => [...people].sort((x, y) => instName(x.institution).localeCompare(instName(y.institution), "fr") || byName(x, y));
 $("csv-benef").addEventListener("click", () => {
-  const rows = [["Institution", "Nom", "Remarque", ...ROTS.map(r => `T${r.n} (${hm(r.debut)})`)]];
-  for (const p of sortedPeople()) rows.push([instName(p.institution), p.nom, p.groupe, ...ROTS.map(r => ACT[p.plan?.[r.key]]?.nom || "")]);
-  downloadCsv("apa-inscriptions-par-beneficiaire.csv", rows);
+  const rows = [["Institution", "Groupe", "Nom", "Remarque", ...ROTS.map(r => `T${r.n} (${hm(r.debut)})`)]];
+  for (const p of sortedPeople()) rows.push([instName(p.institution), p.equipe || "", p.nom, p.groupe, ...ROTS.map(r => ACT[p.plan?.[r.key]]?.nom || "")]);
+  downloadCsv(`${JOURNEE_ID}-inscriptions-par-beneficiaire.csv`, rows);
 });
 $("csv-act").addEventListener("click", () => {
   const rows = [["Activité", "Lieu", "Tournante", "Horaire", "Nom", "Institution"]];
   for (const a of ACTIVITES) for (const r of ROTS)
     for (const p of sortedPeople().filter(p => p.plan?.[r.key] === a.id))
       rows.push([a.nom, a.lieu, "T" + r.n, plage(r), p.nom, instName(p.institution)]);
-  downloadCsv("apa-inscriptions-par-activite.csv", rows);
+  downloadCsv(`${JOURNEE_ID}-inscriptions-par-activite.csv`, rows);
 });
 
 /* ---------- Général ---------- */
@@ -1033,23 +1459,88 @@ function renderStats() {
   const done = people.filter(p => isComplete(p.plan)).length;
   $("stats").innerHTML = `<div><b>${people.length}</b> <span>bénéficiaires</span></div>
     <div><b>${done}</b> <span>plannings complets</span></div>
-    <div><b>${used}</b> <span>/ ${totalPlaces()} places réservées</span></div>`;
+    <div><b>${used}</b> <span>/ ${totalPlaces()} places d'activités réservées</span></div>` +
+    (placesInfo(J) ? `<div><b>${placesInfo(J).reste}</b> <span>/ ${J.places_max} places restantes pour la journée</span></div>` : "");
 }
-function renderAll() { renderStats(); renderInstCards(); renderInstPanel(); refreshSelects(); renderGrid(); renderDetail(); renderPeople(); }
+function renderAll() { renderRegBar(); renderStats(); renderInstCards(); renderInstPanel(); refreshSelects(); renderGrid(); renderDetail(); renderPeople(); }
 function show(view) {
   for (const b of document.querySelectorAll("nav.tabs button")) b.setAttribute("aria-selected", b.dataset.view === view);
-  for (const v of ["institution", "inscrire", "planning", "inscrits"]) $("view-" + v).hidden = v !== view;
+  for (const v of ["institution", "inscrire", "planning", "inscrits", "orga"]) $("view-" + v).hidden = v !== view;
   try { localStorage.setItem("apa-tab", view); } catch {}
+  if (view === "orga" && adminCode) loadOrga();
 }
 document.querySelector("nav.tabs").addEventListener("click", e => { const b = e.target.closest("button"); if (b) show(b.dataset.view); });
 
-if (SUPABASE_URL.includes("VOTRE-PROJET")) {
-  $("login-msg").textContent = "Page pas encore configurée : renseigne SUPABASE_URL et SUPABASE_KEY dans index.html.";
-  $("login-msg").className = "msg err";
-} else {
-  const saved = getSaved();
-  if (saved) { code = saved; enterApp(); }
+/* ================= MENU DES JOURNÉES ================= */
+// « 15 tournantes de 15 min, 5 min de changement » calculé depuis les horaires.
+function rythme() {
+  if (!ROTS.length) return "";
+  const d = minutes(ROTS[0].fin) - minutes(ROTS[0].debut);
+  const g = ROTS.length > 1 && ROTS[1].demi === ROTS[0].demi ? minutes(ROTS[1].debut) - minutes(ROTS[0].fin) : 0;
+  return `${ROTS.length} tournantes de ${d} min` + (g > 0 ? `, ${g} min de changement` : "");
 }
+function setHeader(j) {
+  document.title = `${j.nom} · Inscriptions`;
+  $("eyebrow").textContent = [dateLong(j.date), j.lieu].filter(Boolean).join(" · ");
+  $("title").textContent = j.nom;
+  $("subtitle").textContent = j.description || (ROTS.length ? rythme() + "." + (j.pause_midi ? " " + j.pause_midi + "." : "") : "");
+  $("restricted").innerHTML = j.acces ? `<span class="restricted">🔒 ${esc(j.acces)}</span>` : "";
+}
+const today = () => new Date().toISOString().slice(0, 10);
+function renderHome(list) {
+  const box = $("events");
+  if (!list.length) { box.innerHTML = `<div class="empty-state">Aucune journée programmée pour l'instant.</div>`; return; }
+  box.innerHTML = list.map(j => {
+    const past = j.date < today();
+    const st = past ? `<span class="status">Terminée</span>` : j.ouverte ? `<span class="status open">Inscriptions ouvertes</span>` : `<span class="status">Bientôt ouvertes</span>`;
+    const inner = `<div class="top">
+        <div class="date" aria-hidden="true"><small>${esc(jDate(j.date, { month: "short" }).replace(".", ""))}</small><b>${jDate(j.date, { day: "numeric" })}</b><span>${esc(jDate(j.date, { weekday: "long" }))}</span></div>
+        <div><h3>${esc(j.nom)}</h3><p>${esc([dateLong(j.date), j.lieu].filter(Boolean).join(" · "))}</p>${j.description ? `<p>${esc(j.description)}</p>` : ""}</div>
+      </div>
+      ${j.acces ? `<div><span class="restricted">🔒 ${esc(j.acces)}</span></div>` : ""}
+      <div class="foot">${st}${!past && placesInfo(j) ? `<span class="${placesCls(placesInfo(j))}">${placesTxt(placesInfo(j))}</span>` : ""}${j.ouverte ? `<span class="go">${j.acces ? "Code réservé" : "Entrer"} →</span>` : ""}</div>`;
+    return j.ouverte ? `<a class="event" href="#${encodeURIComponent(j.id)}">${inner}</a>` : `<div class="event closed">${inner}</div>`;
+  }).join("");
+}
+
+// Changer de journée = recharger la page (repart d'un état propre).
+window.addEventListener("hashchange", () => location.reload());
+function goHome(e) {
+  e?.preventDefault();
+  if (Object.keys(drafts).length && !confirm("Des modifications ne sont pas enregistrées. Quitter quand même ?")) return;
+  leaving = true;
+  location.href = location.pathname + location.search;
+}
+$("back").addEventListener("click", goHome);
+$("brand").addEventListener("click", goHome);
+$("logout").addEventListener("click", () => { setSaved(null); leaving = !Object.keys(drafts).length; location.reload(); });
+
+async function start() {
+  if (SUPABASE_URL.includes("VOTRE-PROJET")) {
+    $("home").hidden = false;
+    $("events").innerHTML = `<div class="empty-state">Page pas encore configurée : renseigne SUPABASE_URL et SUPABASE_KEY dans index.html.</div>`;
+    return;
+  }
+  let list;
+  try { list = await rpc("apa_journees", {}); }
+  catch (err) { $("home").hidden = false; $("events").innerHTML = `<div class="empty-state">${esc(err.message)}</div>`; return; }
+  if (!JOURNEE_ID) { $("home").hidden = false; renderHome(list); return; }
+
+  J = list.find(j => j.id === JOURNEE_ID);
+  if (!J) { location.replace(location.pathname + location.search); return; }   // lien périmé : retour au menu
+  $("back").hidden = false;
+  setHeader(J);
+  if (!J.ouverte) {
+    $("login").hidden = false;
+    $("login-sub").textContent = "Les inscriptions pour cette journée ne sont pas encore ouvertes.";
+    $("code").disabled = $("login-btn").disabled = true;
+    return;
+  }
+  if (J.acces) $("login-sub").textContent = `${J.acces}. Entre le code d'accès réservé, donné par l'organisateur.`;
+  const saved = getSaved();
+  if (saved) { code = saved; enterApp(); } else { $("login").hidden = false; $("code").focus(); }
+}
+start();
 </script>
 </body>
 </html>
