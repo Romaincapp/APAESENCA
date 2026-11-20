@@ -1,27 +1,58 @@
-# APATABORA
+# APAENSECA
 
-Inscriptions des bénéficiaires aux activités de la **Journée APA du 17 novembre**
-(17 activités, 15 tournantes de 15 minutes et 5 minutes de battement).
+Inscriptions des bénéficiaires aux **journées APA**. La page d'accueil affiche un menu
+avec toutes les journées. Chaque journée a ses activités, ses horaires, ses institutions
+et **son propre code d'accès**.
 
-- `site/index.html` : la page d'inscription (un seul fichier, sans dépendance).
-- `supabase/schema.sql` : la base de données (tables, sécurité, contrôle des places).
+| Journée | Date | Adresse directe | Accès |
+|---|---|---|---|
+| Journée APA de Marcinelle | mardi 30 mars 2027 | `…/APAENSECA/#marcinelle-2027` | code de la journée |
+| Journée APA de Philippeville | jeudi 22 avril 2027 | `…/APAENSECA/#philippeville-2027` | code de la journée |
+| Poire qui Roule (PQR) | jeudi 27 mai 2027 | `…/APAENSECA/#pqr-2027` | **code réservé aux institutions de la région de Chimay** |
+
+Adresse de la page : `https://romaincapp.github.io/APAENSECA/`. Tu peux envoyer aux
+éducateurs l'adresse directe de leur journée (ex. `https://romaincapp.github.io/APAENSECA/#marcinelle-2027`).
+
+> ⚠ Les activités et horaires des trois journées sont **provisoires** : ce sont ceux de la
+> journée du 17 novembre, recopiés en attendant les vraies listes.
+
+- `site/index.html` : la page (menu des journées + inscriptions, un seul fichier).
+- `supabase/schema.sql` : la base de données (journées, tables, sécurité, contrôle des places).
 - `.github/workflows/deploy.yml` : publication automatique sur GitHub Pages.
 
 ## Mise en place (une seule fois)
 
 ### 1. Base de données Supabase
 
-1. Sur https://supabase.com, clique sur **New project** (le plan gratuit suffit, région EU).
-2. Dans Supabase : **SQL Editor** → **New query** → colle `supabase/schema.sql` → **Run**.
-3. Définis le **code d'équipe** (pour les éducateurs) et le **code organisateur** (pour toi
-   seul, sert à déverrouiller), toujours dans le SQL Editor, jamais dans un fichier du dépôt :
+Le projet Supabase de la journée du 17 novembre est réutilisé.
+
+1. Dans Supabase : **SQL Editor** → **New query** → colle `supabase/schema.sql` → **Run**.
+   Au premier lancement, les anciennes tables du 17 novembre sont déplacées dans le schéma
+   `archive_17_novembre` (rien n'est effacé, mais elles ne sont plus visibles depuis la page).
+   Pour supprimer définitivement ces noms : `drop schema archive_17_novembre cascade;`
+2. **Ouvre chaque journée** en lui donnant un code d'accès (dans le SQL Editor, jamais dans
+   un fichier du dépôt). Tant qu'une journée n'a pas de code, elle apparaît dans le menu
+   comme « Bientôt ouvertes ».
    ```sql
-   select public.apa_definir_code('code-equipe');
+   select public.apa_definir_code('marcinelle-2027',    'code-marcinelle');
+   select public.apa_definir_code('philippeville-2027', 'code-philippeville');
+   select public.apa_definir_code('pqr-2027',           'code-pqr');
+   ```
+   Le code de PQR ne se donne qu'aux institutions de la région de Chimay : sans lui, on ne
+   peut ni voir ni modifier les inscriptions de PQR. Un code donne accès à **sa** journée
+   seulement.
+3. Le **code organisateur** (pour toi seul, sert à déverrouiller) est commun à toutes les
+   journées. Celui du 17 novembre est conservé. Pour le changer :
+   ```sql
    select public.apa_definir_code_admin('code-organisateur');
    ```
-4. Charge les institutions et leurs participants avec le fichier
-   `institutions-participants.sql`. Ce fichier n'est **pas** dans le dépôt, car il contient
-   des noms : garde-le en local. Il peut être relancé sans créer de doublons.
+4. Charge les institutions de chaque journée avec un fichier SQL local (pas dans le dépôt,
+   car il contient des noms). Chaque institution est rattachée à une journée :
+   ```sql
+   insert into public.institutions (journee, nom, nb_attendu, ordre) values
+     ('marcinelle-2027', 'Nom de l''institution', 12, 1)
+   on conflict (journee, nom) do update set nb_attendu = excluded.nb_attendu, ordre = excluded.ordre;
+   ```
 
 ### 2. Configuration GitHub
 
@@ -30,14 +61,17 @@ Inscriptions des bénéficiaires aux activités de la **Journée APA du 17 novem
    - `SUPABASE_URL` : le *Project URL* (Supabase → Project Settings → API)
    - `SUPABASE_KEY` : la clé **anon** / **publishable** (jamais `service_role` / `secret`)
 3. **Actions → Déployer la page d'inscription → Run workflow**.
-   L'adresse de la page s'affiche à la fin : `https://romaincapp.github.io/APATABORA/`.
+   L'adresse de la page s'affiche à la fin : `https://romaincapp.github.io/APAENSECA/`.
 
 Chaque modification de `site/` poussée sur `main` redéploie la page automatiquement.
 
-La clé publique sera visible dans la page, c'est normal : sans le code d'équipe, elle ne
-permet ni de lire les noms ni d'écrire.
+La clé publique sera visible dans la page, c'est normal : sans le code d'une journée, elle
+permet seulement de lire le menu (nom, date, lieu des journées), ni les noms ni les codes.
 
 ## Utilisation par les éducateurs
+
+L'éducateur choisit sa journée dans le menu (ou ouvre directement son lien), puis entre le
+code d'accès de cette journée. La page s'en souvient sur cet appareil.
 
 Onglet **Par institution** : l'éducateur choisit son institution, et ses participants
 s'affichent en tableau (une ligne par participant, une colonne par tournante).
@@ -68,7 +102,7 @@ organisateur.
 Onglet **Inscription individuelle** : pour une personne seule ou un ajout de dernière
 minute.
 
-## Horaires
+## Horaires (provisoires, identiques pour les 3 journées)
 
 | Matin | | Après-midi | |
 |---|---|---|---|
@@ -81,21 +115,28 @@ minute.
 | T7 | 11h45–12h00 | T14 | 14h50–15h05 |
 | | *Dîner 12h05* | T15 | 15h10–15h25 |
 
-Pour changer un horaire ou une capacité, modifie `insert into public.tournantes` ou
-`insert into public.activites` dans `schema.sql`, puis relance tout le script dans
-Supabase. Les inscriptions et le code d'équipe sont conservés. La page lit les horaires
-depuis la base : il n'y a pas besoin de la redéployer.
+Pour changer un horaire, une activité ou une capacité, modifie les listes dans
+`schema.sql` (section « Données de référence »), puis relance tout le script dans Supabase.
+Les inscriptions et les codes sont conservés. La page lit tout depuis la base : il n'y a pas
+besoin de la redéployer.
 
-Changer le code d'équipe (SQL Editor) :
+**Ajouter une journée** : ajoute une ligne dans `insert into public.journees` (identifiant
+en minuscules, ex. `couvin-2027`), ajoute-la aux listes d'activités et de tournantes,
+relance le script, puis donne-lui un code avec `apa_definir_code`. Pour cacher une journée
+passée du menu : `update public.journees set visible = false where id = '…';`
+
+Changer le code d'une journée (SQL Editor) :
 ```sql
-select public.apa_definir_code('nouveau-code');
+select public.apa_definir_code('marcinelle-2027', 'nouveau-code');
 ```
 
 ## Comment ça marche
 
-- La page n'accède jamais directement aux tables. Elle passe par 5 fonctions SQL
-  (`apa_connexion`, `apa_etat`, `apa_enregistrer`, `apa_enregistrer_lot`, `apa_supprimer`)
-  qui vérifient toutes le code d'équipe.
+- La page n'accède jamais directement aux tables. Elle passe par des fonctions SQL
+  (`apa_journees` pour le menu, puis `apa_connexion`, `apa_etat`, `apa_enregistrer`,
+  `apa_enregistrer_lot`, `apa_supprimer`, `apa_verrouiller`) qui vérifient toutes le code de
+  la journée demandée. Un code ne donne jamais accès à une autre journée.
+- Les places sont comptées séparément pour chaque journée.
 - **Places garanties** : les fonctions d'enregistrement verrouillent les activités,
   enregistrent, puis recomptent. Si une place manque, tout est annulé et la page affiche
   « Plus de place pour : … ». Tests effectués : 10 inscriptions simultanées sur la
@@ -112,7 +153,7 @@ select public.apa_definir_code('nouveau-code');
 - **Projet gratuit mis en pause** : Supabase met en pause un projet gratuit après 7 jours
   sans activité. Il suffit de cliquer sur « Restore » dans le tableau de bord. Vérifie-le
   la veille.
-- Toute personne qui a le code peut modifier ou supprimer n'importe quelle fiche.
-  Change le code après la journée.
-- Les noms des bénéficiaires sont des données personnelles : supprime-les après
-  l'événement (`delete from public.beneficiaires;`).
+- Toute personne qui a le code d'une journée peut modifier ou supprimer n'importe quelle
+  fiche de cette journée. Change le code après la journée.
+- Les noms des bénéficiaires sont des données personnelles : supprime-les après chaque
+  journée (`delete from public.beneficiaires where journee = 'marcinelle-2027';`).
