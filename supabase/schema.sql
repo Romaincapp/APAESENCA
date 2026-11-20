@@ -131,6 +131,8 @@ alter table public.institutions add column if not exists email         text not 
 alter table public.institutions add column if not exists telephone     text not null default '' check (length(telephone) <= 40);
 alter table public.institutions add column if not exists nb_educateurs int  not null default 0 check (nb_educateurs between 0 and 100);
 alter table public.institutions add column if not exists nb_pmr        int  not null default 0 check (nb_pmr between 0 and 300);
+-- Groupe du participant dans son institution (ex. « Groupe de Marie », ~8 résidents par éducateur).
+alter table public.beneficiaires add column if not exists equipe text not null default '' check (length(equipe) <= 60);
 alter table public.institutions add column if not exists inscrite_le   timestamptz not null default now();
 alter table public.config add column if not exists admin_hash text;
 
@@ -473,7 +475,7 @@ begin
                     from public.institutions where journee = p_journee),
     'beneficiaires', (
       select coalesce(jsonb_agg(jsonb_build_object(
-        'id', b.id, 'nom', b.nom, 'groupe', b.groupe, 'maj', b.updated_at, 'institution', b.institution_id,
+        'id', b.id, 'nom', b.nom, 'groupe', b.groupe, 'equipe', b.equipe, 'maj', b.updated_at, 'institution', b.institution_id,
         'plan', coalesce((select jsonb_object_agg(i.tournante::text, i.activite) from public.inscriptions i where i.beneficiaire_id = b.id), '{}'::jsonb)
       ) order by b.nom), '[]')
       from public.beneficiaires b where b.journee = p_journee)
@@ -556,7 +558,7 @@ begin
 end $$;
 
 -- Enregistre TOUTE une institution d'un coup (onglet « Par institution »).
--- p_lignes : [{"id": uuid|null, "nom": "...", "maj": "<date lue>", "plan": {"1": "zumba", ...}}, ...]
+-- p_lignes : [{"id": uuid|null, "nom": "...", "equipe": "Groupe 1", "maj": "<date lue>", "plan": {"1": "zumba", ...}}, ...]
 -- Tout passe ou rien ne passe. Si une fiche a été modifiée par quelqu'un d'autre
 -- depuis son chargement ("maj" différent), l'enregistrement est refusé.
 create or replace function public.apa_enregistrer_lot(p_journee text, p_code text, p_institution uuid, p_lignes jsonb)
@@ -566,6 +568,7 @@ declare
   v_id  uuid;
   v_maj timestamptz;
   v_nom text;
+  v_eq  text;
   n     int := 0;
 begin
   perform public._apa_check_code(p_journee, p_code);
@@ -586,9 +589,10 @@ begin
       raise exception 'Un participant n''a pas de nom.' using errcode = '22023';
     end if;
     v_id := nullif(l->>'id', '')::uuid;
+    v_eq := left(trim(coalesce(l->>'equipe', '')), 60);
 
     if v_id is null then
-      insert into public.beneficiaires (journee, nom, institution_id) values (p_journee, v_nom, p_institution)
+      insert into public.beneficiaires (journee, nom, equipe, institution_id) values (p_journee, v_nom, v_eq, p_institution)
       returning id into v_id;
     else
       select updated_at into v_maj from public.beneficiaires where id = v_id and journee = p_journee for update;
@@ -600,7 +604,7 @@ begin
         raise exception 'La fiche de % a été modifiée par quelqu''un d''autre entre-temps.', v_nom using errcode = 'P0003';
       end if;
       update public.beneficiaires
-         set nom = v_nom, institution_id = p_institution, updated_at = now()
+         set nom = v_nom, equipe = v_eq, institution_id = p_institution, updated_at = now()
        where id = v_id;
       delete from public.inscriptions where beneficiaire_id = v_id;
     end if;

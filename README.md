@@ -106,6 +106,19 @@ s'affichent en tableau (une ligne par participant, une colonne par tournante).
   entre-temps, ou si un collègue a modifié la même fiche, rien n'est enregistré et la page
   explique quoi corriger.
 
+**Groupes (≈ 8 résidents par éducateur)** :
+- **Former des groupes de 8** répartit les participants sans groupe en groupes équilibrés
+  d'au plus 8 (ex. 20 → 7 + 7 + 6). Clique sur le nom d'un groupe pour le renommer (ex.
+  « Groupe de Marie »). Le petit menu sous chaque nom change quelqu'un de groupe.
+- Chaque groupe a sa propre ligne dans le tableau : choisir une activité dans cette ligne
+  **inscrit tout le groupe d'un coup** à cette tournante. Seules les activités avec assez de
+  places pour tout le groupe peuvent être choisies. « · mixte · » signifie que les résidents
+  du groupe n'ont pas tous la même activité.
+- **Remplir automatiquement** garde les groupes ensemble quand une activité a assez de
+  places, et ne les sépare que sinon (le message dit combien de fois).
+- Le PDF contient une page **Planning par groupe** pour les éducateurs, et le groupe figure
+  sur chaque fiche et dans l'export CSV.
+
 **Téléchargement et verrouillage** : **Télécharger et verrouiller (PDF)** demande une
 confirmation, puis verrouille le planning de l'institution et télécharge le PDF (vue
 d'ensemble, « où sont les participants », une fiche par participant). Une fois verrouillé,

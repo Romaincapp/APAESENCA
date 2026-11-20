@@ -179,6 +179,17 @@ table.inst-grid select:disabled, table.inst-grid input:disabled { appearance: no
 .lockbar input { width: 200px; }
 .pill.lock { background: var(--surface-2); color: var(--fg); }
 .hint-auto { font-size: 13px; color: var(--muted); }
+/* Groupes (≈ 8 résidents par éducateur) */
+table.inst-grid tr.grp-row > * { background: var(--surface-2); border-top: 1px solid var(--line-strong); }
+table.inst-grid tr.grp-row .who { background: var(--surface-2); }
+.grp-head { display: flex; flex-direction: column; gap: 2px; }
+.grp-head input { font-weight: 600; background: transparent; border-color: transparent; padding: 4px 6px; }
+.grp-head input:hover:not(:disabled), .grp-head input:focus { border-color: var(--line-strong); background: var(--surface); }
+.grp-head small { font-family: var(--f-mono); font-size: 11px; color: var(--muted); padding-left: 6px; }
+.grp-none { font-family: var(--f-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); padding: 4px 6px; display: block; }
+table.inst-grid select.gsel { font-weight: 600; border-color: var(--accent); }
+table.inst-grid select.gsel.mixed { border-style: dashed; border-color: var(--line-strong); font-weight: 400; color: var(--muted); }
+table.inst-grid select.mini { width: auto; max-width: 130px; padding: 1px 4px; font-size: 11px; border-radius: 999px; }
 
 /* Barre du haut + menu des journées */
 .brandbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding-block: 14px; border-bottom: 1px solid var(--line); }
@@ -321,6 +332,7 @@ table.list a:hover { text-decoration: underline; }
             <h2 id="inst-title"></h2>
             <div class="actions">
               <button class="btn small" type="button" id="inst-add">+ Ajouter un participant</button>
+              <button class="btn small" type="button" id="inst-groups">Former des groupes de 8</button>
               <button class="btn small" type="button" id="inst-auto">Remplir automatiquement les cases vides</button>
               <button class="btn small danger" type="button" id="inst-clear">Tout vider</button>
               <button class="btn small primary" type="button" id="inst-pdf">Télécharger et verrouiller (PDF)</button>
@@ -597,7 +609,7 @@ function optionsHtml(rkey, cur, c, short) {
 function instRows(id) {
   if (drafts[id]) return drafts[id].rows;
   return people.filter(p => p.institution === id).sort(byName)
-    .map(p => ({ key: p.id, id: p.id, nom: p.nom, maj: p.maj, plan: { ...(p.plan || {}) }, changed: false, auto: new Set() }));
+    .map(p => ({ key: p.id, id: p.id, nom: p.nom, equipe: p.equipe || "", maj: p.maj, plan: { ...(p.plan || {}) }, changed: false, auto: new Set() }));
 }
 function ensureDraft(id) { if (!drafts[id]) drafts[id] = { rows: instRows(id) }; return drafts[id]; }
 const isDirty = id => !!drafts[id];
@@ -633,6 +645,33 @@ $("insts").addEventListener("click", e => {
   renderInstCards(); renderInstPanel(true);
 });
 
+/* ---------- Groupes ---------- */
+const TAILLE_GROUPE = 8;
+const byNatural = (a, b) => a.localeCompare(b, "fr", { numeric: true, sensitivity: "base" });
+const groupsOf = rows => [...new Set(rows.map(r => r.equipe || "").filter(Boolean))].sort(byNatural);
+let GRP_LIST = [];   // groupes affichés dans le tableau (l'index sert d'identifiant dans le HTML)
+// Menu « tout le groupe » : une activité n'est proposée que s'il reste assez de places pour tout le groupe.
+function groupOptionsHtml(rkey, members, c) {
+  const vals = members.map(m => m.plan[rkey] || ""), same = vals.every(v => v === vals[0]) ? vals[0] : null;
+  let h = `<option value="">${same === null ? "· mixte ·" : same ? "· vider le groupe ·" : "· tout le groupe ·"}</option><option value="${PAUSE}">Pause / repos</option>`;
+  for (const lieu of LIEUX) {
+    h += `<optgroup label="Lieu ${esc(lieu)}">`;
+    for (const a of ACTIVITES.filter(x => x.lieu === lieu)) {
+      const reste = a.cap - (c[rkey + "|" + a.id] || 0) + members.filter(m => m.plan[rkey] === a.id).length;
+      const ok = reste >= members.length;
+      h += `<option value="${a.id}"${!ok && same !== a.id ? " disabled" : ""}>${esc(a.nom)} (${reste > 0 ? reste : "complet"})</option>`;
+    }
+    h += `</optgroup>`;
+  }
+  return { html: h, value: same || "", mixed: same === null };
+}
+function paintGroupCell(sel, i, rkey, rows, c) {
+  const members = rows.filter(r => r.equipe === GRP_LIST[i]); if (!members.length) return;
+  const o = groupOptionsHtml(rkey, members, c);
+  sel.innerHTML = o.html; sel.value = o.value; sel.classList.toggle("mixed", o.mixed);
+  sel.title = o.mixed ? "Les résidents de ce groupe n'ont pas tous la même activité" : "";
+}
+
 let instPending = false;
 function renderInstPanel(force) {
   const panel = $("inst-panel");
@@ -652,7 +691,7 @@ function renderInstPanel(force) {
   $("inst-lock").hidden = !lk;
   if (lk) $("inst-lock-when").textContent = "le " + fmtDate(inst.verrouille_le) + " (PDF téléchargé)";
   else { $("unlock-form").hidden = true; $("unlock-open").hidden = false; }
-  for (const id of ["inst-add", "inst-auto", "inst-clear"]) $(id).hidden = lk;
+  for (const id of ["inst-add", "inst-groups", "inst-auto", "inst-clear"]) $(id).hidden = lk;
   $("inst-pdf").textContent = lk ? "Télécharger le planning (PDF)" : "Télécharger et verrouiller (PDF)";
   resetPdfConfirm();
   let h = `<thead><tr class="halves"><th class="who"></th>`;
@@ -661,12 +700,23 @@ function renderInstPanel(force) {
   for (const r of ROTS) h += `<th class="${r.sep ? "sep" : ""}">T${r.n}<br><small style="font-weight:400">${plage(r)}</small></th>`;
   h += `</tr></thead><tbody>`;
   if (!rows.length) h += `<tr><td class="who" colspan="${ROTS.length + 1}"><span class="sub">Aucun participant. Clique « + Ajouter un participant ».</span></td></tr>`;
-  for (const row of rows) {
+  GRP_LIST = groupsOf(rows);
+  const sections = GRP_LIST.length ? [...GRP_LIST.map((g, i) => ({ i, g, members: rows.filter(r => r.equipe === g) })),
+    { i: -1, g: "", members: rows.filter(r => !r.equipe) }].filter(x => x.members.length) : [{ i: -1, g: "", members: rows }];
+  for (const sec of sections) {
+    if (sec.i >= 0) {
+      h += `<tr class="grp-row"><th class="who"><div class="grp-head"><input type="text" value="${esc(sec.g)}" maxlength="60" data-gname="${sec.i}" aria-label="Nom du groupe ${esc(sec.g)}" title="Mets par exemple le nom de l'éducateur·rice"${dis}><small>${plural(sec.members.length, "résident")} · tout le groupe →</small></div></th>`;
+      for (const r of ROTS) h += `<td class="${r.sep ? "sep" : ""}"><select class="gsel" data-gcell="${sec.i}|${r.key}" aria-label="Tout le groupe ${esc(sec.g)}, tournante ${r.n}"${dis}></select></td>`;
+      h += `</tr>`;
+    } else if (GRP_LIST.length) h += `<tr class="grp-row"><th class="who"><span class="grp-none">Sans groupe</span></th><td colspan="${ROTS.length}"></td></tr>`;
+    for (const row of sec.members) {
     h += `<tr data-row="${row.key}"><th class="who"><div class="who-in"><input type="text" value="${esc(row.nom)}" maxlength="120" aria-label="Nom du participant" data-name="${row.key}"${dis}>${lk ? "" : `<button type="button" class="x" data-remove="${row.key}" title="Retirer ce participant" aria-label="Retirer ${esc(row.nom)}">✕</button>`}</div><div class="who-meta" data-meta="${row.key}"></div></th>`;
     for (const r of ROTS) h += `<td class="${r.sep ? "sep" : ""}"><select data-cell="${row.key}|${r.key}" aria-label="${esc(row.nom)}, tournante ${r.n}"${dis}>${optionsHtml(r.key, row.plan[r.key] || "", c, true)}</select></td>`;
     h += `</tr>`;
+    }
   }
   $("inst-grid").innerHTML = h + `</tbody>`;
+  for (const sel of $("inst-grid").querySelectorAll("[data-gcell]")) { const [i, rk] = sel.dataset.gcell.split("|"); paintGroupCell(sel, +i, rk, rows, c); }
   for (const row of rows) for (const r of ROTS) $("inst-grid").querySelector(`[data-cell="${row.key}|${r.key}"]`).value = row.plan[r.key] || "";
   rows.forEach(paintRow);
   renderInstChecks();
@@ -681,7 +731,11 @@ function paintRow(row) {
     s.title = d.has(r.key) ? "Activité déjà prévue à une autre tournante" : "";
   }
   const meta = $("inst-grid").querySelector(`[data-meta="${row.key}"]`);
-  if (meta) meta.innerHTML = `<span class="pill ${n === ROTS.length ? "ok" : "todo"}">${n}/${ROTS.length}</span>${d.size ? `<span class="pill warn">activité en double</span>` : ""}${row.id ? "" : `<span class="pill draft">nouveau</span>`}`;
+  if (meta) {
+    const lk = locked(currentInst);
+    const grp = !GRP_LIST.length || lk ? "" : `<select class="mini" data-grp-of="${row.key}" aria-label="Groupe de ${esc(row.nom)}">${GRP_LIST.map(g => `<option${g === row.equipe ? " selected" : ""}>${esc(g)}</option>`).join("")}<option value=""${row.equipe ? "" : " selected"}>Sans groupe</option><option value="__new">+ Nouveau groupe</option></select>`;
+    meta.innerHTML = `<span class="pill ${n === ROTS.length ? "ok" : "todo"}">${n}/${ROTS.length}</span>${grp}${d.size ? `<span class="pill warn">activité en double</span>` : ""}${row.id ? "" : `<span class="pill draft">nouveau</span>`}`;
+  }
 }
 function refreshColumn(rkey) {
   const c = counts(null);
@@ -689,7 +743,10 @@ function refreshColumn(rkey) {
     const s = $("inst-grid").querySelector(`[data-cell="${row.key}|${rkey}"]`); if (!s) continue;
     const v = row.plan[rkey] || ""; s.innerHTML = optionsHtml(rkey, v, c, true); s.value = v;
   }
+  const rows = instRows(currentInst);
+  for (const sel of $("inst-grid").querySelectorAll(`[data-gcell$="|${rkey}"]`)) paintGroupCell(sel, +sel.dataset.gcell.split("|")[0], rkey, rows, c);
 }
+function nextGroupName(rows) { const used = new Set(groupsOf(rows)); let k = used.size + 1; while (used.has("Groupe " + k)) k++; return "Groupe " + k; }
 function renderInstChecks() {
   if (!currentInst) return;
   const rows = instRows(currentInst), inst = INST[currentInst];
@@ -716,6 +773,29 @@ function renderInstChecks() {
 function instMsg(t, kind) { const m = $("inst-msg"); m.textContent = t; m.className = "msg " + (kind || ""); }
 
 $("inst-grid").addEventListener("change", e => {
+  const gs = e.target.closest("[data-gcell]");
+  if (gs) {   // inscrire tout le groupe d'un coup
+    const [i, rkey] = gs.dataset.gcell.split("|"), d = ensureDraft(currentInst), g = GRP_LIST[+i];
+    const members = d.rows.filter(r => r.equipe === g);
+    for (const m of members) { if (gs.value) m.plan[rkey] = gs.value; else delete m.plan[rkey]; m.changed = true; m.auto?.delete(rkey); }
+    refreshColumn(rkey); members.forEach(paintRow); renderInstChecks(); renderInstCards(); renderStats();
+    const a = ACT[gs.value];
+    instMsg(gs.value ? `${g} (${plural(members.length, "résident")}) : ${a?.nom || "?"} à la tournante ${rkey}.` : `${g} : tournante ${rkey} vidée.`, "ok");
+    return;
+  }
+  const gn = e.target.closest("[data-gname]");
+  if (gn) {   // renommer un groupe (ex. nom de l'éducateur)
+    const old = GRP_LIST[+gn.dataset.gname], nv = gn.value.trim().slice(0, 60);
+    if (!nv) { gn.value = old; return; }
+    if (nv !== old) for (const m of ensureDraft(currentInst).rows) if (m.equipe === old) { m.equipe = nv; m.changed = true; }
+    renderInstPanel(true); renderInstCards(); return;
+  }
+  const go = e.target.closest("[data-grp-of]");
+  if (go) {   // changer un participant de groupe
+    const d = ensureDraft(currentInst), row = d.rows.find(r => r.key === go.dataset.grpOf); if (!row) return;
+    row.equipe = go.value === "__new" ? nextGroupName(d.rows) : go.value; row.changed = true;
+    renderInstPanel(true); renderInstCards(); return;
+  }
   const s = e.target.closest("[data-cell]"); if (!s) return;
   const [rowKey, rkey] = s.dataset.cell.split("|");
   const row = ensureDraft(currentInst).rows.find(r => r.key === rowKey); if (!row) return;
@@ -749,14 +829,33 @@ $("inst-add").addEventListener("click", () => {
   const d = ensureDraft(currentInst);
   let n = d.rows.length + 1;
   while (d.rows.some(r => r.nom.toLowerCase() === ("participant " + n))) n++;
-  d.rows.push({ key: "new" + (++newKey), id: null, nom: "Participant " + n, plan: {}, changed: true, auto: new Set() });
+  const libre = groupsOf(d.rows).find(g => d.rows.filter(r => r.equipe === g).length < TAILLE_GROUPE) || "";
+  d.rows.push({ key: "new" + (++newKey), id: null, nom: "Participant " + n, equipe: libre, plan: {}, changed: true, auto: new Set() });
   renderInstPanel(true); renderInstCards();
   const inputs = $("inst-grid").querySelectorAll("[data-name]"); const last = inputs[inputs.length - 1];
   if (last) { last.focus(); last.select(); }
 });
 $("inst-discard").addEventListener("click", () => { delete drafts[currentInst]; variantNo = 0; instMsg("Modifications annulées."); renderAll(); renderInstPanel(true); });
 
+// Former des groupes : les participants sans groupe sont répartis en groupes équilibrés
+// d'au plus 8 (ex. 12 → 6 + 6, 20 → 7 + 7 + 6). Les groupes existants ne bougent pas.
+$("inst-groups").addEventListener("click", () => {
+  if (locked(currentInst)) return;
+  const d = ensureDraft(currentInst), libres = d.rows.filter(r => !r.equipe);
+  if (!libres.length) { instMsg("Tout le monde a déjà un groupe. Utilise le petit menu sous chaque nom pour changer quelqu'un de groupe.", "ok"); return; }
+  const nb = Math.ceil(libres.length / TAILLE_GROUPE), base = Math.floor(libres.length / nb), extra = libres.length % nb;
+  let k = 0;
+  for (let g = 0; g < nb; g++) {
+    const name = nextGroupName(d.rows), size = base + (g < extra ? 1 : 0);
+    for (const r of libres.slice(k, k + size)) { r.equipe = name; r.changed = true; }
+    k += size;
+  }
+  renderInstPanel(true); renderInstCards();
+  instMsg(`${plural(nb, "groupe formé", "groupes formés")} (${plural(libres.length, "résident")}). Clique sur le nom d'un groupe pour mettre celui de l'éducateur·rice, puis choisis une activité dans la ligne du groupe pour inscrire tout le groupe d'un coup.`, "ok");
+});
+
 // Remplissage automatique. Chaque clic propose une nouvelle variante :
+// - les groupes restent ensemble quand il y a assez de places pour tout le groupe ;
 // - les cases choisies à la main et le planning déjà enregistré ne bougent pas ;
 // - les cases proposées au clic précédent (bordure bleue) sont tirées à nouveau ;
 // - respecte les places restantes et évite de refaire une activité déjà faite.
@@ -774,11 +873,21 @@ $("inst-auto").addEventListener("click", () => {
   let rerolled = 0;
   for (const row of d.rows) { row.auto ||= new Set(); for (const k of row.auto) { delete row.plan[k]; rerolled++; } row.auto.clear(); }
   const c = counts(null);
-  let n = 0, repeats = 0, impossible = 0;
+  let n = 0, repeats = 0, impossible = 0, splits = 0;
   const reste = (rk, a) => a.cap - (c[rk + "|" + a.id] || 0);
+  const put = (row, r, a) => { row.plan[r.key] = a.id; row.auto.add(r.key); row.changed = true; c[r.key + "|" + a.id] = (c[r.key + "|" + a.id] || 0) + 1; n++; };
+  const groups = groupsOf(d.rows);
   for (const r of shuffle(ROTS)) {
-    for (const row of shuffle(d.rows)) {
-      if (row.plan[r.key]) continue;
+    // Unités : chaque groupe (ses résidents dont la case est vide) ou chaque participant sans groupe.
+    const units = [...groups.map(g => d.rows.filter(x => x.equipe === g && !x.plan[r.key])), ...d.rows.filter(x => !x.equipe && !x.plan[r.key]).map(x => [x])].filter(u => u.length);
+    for (const unit of shuffle(units)) {
+      if (unit.length > 1) {
+        const doneG = new Set(unit.flatMap(m => Object.values(m.plan)));
+        const fit = ACTIVITES.filter(a => reste(r.key, a) >= unit.length && !doneG.has(a.id));
+        if (fit.length) { const a = pickWeighted(fit, x => reste(r.key, x)); for (const m of unit) put(m, r, a); continue; }
+        splits++;   // pas d'activité avec assez de places pour tout le groupe : chacun séparément
+      }
+      for (const row of unit) {
       const done = Object.values(row.plan);
       const libres = ACTIVITES.filter(a => reste(r.key, a) > 0);
       // 1) une activité pas encore faite, tirée au sort (plus de chances là où il reste plus de places) ;
@@ -792,14 +901,15 @@ $("inst-auto").addEventListener("click", () => {
         repeats++;
       }
       if (!a) { impossible++; continue; }
-      row.plan[r.key] = a.id; row.auto.add(r.key); row.changed = true;
-      c[r.key + "|" + a.id] = (c[r.key + "|" + a.id] || 0) + 1; n++;
+      put(row, r, a);
+      }
     }
   }
   renderInstPanel(true); renderInstCards(); renderStats();
   let m = n ? (rerolled ? `Variante ${++variantNo} : ${n} case${n > 1 ? "s" : ""} proposée${n > 1 ? "s" : ""}.` : (variantNo = 1, `${n} case${n > 1 ? "s" : ""} remplie${n > 1 ? "s" : ""}.`)) + " Vérifie, ajuste si besoin, puis clique « Enregistrer »."
     : (impossible ? "" : "Aucune case vide à remplir. Pour tout repartir de zéro, clique « Tout vider ».");
   if (repeats) m += ` ${repeats} fois, il ne restait que des activités déjà faites : elles sont en orange, change-les si tu préfères une pause.`;
+  if (splits) m += ` ${splits} fois, aucune activité n'avait assez de places pour tout un groupe : ses résidents ont été répartis séparément.`;
   if (impossible) m += ` ${impossible} case${impossible > 1 ? "s" : ""} sans aucune place disponible.`;
   instMsg(m.trim(), impossible ? "err" : "ok");
 });
@@ -817,7 +927,7 @@ $("inst-clear").addEventListener("click", () => {
 $("inst-save").addEventListener("click", async () => {
   const d = drafts[currentInst]; if (!d) return;
   if (d.rows.some(r => !r.nom.trim())) { instMsg("Un participant n'a pas de nom.", "err"); return; }
-  const lignes = d.rows.filter(r => r.changed || !r.id).map(r => ({ id: r.id, nom: r.nom.trim(), ...(r.id ? { maj: r.maj } : {}), plan: r.plan }));
+  const lignes = d.rows.filter(r => r.changed || !r.id).map(r => ({ id: r.id, nom: r.nom.trim(), equipe: (r.equipe || "").trim(), ...(r.id ? { maj: r.maj } : {}), plan: r.plan }));
   if (!lignes.length) { delete drafts[currentInst]; renderAll(); return; }
   $("inst-save").disabled = true; instMsg("Enregistrement…");
   try {
@@ -988,7 +1098,8 @@ function resetPdfConfirm() { const b = $("inst-pdf"); if (b.dataset.confirm) { d
 $("inst-pdf").addEventListener("click", async () => {
   const id = currentInst, inst = INST[id]; if (!inst) return;
   if (isDirty(id)) { instMsg("Enregistre d'abord tes modifications : le PDF reprend le planning enregistré.", "err"); return; }
-  const rows = people.filter(p => p.institution === id).sort(byName);
+  // Triés par groupe puis par nom (sans groupe en dernier).
+  const rows = people.filter(p => p.institution === id).sort((a, b) => (!a.equipe - !b.equipe) || byNatural(a.equipe || "", b.equipe || "") || byName(a, b));
   if (!rows.length) { instMsg("Aucun participant à mettre dans le planning.", "err"); return; }
   const btn = $("inst-pdf");
   // Premier clic : on explique que le planning sera verrouillé. Deuxième clic : on verrouille puis on télécharge.
@@ -1033,7 +1144,7 @@ $("inst-pdf").addEventListener("click", async () => {
         [{ content: "", styles: { fillColor: [255, 255, 255] } }, ...demis.map(d => ({ content: d, colSpan: ROTS.filter(r => r.demi === d).length, styles: { halign: "center" } }))],
         ["Participant", ...ROTS.map(r => `T${r.n}\n${hm(r.debut)}`)],
       ],
-      body: rows.map(p => [p.nom, ...ROTS.map(r => cellTxt(p.plan?.[r.key]))]),
+      body: rows.map(p => [p.equipe ? `${p.nom}\n${p.equipe}` : p.nom, ...ROTS.map(r => cellTxt(p.plan?.[r.key]))]),
       styles: { fontSize: 6.3, cellPadding: 0.9, valign: "middle", halign: "center", textColor: INK, lineColor: [221, 225, 236], lineWidth: 0.2, overflow: "linebreak" },
       headStyles: { fillColor: HEAD, textColor: [255, 255, 255], fontStyle: "bold", fontSize: 7 },
       columnStyles: { 0: { halign: "left", fontStyle: "bold", cellWidth: 30, fontSize: 7 } },
@@ -1064,6 +1175,33 @@ $("inst-pdf").addEventListener("click", async () => {
       didParseCell: d => { if (d.section === "head" && d.column.index > 0 && d.column.index <= lieux.length) { d.cell.styles.fillColor = lieuRgb(lieux[d.column.index - 1]); d.cell.styles.textColor = INK; } },
     });
 
+    // 2 bis) Planning par groupe : pour chaque éducateur·rice, où est son groupe à chaque tournante.
+    const grps = groupsOf(rows);
+    if (grps.length) {
+      doc.addPage("a4", "landscape");
+      header(`Planning par groupe · ${inst.nom}`, "Pour chaque éducateur·rice : l'activité de son groupe à chaque tournante.");
+      const grpCell = (g, r) => {
+        const ms = rows.filter(p => p.equipe === g), by = {};
+        for (const m of ms) (by[m.plan?.[r.key] || ""] ||= []).push(m.nom);
+        const keys = Object.keys(by);
+        if (keys.length === 1) return cellTxt(keys[0]);   // tout le groupe ensemble
+        return keys.map(a => `${a ? (a === PAUSE ? "Pause" : `${ACT[a]?.nom || "?"} (${ACT[a]?.lieu || ""})`) : "À compléter"} : ${by[a].join(", ")}`).join("\n");
+      };
+      doc.autoTable({
+        startY: 28, margin: { left: 8, right: 8 }, theme: "grid",
+        head: [["Tournante", ...grps.map(g => `${g}\n${plural(rows.filter(p => p.equipe === g).length, "résident")}`)]],
+        body: ROTS.map(r => [`T${r.n}\n${plage(r)}`, ...grps.map(g => grpCell(g, r))]),
+        styles: { fontSize: 7, cellPadding: 1.2, valign: "middle", textColor: INK, lineColor: [221, 225, 236], lineWidth: 0.2 },
+        headStyles: { fillColor: HEAD, textColor: [255, 255, 255] },
+        columnStyles: { 0: { cellWidth: 24, fontStyle: "bold" } },
+        didParseCell: d => {
+          if (d.section !== "body" || d.column.index === 0) return;
+          const ms = rows.filter(p => p.equipe === grps[d.column.index - 1]), vals = new Set(ms.map(m => m.plan?.[ROTS[d.row.index].key] || ""));
+          if (vals.size === 1) { d.cell.styles.fillColor = fillFor([...vals][0]); d.cell.styles.halign = "center"; d.cell.styles.fontStyle = "bold"; }
+        },
+      });
+    }
+
     // 3) Une fiche par participant (4 par page, à découper)
     const W = 210, H = 297, cw = 91, ch = 134, gx = (W - 2 * cw) / 3, gy = (H - 2 * ch) / 3;
     rows.forEach((p, i) => {
@@ -1072,7 +1210,7 @@ $("inst-pdf").addEventListener("click", async () => {
       doc.setDrawColor(190, 196, 214); doc.setLineDashPattern([1.5, 1.5], 0); doc.rect(x, y, cw, ch); doc.setLineDashPattern([], 0);
       doc.setFont("helvetica", "bold"); doc.setFontSize(7); doc.setTextColor(...MUTED); doc.text(`${J.nom} · ${jDate(J.date, { day: "numeric", month: "long" })}`.toUpperCase(), x + 4, y + 6);
       doc.setFontSize(12); doc.setTextColor(...INK); doc.text(doc.splitTextToSize(p.nom, cw - 8)[0], x + 4, y + 12);
-      doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(...MUTED); doc.text(inst.nom, x + 4, y + 16.5);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(...MUTED); doc.text([inst.nom, p.equipe].filter(Boolean).join(" · "), x + 4, y + 16.5);
       const body = [];
       ROTS.forEach((r, k) => {
         if (k > 0 && r.demi !== ROTS[k - 1].demi) body.push([{ content: J.pause_midi || "Pause de midi", colSpan: 4, styles: { halign: "center", fontStyle: "italic", textColor: MUTED, fillColor: [255, 255, 255] } }]);
@@ -1301,8 +1439,8 @@ function downloadCsv(name, rows) {
 }
 const sortedPeople = () => [...people].sort((x, y) => instName(x.institution).localeCompare(instName(y.institution), "fr") || byName(x, y));
 $("csv-benef").addEventListener("click", () => {
-  const rows = [["Institution", "Nom", "Remarque", ...ROTS.map(r => `T${r.n} (${hm(r.debut)})`)]];
-  for (const p of sortedPeople()) rows.push([instName(p.institution), p.nom, p.groupe, ...ROTS.map(r => ACT[p.plan?.[r.key]]?.nom || "")]);
+  const rows = [["Institution", "Groupe", "Nom", "Remarque", ...ROTS.map(r => `T${r.n} (${hm(r.debut)})`)]];
+  for (const p of sortedPeople()) rows.push([instName(p.institution), p.equipe || "", p.nom, p.groupe, ...ROTS.map(r => ACT[p.plan?.[r.key]]?.nom || "")]);
   downloadCsv(`${JOURNEE_ID}-inscriptions-par-beneficiaire.csv`, rows);
 });
 $("csv-act").addEventListener("click", () => {
