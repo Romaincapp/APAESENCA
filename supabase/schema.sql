@@ -1,5 +1,5 @@
 -- =====================================================================
--- APAENSECA – inscriptions aux journées APA (plusieurs journées)
+-- APAESENCA – inscriptions aux journées APA (plusieurs journées)
 -- À coller dans Supabase > SQL Editor, puis "Run".
 -- Le script peut être relancé : il recrée les fonctions et les données
 -- de référence (journées, activités, tournantes) sans toucher aux

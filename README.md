@@ -1,4 +1,4 @@
-# APAENSECA
+# APAESENCA
 
 Inscriptions des bénéficiaires aux **journées APA**. La page d'accueil affiche un menu
 avec toutes les journées. Chaque journée a ses activités, ses horaires, ses institutions
@@ -6,12 +6,12 @@ et **son propre code d'accès**.
 
 | Journée | Date | Adresse directe | Accès |
 |---|---|---|---|
-| Journée APA de Marcinelle | mardi 30 mars 2027 | `…/APAENSECA/#marcinelle-2027` | code de la journée |
-| Journée APA de Philippeville | jeudi 22 avril 2027 | `…/APAENSECA/#philippeville-2027` | code de la journée |
-| Poire qui Roule (PQR) | jeudi 27 mai 2027 | `…/APAENSECA/#pqr-2027` | **code réservé aux institutions de la région de Chimay** |
+| Journée APA de Marcinelle | mardi 30 mars 2027 | `…/APAESENCA/#marcinelle-2027` | code de la journée |
+| Journée APA de Philippeville | jeudi 22 avril 2027 | `…/APAESENCA/#philippeville-2027` | code de la journée |
+| Poire qui Roule (PQR) | jeudi 27 mai 2027 | `…/APAESENCA/#pqr-2027` | **code réservé aux institutions de la région de Chimay** |
 
-Adresse de la page : `https://romaincapp.github.io/APAENSECA/`. Tu peux envoyer aux
-éducateurs l'adresse directe de leur journée (ex. `https://romaincapp.github.io/APAENSECA/#marcinelle-2027`).
+Adresse de la page : `https://romaincapp.github.io/APAESENCA/`. Tu peux envoyer aux
+éducateurs l'adresse directe de leur journée (ex. `https://romaincapp.github.io/APAESENCA/#marcinelle-2027`).
 
 > ⚠ Les activités et horaires des trois journées sont **provisoires** : ce sont ceux de la
 > journée du 17 novembre, recopiés en attendant les vraies listes.
@@ -61,7 +61,7 @@ Le projet Supabase de la journée du 17 novembre est réutilisé.
    - `SUPABASE_URL` : le *Project URL* (Supabase → Project Settings → API)
    - `SUPABASE_KEY` : la clé **anon** / **publishable** (jamais `service_role` / `secret`)
 3. **Actions → Déployer la page d'inscription → Run workflow**.
-   L'adresse de la page s'affiche à la fin : `https://romaincapp.github.io/APAENSECA/`.
+   L'adresse de la page s'affiche à la fin : `https://romaincapp.github.io/APAESENCA/`.
 
 Chaque modification de `site/` poussée sur `main` redéploie la page automatiquement.
 
