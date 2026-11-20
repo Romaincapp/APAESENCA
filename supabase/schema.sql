@@ -118,6 +118,20 @@ create table if not exists public.config (
   admin_hash text
 );
 alter table public.config alter column code_hash drop not null;
+
+-- Nombre maximum de participants pour la journée (null = pas de limite).
+-- Se règle dans le SQL Editor : update public.journees set places_max = 60 where id = '…';
+alter table public.journees add column if not exists places_max int check (places_max > 0);
+
+-- Inscription des institutions (remplace le Google Form).
+-- nb_attendu = nombre de places réservées par l'institution.
+-- Les coordonnées ne sont lisibles qu'avec le code organisateur.
+alter table public.institutions add column if not exists responsable   text not null default '' check (length(responsable) <= 120);
+alter table public.institutions add column if not exists email         text not null default '' check (length(email) <= 200);
+alter table public.institutions add column if not exists telephone     text not null default '' check (length(telephone) <= 40);
+alter table public.institutions add column if not exists nb_educateurs int  not null default 0 check (nb_educateurs between 0 and 100);
+alter table public.institutions add column if not exists nb_pmr        int  not null default 0 check (nb_pmr between 0 and 300);
+alter table public.institutions add column if not exists inscrite_le   timestamptz not null default now();
 alter table public.config add column if not exists admin_hash text;
 
 -- ---------- Sécurité : aucune lecture/écriture directe ----------------
@@ -270,12 +284,165 @@ begin
   end if;
 end $$;
 
+-- Places prises dans une journée : places réservées par les institutions
+-- (ou leur nombre réel de participants s'il est plus grand) + inscriptions
+-- individuelles sans institution.
+create or replace function public._apa_places_prises(p_journee text)
+returns int language sql stable security definer set search_path = public, extensions as $$
+  select coalesce((select sum(greatest(i.nb_attendu,
+                     (select count(*) from public.beneficiaires b where b.institution_id = i.id)))
+                     from public.institutions i where i.journee = p_journee), 0)::int
+       + (select count(*) from public.beneficiaires b where b.journee = p_journee and b.institution_id is null)::int;
+$$;
+
+-- Après une écriture : une institution ne dépasse pas ses places réservées,
+-- et la journée ne dépasse pas son maximum.
+create or replace function public._apa_check_places(p_journee text, p_institution uuid)
+returns void language plpgsql security definer set search_path = public, extensions as $$
+declare v_nom text; v_res int; v_n int; v_max int; v_prises int;
+begin
+  if p_institution is not null then
+    select nom, nb_attendu into v_nom, v_res from public.institutions where id = p_institution;
+    select count(*) into v_n from public.beneficiaires where institution_id = p_institution;
+    if v_res > 0 and v_n > v_res then   -- 0 = pas de réservation (institution chargée à la main)
+      raise exception '% a % participants pour % places réservées. Augmente la réservation ou retire des participants.', v_nom, v_n, v_res
+        using errcode = 'P0008';
+    end if;
+  end if;
+  select places_max into v_max from public.journees where id = p_journee;
+  if v_max is not null then
+    v_prises := public._apa_places_prises(p_journee);
+    if v_prises > v_max then
+      raise exception 'La journée est complète (% places).', v_max using errcode = 'P0007';
+    end if;
+  end if;
+end $$;
+
+-- Valide les champs d'une réservation.
+create or replace function public._apa_check_reservation(p_places int, p_educateurs int, p_pmr int)
+returns void language plpgsql security definer set search_path = public, extensions as $$
+begin
+  if p_places is null or p_places < 1 or p_places > 300 then
+    raise exception 'Indique le nombre de participants (au moins 1).' using errcode = '22023';
+  end if;
+  if p_educateurs is null or p_educateurs < 0 or p_educateurs > 100 then
+    raise exception 'Nombre d''éducateurs invalide.' using errcode = '22023';
+  end if;
+  if p_pmr is null or p_pmr < 0 or p_pmr > p_places then
+    raise exception 'Le nombre de PMR doit être entre 0 et le nombre de participants.' using errcode = '22023';
+  end if;
+end $$;
+
+-- Une institution s'inscrit à la journée (remplace le Google Form).
+-- Crée aussi ses lignes « Participant 1…N », prêtes à être nommées et planifiées.
+create or replace function public.apa_inscrire_institution(
+  p_journee text, p_code text, p_nom text, p_responsable text, p_email text, p_telephone text,
+  p_places int, p_educateurs int, p_pmr int)
+returns uuid language plpgsql security definer set search_path = public, extensions as $$
+declare v_id uuid; v_max int; v_reste int;
+begin
+  perform public._apa_check_code(p_journee, p_code);
+  if length(trim(coalesce(p_nom, ''))) = 0 then
+    raise exception 'Indique le nom de l''institution.' using errcode = '22023';
+  end if;
+  if length(trim(coalesce(p_responsable, ''))) = 0 then
+    raise exception 'Indique le nom de la personne responsable.' using errcode = '22023';
+  end if;
+  if trim(coalesce(p_email, '')) !~ '^[^@\s]+@[^@\s]+\.[^@\s]+$' then
+    raise exception 'Adresse e-mail invalide.' using errcode = '22023';
+  end if;
+  if length(regexp_replace(coalesce(p_telephone, ''), '\D', '', 'g')) < 8 then
+    raise exception 'Numéro de téléphone invalide.' using errcode = '22023';
+  end if;
+  perform public._apa_check_reservation(p_places, p_educateurs, p_pmr);
+
+  -- Une seule inscription à la fois par journée : les places ne peuvent pas être prises deux fois.
+  select places_max into v_max from public.journees where id = p_journee for update;
+  if v_max is not null then
+    v_reste := v_max - public._apa_places_prises(p_journee);
+    if v_reste <= 0 then
+      raise exception 'La journée est complète.' using errcode = 'P0007';
+    elsif p_places > v_reste then
+      raise exception 'Il ne reste que % place%.', v_reste, case when v_reste > 1 then 's' else '' end using errcode = 'P0007';
+    end if;
+  end if;
+
+  if exists (select 1 from public.institutions
+              where journee = p_journee and lower(trim(nom)) = lower(trim(p_nom))) then
+    raise exception '« % » est déjà inscrite à cette journée. Choisis-la dans la liste.', trim(p_nom) using errcode = 'P0009';
+  end if;
+
+  begin
+    insert into public.institutions (journee, nom, nb_attendu, responsable, email, telephone, nb_educateurs, nb_pmr, ordre)
+    values (p_journee, trim(p_nom), p_places, trim(p_responsable), lower(trim(p_email)), trim(p_telephone), p_educateurs, p_pmr,
+            coalesce((select max(ordre) + 1 from public.institutions where journee = p_journee), 1))
+    returning id into v_id;
+  exception when unique_violation then
+    raise exception '« % » est déjà inscrite à cette journée. Choisis-la dans la liste.', trim(p_nom) using errcode = 'P0009';
+  end;
+
+  insert into public.beneficiaires (journee, nom, institution_id)
+  select p_journee, 'Participant ' || k, v_id from generate_series(1, p_places) k;
+  return v_id;
+end $$;
+
+-- Modifie la réservation d'une institution (places, éducateurs, PMR).
+create or replace function public.apa_modifier_reservation(p_journee text, p_code text, p_institution uuid, p_places int, p_educateurs int, p_pmr int)
+returns void language plpgsql security definer set search_path = public, extensions as $$
+declare v_max int; v_reste int; v_n int;
+begin
+  perform public._apa_check_code(p_journee, p_code);
+  if p_institution is null then
+    raise exception 'Institution inconnue.' using errcode = '22023';
+  end if;
+  perform public._apa_check_institution(p_journee, p_institution);
+  perform public._apa_check_reservation(p_places, p_educateurs, p_pmr);
+  perform public._apa_check_ouvert(p_institution);
+  select count(*) into v_n from public.beneficiaires where institution_id = p_institution;
+  if p_places < v_n then
+    raise exception 'L''institution a déjà % participants : retire d''abord des participants.', v_n using errcode = 'P0008';
+  end if;
+  select places_max into v_max from public.journees where id = p_journee for update;
+  if v_max is not null then
+    v_reste := v_max - public._apa_places_prises(p_journee)
+             + (select greatest(nb_attendu, v_n) from public.institutions where id = p_institution);
+    if p_places > v_reste then
+      raise exception 'Il ne reste que % place% pour cette institution.', v_reste, case when v_reste > 1 then 's' else '' end using errcode = 'P0007';
+    end if;
+  end if;
+  update public.institutions set nb_attendu = p_places, nb_educateurs = p_educateurs, nb_pmr = p_pmr where id = p_institution;
+end $$;
+
+-- ORGANISATEUR : liste des institutions avec leurs coordonnées.
+create or replace function public.apa_admin_institutions(p_code_admin text, p_journee text)
+returns jsonb language plpgsql stable security definer set search_path = public, extensions as $$
+begin
+  perform public._apa_check_admin(p_code_admin);
+  return (select coalesce(jsonb_agg(jsonb_build_object(
+      'id', i.id, 'nom', i.nom, 'responsable', i.responsable, 'email', i.email, 'telephone', i.telephone,
+      'places', i.nb_attendu, 'educateurs', i.nb_educateurs, 'pmr', i.nb_pmr, 'inscrite_le', i.inscrite_le,
+      'verrouille_le', i.verrouille_le,
+      'participants', (select count(*) from public.beneficiaires b where b.institution_id = i.id)
+    ) order by i.inscrite_le), '[]')
+    from public.institutions i where i.journee = p_journee);
+end $$;
+
+-- ORGANISATEUR : supprime une institution et tous ses participants.
+create or replace function public.apa_admin_supprimer_institution(p_code_admin text, p_institution uuid)
+returns void language plpgsql security definer set search_path = public, extensions as $$
+begin
+  perform public._apa_check_admin(p_code_admin);
+  delete from public.beneficiaires where institution_id = p_institution;
+  delete from public.institutions where id = p_institution;
+end $$;
+
 -- Menu d'accueil : liste publique des journées (sans aucun nom ni code).
 create or replace function public.apa_journees()
 returns jsonb language sql stable security definer set search_path = public, extensions as $$
   select coalesce(jsonb_agg(jsonb_build_object(
     'id', id, 'nom', nom, 'date', date_jour, 'lieu', lieu, 'description', description,
-    'acces', acces, 'pause_midi', pause_midi, 'ouverte', code_hash is not null
+    'acces', acces, 'pause_midi', pause_midi, 'ouverte', code_hash is not null,
+    'places_max', places_max, 'places_prises', public._apa_places_prises(id)
   ) order by date_jour, ordre), '[]')
   from public.journees where visible;
 $$;
@@ -295,12 +462,14 @@ begin
   perform public._apa_check_code(p_journee, p_code);
   return jsonb_build_object(
     'journee', (select jsonb_build_object('id', id, 'nom', nom, 'date', date_jour, 'lieu', lieu, 'description', description,
+                  'places_max', places_max, 'places_prises', public._apa_places_prises(id),
                   'acces', acces, 'pause_midi', pause_midi) from public.journees where id = p_journee),
     'activites', (select coalesce(jsonb_agg(jsonb_build_object('id', id, 'nom', nom, 'lieu', lieu, 'cap', cap) order by ordre), '[]')
                     from public.activites where journee = p_journee),
     'tournantes', (select coalesce(jsonb_agg(jsonb_build_object('id', id, 'debut', to_char(debut, 'HH24:MI'), 'fin', to_char(fin, 'HH24:MI'), 'demi', demi) order by id), '[]')
                     from public.tournantes where journee = p_journee),
-    'institutions', (select coalesce(jsonb_agg(jsonb_build_object('id', id, 'nom', nom, 'nb_attendu', nb_attendu, 'verrouille_le', verrouille_le) order by ordre, nom), '[]')
+    'institutions', (select coalesce(jsonb_agg(jsonb_build_object('id', id, 'nom', nom, 'nb_attendu', nb_attendu, 'verrouille_le', verrouille_le,
+                      'nb_educateurs', nb_educateurs, 'nb_pmr', nb_pmr) order by ordre, nom), '[]')
                     from public.institutions where journee = p_journee),
     'beneficiaires', (
       select coalesce(jsonb_agg(jsonb_build_object(
@@ -382,6 +551,7 @@ begin
   select v_id, p_journee, key::int, value from jsonb_each_text(p_plan);
 
   perform public._apa_check_capacite(p_journee);
+  perform public._apa_check_places(p_journee, p_institution);
   return v_id;
 end $$;
 
@@ -441,6 +611,7 @@ begin
   end loop;
 
   perform public._apa_check_capacite(p_journee);
+  perform public._apa_check_places(p_journee, p_institution);
   return n;
 end $$;
 
@@ -482,6 +653,13 @@ revoke all on function public._apa_check_admin(text)                 from public
 revoke all on function public._apa_check_ouvert(uuid)                from public, anon, authenticated;
 revoke all on function public.apa_definir_code(text, text)           from public, anon, authenticated;
 revoke all on function public.apa_definir_code_admin(text)           from public, anon, authenticated;
+revoke all on function public._apa_places_prises(text)               from public, anon, authenticated;
+revoke all on function public._apa_check_places(text, uuid)          from public, anon, authenticated;
+revoke all on function public._apa_check_reservation(int, int, int)  from public, anon, authenticated;
+grant execute on function public.apa_inscrire_institution(text, text, text, text, text, text, int, int, int) to anon, authenticated;
+grant execute on function public.apa_modifier_reservation(text, text, uuid, int, int, int)                  to anon, authenticated;
+grant execute on function public.apa_admin_institutions(text, text)                                         to anon, authenticated;
+grant execute on function public.apa_admin_supprimer_institution(text, uuid)                                to anon, authenticated;
 grant execute on function public.apa_journees()                                             to anon, authenticated;
 grant execute on function public.apa_connexion(text, text)                                  to anon, authenticated;
 grant execute on function public.apa_etat(text, text)                                       to anon, authenticated;

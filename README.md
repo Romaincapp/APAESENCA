@@ -46,13 +46,13 @@ Le projet Supabase de la journée du 17 novembre est réutilisé.
    ```sql
    select public.apa_definir_code_admin('code-organisateur');
    ```
-4. Charge les institutions de chaque journée avec un fichier SQL local (pas dans le dépôt,
-   car il contient des noms). Chaque institution est rattachée à une journée :
+4. **Nombre maximum de participants** par journée (comme le « max » du Google Form).
+   Sans limite tant que rien n'est défini :
    ```sql
-   insert into public.institutions (journee, nom, nb_attendu, ordre) values
-     ('marcinelle-2027', 'Nom de l''institution', 12, 1)
-   on conflict (journee, nom) do update set nb_attendu = excluded.nb_attendu, ordre = excluded.ordre;
+   update public.journees set places_max = 60 where id = 'marcinelle-2027';
    ```
+5. Les **institutions s'inscrivent elles-mêmes** dans la page (plus besoin de Google Form
+   ni de fichier SQL). Envoie-leur simplement l'adresse de la journée et son code.
 
 ### 2. Configuration GitHub
 
@@ -72,6 +72,21 @@ permet seulement de lire le menu (nom, date, lieu des journées), ni les noms ni
 
 L'éducateur choisit sa journée dans le menu (ou ouvre directement son lien), puis entre le
 code d'accès de cette journée. La page s'en souvient sur cet appareil.
+
+**Inscrire son institution** (remplace le Google Form) : bouton **+ Inscrire mon
+institution**, avec les mêmes questions que le formulaire : nom de l'institution, personne
+responsable, téléphone, e-mail, nombre de participants, nombre d'éducateurs · éducatrices,
+nombre de PMR.
+- Les places restantes s'affichent partout (menu, onglet, formulaire). Quand la journée est
+  complète, l'inscription se ferme d'elle-même. C'est vérifié par la base : deux
+  institutions qui s'inscrivent en même temps ne peuvent pas dépasser le maximum.
+- Une institution ne peut s'inscrire qu'une fois par journée (même nom, peu importe les
+  majuscules).
+- Les lignes « Participant 1, 2… » sont créées tout de suite, prêtes à être renommées et
+  planifiées.
+- **Modifier la réservation** permet ensuite de changer le nombre de places, d'éducateurs
+  ou de PMR (dans la limite des places restantes). On ne peut pas avoir plus de participants
+  que de places réservées.
 
 Onglet **Par institution** : l'éducateur choisit son institution, et ses participants
 s'affichent en tableau (une ligne par participant, une colonne par tournante).
@@ -98,6 +113,12 @@ plus personne ne peut modifier, ajouter ou supprimer un participant de cette ins
 c'est contrôlé par la base, pas seulement par la page. Le PDF reste téléchargeable.
 Seul l'organisateur peut déverrouiller : bouton **Déverrouiller (organisateur)** et code
 organisateur.
+
+Onglet **Organisateur** (code organisateur) : la liste des institutions inscrites avec
+leurs coordonnées (responsable, e-mail, téléphone), places, éducateurs, PMR et date
+d'inscription, avec les totaux. Boutons **Exporter (CSV)**, **Copier toutes les adresses
+e-mail** (à coller en Cci) et **Supprimer** une institution avec ses participants. Les
+coordonnées ne sont lisibles qu'avec le code organisateur, jamais avec le code de la journée.
 
 Onglet **Inscription individuelle** : pour une personne seule ou un ajout de dernière
 minute.
@@ -137,6 +158,8 @@ select public.apa_definir_code('marcinelle-2027', 'nouveau-code');
   `apa_enregistrer_lot`, `apa_supprimer`, `apa_verrouiller`) qui vérifient toutes le code de
   la journée demandée. Un code ne donne jamais accès à une autre journée.
 - Les places sont comptées séparément pour chaque journée.
+- Places de la journée = places réservées par chaque institution (ou son nombre réel de
+  participants s'il est plus grand) + inscriptions individuelles sans institution.
 - **Places garanties** : les fonctions d'enregistrement verrouillent les activités,
   enregistrent, puis recomptent. Si une place manque, tout est annulé et la page affiche
   « Plus de place pour : … ». Tests effectués : 10 inscriptions simultanées sur la
