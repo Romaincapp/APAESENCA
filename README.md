@@ -106,6 +106,21 @@ s'affichent en tableau (une ligne par participant, une colonne par tournante).
   entre-temps, ou si un collègue a modifié la même fiche, rien n'est enregistré et la page
   explique quoi corriger.
 
+**Vue par groupe** (affichage par défaut ; « Tableau détaillé » garde l'ancien tableau avec
+un menu par case) :
+- Une ligne par groupe, des cases en couleur selon le lieu. Un clic sur une case ouvre la
+  **palette d'ateliers** : rangés par lieu, avec les places libres, ceux déjà faits signalés,
+  les complets barrés. Taper deux lettres filtre (« zu » → Zumba), Entrée choisit.
+- **Atelier trop petit pour le groupe** (ex. 8 résidents pour 4 places, ou plus assez de
+  places) : on choisit dans une liste qui y va (ceux qui ne l'ont pas encore fait sont
+  présélectionnés), puis un 2e atelier est proposé pour les autres, **d'abord sur le même
+  lieu**. Un groupe divisé montre ses deux ateliers côte à côte dans la case.
+- **▸** déplie un groupe pour changer l'atelier d'un seul résident ou son nom.
+- **↶ Annuler** (ou Ctrl+Z) revient en arrière d'une action à la fois, y compris après
+  « Remplir automatiquement », « Tout vider » ou « Former des groupes ». ✕ ou Échap ferme la
+  palette sans rien changer.
+- Rien n'est enregistré tant qu'on n'a pas cliqué « Enregistrer ».
+
 **Groupes (≈ 8 résidents par éducateur)** :
 - **Former des groupes de 8** répartit les participants sans groupe en groupes équilibrés
   d'au plus 8 (ex. 20 → 7 + 7 + 6). Clique sur le nom d'un groupe pour le renommer (ex.

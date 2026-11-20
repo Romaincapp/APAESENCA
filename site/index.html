@@ -68,7 +68,7 @@ main { padding-block: 20px 60px; }
 .fields { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
 @media (max-width: 560px) { .fields { grid-template-columns: 1fr; } }
 label.f { display: flex; flex-direction: column; gap: 6px; font-weight: 500; font-size: 13px; color: var(--muted); min-width: 0; }
-input[type=text], input[type=password], input[type=email], input[type=tel], input[type=number], select { font: 400 14px var(--f-body); color: var(--fg); background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 8px 10px; width: 100%; min-width: 0; }
+input[type=text], input[type=password], input[type=email], input[type=tel], input[type=number], input[type=search], select { font: 400 14px var(--f-body); color: var(--fg); background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 8px 10px; width: 100%; min-width: 0; }
 
 .half-title { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin: 6px 0 4px; }
 .half-title h3 { font-family: var(--f-display); font-weight: 500; font-size: 16px; margin: 0; }
@@ -195,6 +195,78 @@ table.inst-grid tr.grp-row .who { background: var(--surface-2); }
 .grp-none { font-family: var(--f-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); padding: 4px 6px; display: block; }
 table.inst-grid select.gsel { font-weight: 600; border-color: var(--accent); }
 table.inst-grid select.gsel.mixed { border-style: dashed; border-color: var(--line-strong); font-weight: 400; color: var(--muted); }
+/* Vue par groupe : cases en couleur, palette d'ateliers */
+.viewbar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: space-between; }
+.seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: var(--radius); overflow: hidden; }
+.seg button { border: 0; background: var(--surface); color: var(--muted); font: 500 13px var(--f-body); padding: 6px 12px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line-strong); }
+.seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--fg); }
+#board-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--muted); }
+#board-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.sw.l0 { background: var(--l0-soft); border: 1px solid var(--l0); } .sw.l1 { background: var(--l1-soft); border: 1px solid var(--l1); }
+.sw.l2 { background: var(--l2-soft); border: 1px solid var(--l2); } .sw.l3 { background: var(--l3-soft); border: 1px solid var(--l3); }
+.sw.dup { box-shadow: inset 0 0 0 2px var(--warn); } .sw.none { border: 1px dashed var(--full); background: var(--full-soft); }
+.sw.auto { border: 1px dashed var(--l3); }
+.bcell { display: flex; gap: 2px; width: 138px; min-height: 38px; padding: 2px; border-radius: var(--radius); border: 1px solid transparent; background: none; cursor: pointer; text-align: left; font: inherit; color: inherit; }
+.bcell:hover:not(:disabled) { border-color: var(--line-strong); }
+.bcell:disabled { cursor: default; }
+.bcell.empty { border: 1px dashed var(--full); background: var(--full-soft); color: var(--full); justify-content: center; align-items: center; font-size: 12px; }
+.bcell:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+tr.pers-row .bcell { min-height: 30px; }
+.bchip { flex: 1 1 0; min-width: 0; border-radius: 4px; padding: 3px 5px; font-size: 12px; line-height: 1.25; display: flex; flex-direction: column; justify-content: center; background: var(--surface-2); color: var(--fg); }
+.bchip b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bchip small { font: 10px var(--f-mono); }
+.bchip.l0 { background: var(--l0-soft); color: var(--l0); } .bchip.l1 { background: var(--l1-soft); color: var(--l1); }
+.bchip.l2 { background: var(--l2-soft); color: var(--l2); } .bchip.l3 { background: var(--l3-soft); color: var(--l3); }
+.bchip.pause { background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.bchip.none { background: var(--full-soft); color: var(--full); border: 1px dashed var(--full); }
+.bchip.dup { box-shadow: inset 0 0 0 2px var(--warn); }
+.bchip.auto { outline: 1px dashed var(--l3); outline-offset: 1px; }
+.bchip.more { flex: 0 0 auto; padding: 3px 6px; background: var(--surface); border: 1px dashed var(--line-strong); color: var(--muted); text-align: center; }
+@media (max-width: 600px) { table.inst-grid .who { min-width: 136px; max-width: 136px; } .bcell { width: 120px; } }
+.tgl { flex: none; background: none; border: 0; color: var(--muted); cursor: pointer; width: 24px; height: 24px; border-radius: 4px; font-size: 12px; transition: transform .15s; }
+.tgl:hover { color: var(--fg); background: var(--surface); }
+.tgl[aria-expanded="true"] { transform: rotate(90deg); }
+.gbar { display: block; height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; margin: 3px 6px 0; }
+.gbar i { display: block; height: 100%; background: var(--ok); }
+@media (prefers-reduced-motion: reduce) { .tgl { transition: none; } }
+
+#pal-veil { position: fixed; inset: 0; z-index: 40; }
+.pal { position: fixed; z-index: 41; width: 340px; max-height: min(560px, calc(100vh - 24px)); display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px; box-shadow: 0 10px 30px rgba(0, 0, 0, .28), 0 2px 6px rgba(0, 0, 0, .12); overflow: hidden; }
+@media (max-width: 560px) { .pal { left: 0 !important; right: 0; bottom: 0; top: auto !important; width: auto; max-height: 80vh; border-radius: 14px 14px 0 0; padding-bottom: env(safe-area-inset-bottom, 0px); } }
+.pal-h { position: relative; padding: 12px 48px 10px 14px; border-bottom: 1px solid var(--line); }
+.pal-h h3 { margin: 0; font-size: 14px; font-weight: 600; }
+.pal-h h3 span { font-weight: 400; color: var(--muted); }
+.pal-h p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+.pal-h input { margin-top: 8px; width: calc(100% + 34px); }
+.pal-x { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid transparent; background: none; border-radius: var(--radius); color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; }
+.pal-x:hover { color: var(--fg); background: var(--surface-2); border-color: var(--line); }
+.pal-b { overflow-y: auto; padding: 6px 8px 10px; }
+.pal-lieu { font: 11px var(--f-mono); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); padding: 8px 6px 4px; }
+.pal-opt { display: grid; grid-template-columns: 8px 1fr auto; gap: 4px 10px; align-items: center; width: 100%; text-align: left; border: 0; background: none; padding: 7px 8px; border-radius: var(--radius); cursor: pointer; color: var(--fg); font: inherit; }
+.pal-opt:hover:not([disabled]), .pal-opt.kb { background: var(--surface-2); }
+.pal-opt .dot { width: 8px; height: 8px; border-radius: 50%; }
+.pal-opt .nm { font-weight: 500; font-size: 13px; }
+.pal-opt .st { font: 11px var(--f-mono); color: var(--muted); text-align: right; white-space: nowrap; }
+.pal-opt .gauge { grid-column: 2 / -1; height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; }
+.pal-opt .gauge i { display: block; height: 100%; }
+.pal-opt.partial .st { color: var(--warn); }
+.pal-opt.done .nm { color: var(--muted); }
+.pal-opt[disabled] { cursor: not-allowed; }
+.pal-opt[disabled] .nm { color: var(--muted); text-decoration: line-through; }
+.pal-opt .why { grid-column: 2 / -1; font-size: 11px; color: var(--muted); margin-top: -2px; }
+.pal-f { display: flex; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.pal-warn { margin: 10px 14px 0; padding: 9px 11px; border-radius: 8px; background: var(--warn-soft); color: var(--fg); font-size: 13px; }
+.pal-warn b { color: var(--warn); }
+.pal-people { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 14px 4px; }
+.pal-pp { border: 1px solid var(--line-strong); background: var(--surface-2); color: var(--fg); border-radius: 999px; padding: 4px 10px; font: 13px var(--f-body); cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+.pal-pp[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+.pal-pp[aria-pressed="true"]::before { content: "✓"; color: var(--accent); font-weight: 600; }
+.pal-pp small { font: 10px var(--f-mono); color: var(--muted); }
+.pal-count { padding: 4px 14px 0; font: 12px var(--f-mono); color: var(--muted); }
+.pal-count.ok { color: var(--ok); }
+.pal-sugg { display: grid; gap: 4px; padding: 8px 8px 0; }
 table.inst-grid select.mini { width: auto; max-width: 130px; padding: 1px 4px; font-size: 11px; border-radius: 999px; }
 
 /* Barre du haut + menu des journées */
@@ -370,6 +442,17 @@ table.list a:hover { text-decoration: underline; }
             </form>
           </div>
           <div class="checks" id="inst-checks"></div>
+          <div class="viewbar">
+            <div class="seg" role="group" aria-label="Affichage du planning">
+              <button type="button" data-view-mode="groupes" aria-pressed="true">Par groupe</button>
+              <button type="button" data-view-mode="detail" aria-pressed="false">Tableau détaillé</button>
+            </div>
+            <div class="actions">
+              <button class="btn small" type="button" id="inst-expand">Tout ouvrir</button>
+              <button class="btn small" type="button" id="inst-undo" disabled title="Annuler la dernière action (Ctrl+Z)">↶ Annuler</button>
+            </div>
+          </div>
+          <div id="board-legend" aria-label="Légende"></div>
           <div class="hint-auto" id="inst-hint" hidden>Bordure bleue : case proposée automatiquement. Re-clique « Proposer une autre variante » pour une autre répartition ; les cases que tu as choisies toi-même ne bougent pas.</div>
           <div class="scroll" id="inst-scroll"><table class="inst-grid" id="inst-grid"></table></div>
           <div class="actions sticky-actions">
@@ -459,6 +542,8 @@ table.list a:hover { text-decoration: underline; }
     </main>
   </div>
 </div>
+<div id="pal-veil" hidden></div>
+<div class="pal" id="pal" hidden role="dialog" aria-modal="true" aria-labelledby="pal-title"></div>
 
 <script>
 /* ================== CONFIGURATION ==================
@@ -702,11 +787,16 @@ function renderInstPanel(force) {
   resetPdfConfirm();
   let h = `<thead><tr class="halves"><th class="who"></th>`;
   for (const d of [...new Set(ROTS.map(r => r.demi))]) h += `<th class="sep" colspan="${ROTS.filter(r => r.demi === d).length}">${esc(d)}</th>`;
-  h += `</tr><tr><th class="who">Participant</th>`;
+  h += `</tr><tr><th class="who">${instView === "groupes" ? "Groupe / résident" : "Participant"}</th>`;
   for (const r of ROTS) h += `<th class="${r.sep ? "sep" : ""}">T${r.n}<br><small style="font-weight:400">${plage(r)}</small></th>`;
   h += `</tr></thead><tbody>`;
   if (!rows.length) h += `<tr><td class="who" colspan="${ROTS.length + 1}"><span class="sub">Aucun participant. Clique « + Ajouter un participant ».</span></td></tr>`;
   GRP_LIST = groupsOf(rows);
+  if (instView === "groupes") {   // vue par groupe (cases en couleur + palette)
+    $("inst-grid").innerHTML = h + boardBody(rows, lk) + `</tbody>`;
+    rows.forEach(paintRow); renderInstChecks(); paintViewbar();
+    return;
+  }
   const sections = GRP_LIST.length ? [...GRP_LIST.map((g, i) => ({ i, g, members: rows.filter(r => r.equipe === g) })),
     { i: -1, g: "", members: rows.filter(r => !r.equipe) }].filter(x => x.members.length) : [{ i: -1, g: "", members: rows }];
   for (const sec of sections) {
@@ -725,7 +815,7 @@ function renderInstPanel(force) {
   for (const sel of $("inst-grid").querySelectorAll("[data-gcell]")) { const [i, rk] = sel.dataset.gcell.split("|"); paintGroupCell(sel, +i, rk, rows, c); }
   for (const row of rows) for (const r of ROTS) $("inst-grid").querySelector(`[data-cell="${row.key}|${r.key}"]`).value = row.plan[r.key] || "";
   rows.forEach(paintRow);
-  renderInstChecks();
+  renderInstChecks(); paintViewbar();
 }
 function paintRow(row) {
   const d = dupKeys(row.plan), n = filled(row.plan);
@@ -781,6 +871,7 @@ function instMsg(t, kind) { const m = $("inst-msg"); m.textContent = t; m.classN
 $("inst-grid").addEventListener("change", e => {
   const gs = e.target.closest("[data-gcell]");
   if (gs) {   // inscrire tout le groupe d'un coup
+    snapshot();
     const [i, rkey] = gs.dataset.gcell.split("|"), d = ensureDraft(currentInst), g = GRP_LIST[+i];
     const members = d.rows.filter(r => r.equipe === g);
     for (const m of members) { if (gs.value) m.plan[rkey] = gs.value; else delete m.plan[rkey]; m.changed = true; m.auto?.delete(rkey); }
@@ -793,16 +884,19 @@ $("inst-grid").addEventListener("change", e => {
   if (gn) {   // renommer un groupe (ex. nom de l'éducateur)
     const old = GRP_LIST[+gn.dataset.gname], nv = gn.value.trim().slice(0, 60);
     if (!nv) { gn.value = old; return; }
+    if (nv !== old) snapshot();
     if (nv !== old) for (const m of ensureDraft(currentInst).rows) if (m.equipe === old) { m.equipe = nv; m.changed = true; }
     renderInstPanel(true); renderInstCards(); return;
   }
   const go = e.target.closest("[data-grp-of]");
   if (go) {   // changer un participant de groupe
+    snapshot();
     const d = ensureDraft(currentInst), row = d.rows.find(r => r.key === go.dataset.grpOf); if (!row) return;
     row.equipe = go.value === "__new" ? nextGroupName(d.rows) : go.value; row.changed = true;
     renderInstPanel(true); renderInstCards(); return;
   }
   const s = e.target.closest("[data-cell]"); if (!s) return;
+  snapshot();
   const [rowKey, rkey] = s.dataset.cell.split("|");
   const row = ensureDraft(currentInst).rows.find(r => r.key === rowKey); if (!row) return;
   if (s.value) row.plan[rkey] = s.value; else delete row.plan[rkey];
@@ -820,18 +914,20 @@ $("inst-grid").addEventListener("click", async e => {
   const b = e.target.closest("[data-remove]"); if (!b) return;
   const rows = instRows(currentInst), row = rows.find(r => r.key === b.dataset.remove); if (!row) return;
   if (!b.classList.contains("confirm")) { b.classList.add("confirm"); b.textContent = "Retirer ?"; return; }
-  if (!row.id) { const d = ensureDraft(currentInst); d.rows = d.rows.filter(r => r !== row); renderInstPanel(true); renderInstCards(); return; }
+  if (!row.id) { snapshot(); const d = ensureDraft(currentInst); d.rows = d.rows.filter(r => r !== row); renderInstPanel(true); renderInstCards(); return; }
   b.disabled = true;
   try {
     await rpc("apa_supprimer", { p_journee: JOURNEE_ID, p_code: code, p_id: row.id });
     if (drafts[currentInst]) drafts[currentInst].rows = drafts[currentInst].rows.filter(r => r.id !== row.id);
     instMsg(row.nom + " a été retiré·e.", "ok");
+    undoStack[currentInst] = [];   // suppression enregistrée : on ne peut plus revenir avant
     await refresh(); renderInstPanel(true);
   } catch (err) { b.disabled = false; instMsg(err.message, "err"); }
 });
 $("inst-add").addEventListener("click", () => {
   const res = INST[currentInst]?.nb_attendu || 0;
   if (res && instRows(currentInst).length >= res) { instMsg(`Les ${res} places réservées sont toutes utilisées. Clique « Modifier la réservation » pour en ajouter.`, "err"); return; }
+  snapshot();
   const d = ensureDraft(currentInst);
   let n = d.rows.length + 1;
   while (d.rows.some(r => r.nom.toLowerCase() === ("participant " + n))) n++;
@@ -841,7 +937,7 @@ $("inst-add").addEventListener("click", () => {
   const inputs = $("inst-grid").querySelectorAll("[data-name]"); const last = inputs[inputs.length - 1];
   if (last) { last.focus(); last.select(); }
 });
-$("inst-discard").addEventListener("click", () => { delete drafts[currentInst]; variantNo = 0; instMsg("Modifications annulées."); renderAll(); renderInstPanel(true); });
+$("inst-discard").addEventListener("click", () => { delete drafts[currentInst]; undoStack[currentInst] = []; variantNo = 0; instMsg("Modifications annulées."); renderAll(); renderInstPanel(true); });
 
 // Former des groupes : les participants sans groupe sont répartis en groupes équilibrés
 // d'au plus 8 (ex. 12 → 6 + 6, 20 → 7 + 7 + 6). Les groupes existants ne bougent pas.
@@ -849,6 +945,7 @@ $("inst-groups").addEventListener("click", () => {
   if (locked(currentInst)) return;
   const d = ensureDraft(currentInst), libres = d.rows.filter(r => !r.equipe);
   if (!libres.length) { instMsg("Tout le monde a déjà un groupe. Utilise le petit menu sous chaque nom pour changer quelqu'un de groupe.", "ok"); return; }
+  snapshot();
   const nb = Math.ceil(libres.length / TAILLE_GROUPE), base = Math.floor(libres.length / nb), extra = libres.length % nb;
   let k = 0;
   for (let g = 0; g < nb; g++) {
@@ -875,6 +972,7 @@ const shuffle = arr => { const a = [...arr]; for (let i = a.length - 1; i > 0; i
 let variantNo = 0;
 $("inst-auto").addEventListener("click", () => {
   if (locked(currentInst)) return;
+  snapshot();
   const d = ensureDraft(currentInst);
   let rerolled = 0;
   for (const row of d.rows) { row.auto ||= new Set(); for (const k of row.auto) { delete row.plan[k]; rerolled++; } row.auto.clear(); }
@@ -924,6 +1022,7 @@ $("inst-clear").addEventListener("click", () => {
   const b = $("inst-clear");
   if (!b.dataset.confirm) { b.dataset.confirm = "1"; b.textContent = "Confirmer : tout vider ?"; setTimeout(() => { delete b.dataset.confirm; b.textContent = "Tout vider"; }, 4000); return; }
   delete b.dataset.confirm; b.textContent = "Tout vider";
+  snapshot();
   const d = ensureDraft(currentInst);
   for (const row of d.rows) { row.plan = {}; row.auto = new Set(); row.changed = true; }
   variantNo = 0;
@@ -939,7 +1038,7 @@ $("inst-save").addEventListener("click", async () => {
   try {
     // Le serveur revérifie toutes les places sous verrou : tout passe ou rien ne passe.
     await rpc("apa_enregistrer_lot", { p_journee: JOURNEE_ID, p_code: code, p_institution: currentInst, p_lignes: lignes });
-    delete drafts[currentInst];
+    delete drafts[currentInst]; undoStack[currentInst] = [];
     instMsg(`${INST[currentInst].nom} : ${lignes.length} participant${lignes.length > 1 ? "s" : ""} enregistré${lignes.length > 1 ? "s" : ""}.`, "ok");
   } catch (err) {
     const hint = err.code === "P0001" ? " Une autre personne a pris ces places entre-temps : choisis une autre activité pour ces cases."
@@ -950,6 +1049,237 @@ $("inst-save").addEventListener("click", async () => {
   }
 });
 window.addEventListener("beforeunload", e => { if (!leaving && Object.keys(drafts).length) { e.preventDefault(); e.returnValue = ""; } });
+
+/* ================= VUE PAR GROUPE ================= */
+// Une ligne par groupe ; un clic sur une case ouvre la palette d'ateliers. Si l'atelier n'a pas
+// assez de places pour tout le groupe, on choisit qui y va, puis un 2e atelier pour les autres
+// (d'abord sur le même plateau). Tout se fait dans le brouillon : rien n'est enregistré avant « Enregistrer ».
+let instView = (() => { try { return localStorage.getItem("apa-vue") === "detail" ? "detail" : "groupes"; } catch { return "groupes"; } })();
+const openGrp = new Set();          // groupes dépliés : "institution|nom du groupe"
+const undoStack = {};               // institution -> instantanés du brouillon
+const actName = v => v === PAUSE ? "Pause" : ACT[v]?.nom || "?";
+const lieuVar = l => `var(--${lieuCls(l) || "muted"})`;
+
+function snapshot() {
+  if (!currentInst) return;
+  const st = (undoStack[currentInst] ||= []);
+  st.push({ had: !!drafts[currentInst], rows: JSON.stringify(instRows(currentInst).map(r => ({ ...r, auto: [...(r.auto || [])] }))) });
+  if (st.length > 60) st.shift();
+  paintUndo();
+}
+function undo() {
+  const st = undoStack[currentInst]; if (!st?.length || locked(currentInst)) return;
+  const snap = st.pop();
+  if (snap.had) drafts[currentInst] = { rows: JSON.parse(snap.rows).map(r => ({ ...r, auto: new Set(r.auto) })) };
+  else delete drafts[currentInst];
+  renderInstPanel(true); renderInstCards(); renderStats();
+  instMsg("Dernière action annulée.", "ok");
+}
+function paintUndo() { const b = $("inst-undo"); b.disabled = !undoStack[currentInst]?.length || locked(currentInst); }
+function paintViewbar() {
+  for (const b of document.querySelectorAll("[data-view-mode]")) b.setAttribute("aria-pressed", String(b.dataset.viewMode === instView));
+  const board = instView === "groupes", allOpen = GRP_LIST.length && GRP_LIST.every(g => openGrp.has(currentInst + "|" + g));
+  $("inst-expand").hidden = !board || !GRP_LIST.length;
+  $("inst-expand").textContent = allOpen ? "Tout fermer" : "Tout ouvrir";
+  $("board-legend").hidden = !board;
+  $("board-legend").innerHTML = LIEUX.map(l => `<span><i class="sw ${lieuCls(l)}"></i>Lieu ${esc(l)}</span>`).join("")
+    + `<span><i class="sw dup"></i>déjà fait</span><span><i class="sw none"></i>à choisir</span><span><i class="sw auto"></i>proposé automatiquement</span>`;
+  paintUndo();
+}
+
+function bchip(v, n, dup, auto) {
+  if (!v) return `<span class="bchip none"><b>à choisir</b>${n ? `<small>${n}</small>` : ""}</span>`;
+  if (v === PAUSE) return `<span class="bchip pause"><b>Pause</b>${n ? `<small>${n}</small>` : ""}</span>`;
+  const a = ACT[v] || { nom: "?", lieu: "" };
+  return `<span class="bchip ${lieuCls(a.lieu)}${dup ? " dup" : ""}${auto ? " auto" : ""}" title="${esc(a.nom)} · lieu ${esc(a.lieu)}${dup ? " · déjà fait à une autre tournante" : ""}"><b>${esc(a.nom)}</b><small>${esc(a.lieu)}${n ? " · " + n : ""}</small></span>`;
+}
+function groupBCell(ms, i, r, dis) {
+  const by = new Map();
+  for (const m of ms) { const v = m.plan[r.key] || ""; if (!by.has(v)) by.set(v, []); by.get(v).push(m); }
+  const g = GRP_LIST[i];
+  if (by.size === 1 && by.has("")) return `<button type="button" class="bcell empty" data-g="${i}" data-t="${r.key}" aria-label="${esc(g)}, T${r.n} : à choisir"${dis}>+ choisir</button>`;
+  const parts = [...by.entries()].sort((a, b) => (a[0] === "") - (b[0] === "") || b[1].length - a[1].length), split = parts.length > 1;
+  const label = parts.map(([v, l]) => `${v ? actName(v) : "à choisir"} ${l.length}`).join(", ");
+  const chip = ([v, l]) => bchip(v, split ? l.length : 0, l.some(m => dupKeys(m.plan).has(r.key)), l.some(m => m.auto?.has(r.key)));
+  // Groupe divisé en 2 : les deux ateliers côte à côte. Au-delà : l'atelier principal + « +N autres » (détail en dépliant le groupe).
+  const inner = parts.length <= 2 ? parts.map(chip).join("")
+    : chip(parts[0]) + `<span class="bchip more"><b>+${parts.length - 1}</b><small>autres</small></span>`;
+  return `<button type="button" class="bcell" data-g="${i}" data-t="${r.key}" aria-label="${esc(g)}, T${r.n} : ${esc(label)}" title="${esc(label)}"${dis}>${inner}</button>`;
+}
+function personRow(row, lk) {
+  const dis = lk ? " disabled" : "", d = dupKeys(row.plan);
+  let h = `<tr data-row="${row.key}" class="pers-row"><th class="who"><div class="who-in"><input type="text" value="${esc(row.nom)}" maxlength="120" aria-label="Nom du participant" data-name="${row.key}"${dis}>${lk ? "" : `<button type="button" class="x" data-remove="${row.key}" title="Retirer ce participant" aria-label="Retirer ${esc(row.nom)}">✕</button>`}</div><div class="who-meta" data-meta="${row.key}"></div></th>`;
+  for (const r of ROTS) {
+    const v = row.plan[r.key] || "";
+    h += `<td class="${r.sep ? "sep" : ""}"><button type="button" class="bcell${v ? "" : " empty"}" data-p="${row.key}" data-t="${r.key}" aria-label="${esc(row.nom)}, T${r.n} : ${v ? esc(actName(v)) : "à choisir"}"${dis}>${v ? bchip(v, 0, d.has(r.key), row.auto?.has(r.key)) : "+"}</button></td>`;
+  }
+  return h + `</tr>`;
+}
+function boardBody(rows, lk) {
+  const dis = lk ? " disabled" : "";
+  let h = "";
+  GRP_LIST.forEach((g, i) => {
+    const ms = rows.filter(r => r.equipe === g), ok = ROTS.filter(r => ms.every(m => m.plan[r.key])).length, isOpen = openGrp.has(currentInst + "|" + g);
+    h += `<tr class="grp-row"><th class="who"><div class="grp-head"><div class="who-in"><button type="button" class="tgl" data-toggle="${i}" aria-expanded="${isOpen}" aria-label="${isOpen ? "Replier" : "Déplier"} ${esc(g)}">▸</button><input type="text" value="${esc(g)}" maxlength="60" data-gname="${i}" aria-label="Nom du groupe ${esc(g)}" title="Mets par exemple le nom de l'éducateur·rice"${dis}></div>`
+      + `<small>${plural(ms.length, "résident")} · ${ok}/${ROTS.length} tournantes</small><span class="gbar"><i style="width:${ok / (ROTS.length || 1) * 100}%"></i></span></div></th>`;
+    for (const r of ROTS) h += `<td class="${r.sep ? "sep" : ""}">${groupBCell(ms, i, r, dis)}</td>`;
+    h += `</tr>`;
+    if (isOpen) for (const m of ms) h += personRow(m, lk);
+  });
+  const loose = rows.filter(r => !r.equipe);
+  if (loose.length && GRP_LIST.length) h += `<tr class="grp-row"><th class="who"><span class="grp-none">Sans groupe</span></th><td colspan="${ROTS.length}"></td></tr>`;
+  else if (loose.length && !lk) h += `<tr class="grp-row"><td colspan="${ROTS.length + 1}"><span class="hint-auto">Astuce : clique « Former des groupes de 8 » pour planifier un groupe entier d'un seul clic.</span></td></tr>`;
+  for (const m of loose) h += personRow(m, lk);
+  return h;
+}
+
+/* ---------- Palette d'ateliers ---------- */
+let pal = null;
+const rowsOf = keys => { const rs = instRows(currentInst); return keys.map(k => rs.find(r => r.key === k)).filter(Boolean); };
+function freeFor(rkey, aid, keys) { const a = ACT[aid]; return a.cap - (counts(null)[rkey + "|" + aid] || 0) + rowsOf(keys).filter(r => r.plan[rkey] === aid).length; }
+const doneBy = (aid, rkey, keys) => rowsOf(keys).filter(r => Object.entries(r.plan).some(([k, v]) => v === aid && k !== rkey)).map(r => r.key);
+const palAnchor = () => pal && $("inst-grid").querySelector(pal.anchor);
+const PAL_X = `<button class="pal-x" type="button" data-pal-close aria-label="Fermer sans rien changer" title="Fermer sans rien changer (Échap)">✕</button>`;
+function palPlace() {
+  const pn = $("pal"); pn.hidden = false; $("pal-veil").hidden = false;
+  if (innerWidth <= 560) { pn.style.left = ""; pn.style.top = ""; return; }
+  const an = palAnchor(), r = an ? an.getBoundingClientRect() : { left: innerWidth / 2 - 170, bottom: 120, top: 120 };
+  const w = pn.offsetWidth, hgt = pn.offsetHeight;
+  let y = r.bottom + 6; if (y + hgt > innerHeight - 12) y = Math.max(12, r.top - hgt - 6);
+  pn.style.left = Math.max(12, Math.min(r.left, innerWidth - w - 12)) + "px"; pn.style.top = y + "px";
+}
+function closePal() { const an = palAnchor(); pal = null; $("pal").hidden = true; $("pal-veil").hidden = true; an?.focus(); }
+function openPal(keys, rkey, anchor, title) {
+  const r = ROTS.find(x => x.key === rkey); if (!r || !keys.length) return;
+  pal = { mode: "pick", keys, rkey, anchor, title, q: "", kb: 0 };
+  $("pal").innerHTML = `<div class="pal-h">${PAL_X}<h3 id="pal-title">${esc(title)} · T${r.n} <span>${plage(r)}</span></h3>
+    <p>${keys.length > 1 ? `${plural(keys.length, "résident")} à placer` : "1 résident"}. Tape pour chercher, Entrée pour choisir.</p>
+    <input id="pal-q" type="search" placeholder="Rechercher un atelier…" autocomplete="off" aria-label="Rechercher un atelier"></div>
+    <div class="pal-b" id="pal-opts"></div>
+    <div class="pal-f"><button class="btn small" type="button" data-pal-pick="${PAUSE}">Pause / repos</button><button class="btn small" type="button" data-pal-pick="">Vider</button></div>`;
+  paintPalOptions(); palPlace(); $("pal-q").focus();
+}
+function paintPalOptions() {
+  const { keys, rkey, q } = pal, rows = [];
+  for (const lieu of LIEUX) {
+    const acts = ACTIVITES.filter(a => a.lieu === lieu && (!q || a.nom.toLowerCase().includes(q)));
+    if (!acts.length) continue;
+    rows.push({ lieu });
+    for (const a of acts) { const f = freeFor(rkey, a.id, keys); rows.push({ a, f, done: doneBy(a.id, rkey, keys).length, full: f <= 0, partial: f > 0 && f < keys.length }); }
+  }
+  pal.pickable = rows.filter(x => x.a && !x.full).map(x => x.a.id);
+  pal.kb = Math.min(pal.kb, Math.max(0, pal.pickable.length - 1));
+  $("pal-opts").innerHTML = rows.map(x => {
+    if (x.lieu) return `<div class="pal-lieu">Lieu ${esc(x.lieu)}</div>`;
+    const { a, f, done, full, partial } = x, col = lieuVar(a.lieu);
+    const st = full ? "complet" : partial ? `${f} pl. · partiel` : `${f} pl. libres`;
+    const why = done ? `déjà fait par ${done === keys.length ? (keys.length > 1 ? "tout le groupe" : "ce résident") : plural(done, "résident")}` : partial ? `pas assez pour ${keys.length} : tu choisiras qui y va` : "";
+    return `<button class="pal-opt${partial ? " partial" : ""}${done ? " done" : ""}${pal.pickable[pal.kb] === a.id ? " kb" : ""}" type="button" data-pal-pick="${a.id}"${full ? " disabled" : ""}>
+      <span class="dot" style="background:${col}"></span><span class="nm">${esc(a.nom)}</span><span class="st">${st}</span>
+      <span class="gauge"><i style="width:${Math.min(100, (a.cap - Math.max(0, f)) / a.cap * 100)}%;background:${full ? "var(--full)" : col}"></i></span>${why ? `<span class="why">${why}</span>` : ""}</button>`;
+  }).join("") || `<p class="sub" style="padding:10px">Aucun atelier ne correspond.</p>`;
+}
+function setCells(keys, rkey, aid) {
+  snapshot();
+  const d = ensureDraft(currentInst);
+  for (const k of keys) { const r = d.rows.find(x => x.key === k); if (!r) continue; if (aid) r.plan[rkey] = aid; else delete r.plan[rkey]; r.changed = true; r.auto?.delete(rkey); }
+  renderInstPanel(true); renderInstCards(); renderStats();
+}
+function palAssign(keys, rkey, aid) {
+  if (aid && aid !== PAUSE) { const f = freeFor(rkey, aid, keys); if (f < keys.length) { openSplit(keys, rkey, aid, Math.max(0, f)); return; } }
+  setCells(keys, rkey, aid);
+  const r = ROTS.find(x => x.key === rkey), who = keys.length > 1 ? `${pal?.title || "Groupe"} (${plural(keys.length, "résident")})` : rowsOf(keys)[0]?.nom;
+  closePal();
+  instMsg(aid ? `${who} : ${actName(aid)} à T${r.n}. Clique « Enregistrer » quand tu as fini.` : `${who} : T${r.n} vidée.`, "ok");
+}
+function openSplit(keys, rkey, aid, f) {
+  // Pré-sélection : d'abord ceux qui n'ont pas encore fait l'atelier, puis l'ordre de la liste.
+  const done = new Set(doneBy(aid, rkey, keys));
+  pal = { ...pal, mode: "split", keys, rkey, aid, f, chosen: new Set([...keys].sort((x, y) => done.has(x) - done.has(y)).slice(0, f)) };
+  if (!f) { paintRest(keys); return; }
+  paintSplit(); palPlace();
+}
+function paintSplit() {
+  const { keys, rkey, aid, f, chosen } = pal, a = ACT[aid], r = ROTS.find(x => x.key === rkey), names = rowsOf(keys);
+  $("pal").innerHTML = `<div class="pal-h">${PAL_X}<h3 id="pal-title">${esc(a.nom)} · T${r.n} <span>${plage(r)}</span></h3><p>Lieu ${esc(a.lieu)}</p></div>
+    <div class="pal-warn">⚠ <b>Il ne reste que ${plural(f, "place")}</b> pour ${plural(keys.length, "résident")}. Choisis qui va à ${esc(a.nom)} :</div>
+    <div class="pal-people">${names.map(m => `<button class="pal-pp" type="button" data-pal-person="${m.key}" aria-pressed="${chosen.has(m.key)}">${esc(m.nom)}${doneBy(aid, rkey, [m.key]).length ? " <small>déjà fait</small>" : ""}</button>`).join("")}</div>
+    <div class="pal-count${chosen.size === f ? " ok" : ""}">${chosen.size}/${f} sélectionné${chosen.size > 1 ? "s" : ""}${chosen.size < f ? ` · tu peux en choisir ${f - chosen.size} de plus` : ""}</div>
+    <div class="pal-f"><button class="btn small primary" type="button" id="pal-split-ok"${chosen.size ? "" : " disabled"}>Inscrire ${plural(chosen.size, "résident")} à ${esc(a.nom)}</button><button class="btn small" type="button" data-pal-close>Annuler</button></div>`;
+}
+function paintRest(rest) {
+  const { rkey, aid } = pal, a = ACT[aid], r = ROTS.find(x => x.key === rkey);
+  pal = { ...pal, mode: "rest", keys: rest };
+  // Suggestions : assez de places pour tous, même lieu (plateau) d'abord, jamais un atelier déjà fait.
+  const cands = ACTIVITES.filter(x => x.id !== aid && freeFor(rkey, x.id, rest) >= rest.length && !doneBy(x.id, rkey, rest).length)
+    .sort((x, y) => (x.lieu !== a.lieu) - (y.lieu !== a.lieu) || freeFor(rkey, y.id, rest) - freeFor(rkey, x.id, rest)).slice(0, 5);
+  $("pal").innerHTML = `<div class="pal-h">${PAL_X}<h3 id="pal-title">Et ${rest.length > 1 ? `les ${rest.length} autres` : "l'autre"} ? <span>T${r.n}</span></h3><p>${esc(rowsOf(rest).map(m => m.nom).join(", "))}</p></div>
+    <div class="pal-warn">${rest.length > 1 ? "Ils ne vont" : "Il ou elle ne va"} pas à ${esc(a.nom)}. Ateliers proposés, <b>même lieu (${esc(a.lieu)}) d'abord</b> :</div>
+    <div class="pal-sugg">${cands.map(x => `<button class="pal-opt" type="button" data-pal-rest="${x.id}"><span class="dot" style="background:${lieuVar(x.lieu)}"></span><span class="nm">${esc(x.nom)}</span>
+      <span class="st">${esc(x.lieu)}${x.lieu === a.lieu ? " · voisin" : ""} · ${freeFor(rkey, x.id, rest)} pl.</span></button>`).join("") || `<p class="sub" style="padding:6px 8px">Aucun atelier n'a assez de places pour eux.</p>`}</div>
+    <div class="pal-f"><button class="btn small" type="button" id="pal-other">Autre atelier…</button><button class="btn small" type="button" data-pal-rest="${PAUSE}">Pause / repos</button><button class="btn small" type="button" id="pal-later">Plus tard</button></div>`;
+  palPlace();
+}
+
+$("inst-grid").addEventListener("click", e => {
+  const tg = e.target.closest("[data-toggle]");
+  if (tg) { const k = currentInst + "|" + GRP_LIST[+tg.dataset.toggle]; openGrp.has(k) ? openGrp.delete(k) : openGrp.add(k); renderInstPanel(true); $("inst-grid").querySelector(`[data-toggle="${tg.dataset.toggle}"]`)?.focus(); return; }
+  const c = e.target.closest(".bcell"); if (!c || c.disabled || locked(currentInst)) return;
+  const rkey = c.dataset.t;
+  if (c.dataset.g !== undefined) {
+    const g = GRP_LIST[+c.dataset.g];
+    openPal(instRows(currentInst).filter(r => r.equipe === g).map(r => r.key), rkey, `[data-g="${c.dataset.g}"][data-t="${rkey}"]`, g);
+  } else {
+    const row = instRows(currentInst).find(r => r.key === c.dataset.p); if (!row) return;
+    openPal([row.key], rkey, `[data-p="${CSS.escape(c.dataset.p)}"][data-t="${rkey}"]`, row.nom);
+  }
+});
+$("pal").addEventListener("input", e => { if (e.target.id === "pal-q" && pal?.mode === "pick") { pal.q = e.target.value.trim().toLowerCase(); pal.kb = 0; paintPalOptions(); } });
+$("pal").addEventListener("keydown", e => {
+  if (pal?.mode !== "pick" || !pal.pickable?.length) return;
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); pal.kb = (pal.kb + (e.key === "ArrowDown" ? 1 : -1) + pal.pickable.length) % pal.pickable.length; paintPalOptions(); $("pal-opts").querySelector(".kb")?.scrollIntoView({ block: "nearest" }); }
+  if (e.key === "Enter") { e.preventDefault(); palAssign(pal.keys, pal.rkey, pal.pickable[pal.kb]); }
+});
+$("pal").addEventListener("click", e => {
+  if (!pal) return;
+  if (e.target.closest("[data-pal-close]")) { closePal(); return; }
+  const pick = e.target.closest("[data-pal-pick]");
+  if (pick && pal.mode === "pick" && !pick.disabled) { palAssign(pal.keys, pal.rkey, pick.dataset.palPick); return; }
+  const pp = e.target.closest("[data-pal-person]");
+  if (pp && pal.mode === "split") {
+    const k = pp.dataset.palPerson, ch = pal.chosen;
+    if (ch.has(k)) ch.delete(k); else if (ch.size < pal.f) ch.add(k); else { instMsg(`Maximum ${plural(pal.f, "place")} : retire d'abord quelqu'un de la sélection.`, "err"); return; }
+    paintSplit(); return;
+  }
+  if (e.target.id === "pal-split-ok" && pal.mode === "split") {
+    const { keys, rkey, aid, chosen } = pal;
+    setCells([...chosen], rkey, aid);
+    const rest = keys.filter(k => !chosen.has(k));
+    if (rest.length) paintRest(rest); else closePal();
+    return;
+  }
+  const rs = e.target.closest("[data-pal-rest]");
+  if (rs && pal.mode === "rest") { palAssign(pal.keys, pal.rkey, rs.dataset.palRest); return; }
+  if (e.target.id === "pal-other" && pal.mode === "rest") { openPal(pal.keys, pal.rkey, pal.anchor, plural(pal.keys.length, "résident")); return; }
+  if (e.target.id === "pal-later") { const n = pal.keys.length; closePal(); instMsg(`${plural(n, "résident")} à placer plus tard : la case reste en rouge.`); }
+});
+$("pal-veil").addEventListener("click", closePal);
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && pal) { e.preventDefault(); closePal(); return; }
+  if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === "z" && !pal && currentInst
+      && !$("view-institution").hidden && !$("inst-panel").hidden && !e.target.closest?.("input, textarea, select")) { e.preventDefault(); undo(); }
+});
+$("inst-undo").addEventListener("click", undo);
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-view-mode]"); if (!b) return;
+  instView = b.dataset.viewMode; try { localStorage.setItem("apa-vue", instView); } catch {}
+  renderInstPanel(true);
+});
+$("inst-expand").addEventListener("click", () => {
+  const all = GRP_LIST.every(g => openGrp.has(currentInst + "|" + g));
+  for (const g of GRP_LIST) all ? openGrp.delete(currentInst + "|" + g) : openGrp.add(currentInst + "|" + g);
+  renderInstPanel(true);
+});
 
 /* ---------- Inscription d'une institution (remplace le Google Form) ---------- */
 function renderRegBar() {
