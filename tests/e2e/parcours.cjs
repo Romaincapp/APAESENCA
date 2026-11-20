@@ -165,14 +165,21 @@ const AUDIT = () => {
     });
 
     await etape("Organisatrice : supprimer Boccia montre l'institution touchée, puis confirme", async () => {
+      await orga.locator("#sec-ateliers").scrollIntoViewIfNeeded(); await orga.evaluate(() => scrollBy(0, 300));
+      const avant = await orga.evaluate(() => scrollY);
       await orga.click('tr[data-at="boccia"] [data-at-del]');
       await attendreTexte(orga, "#adm-ateliers tr.warn", "Les Tilleuls : 4");
       await orga.click('tr[data-at="boccia"] [data-at-del]'); await admMsg("4 inscriptions effacées");
       check(!(await orga.$('tr[data-at="boccia"]')), "Boccia supprimé");
+      const apres = await orga.evaluate(() => scrollY);
+      check(avant > 300 && Math.abs(apres - avant) < 5, `la page ne remonte pas (avant ${avant}, après ${apres})`);
+      check(await orga.isVisible("#adm-msg"), "message visible en bas de l'écran");
     });
 
     await etape("Organisatrice : retirer la dernière tournante et renommer la journée", async () => {
       await orga.click("[data-h-del]"); await orga.click("#h-save"); await admMsg("4 tournantes");
+      const avantH = await orga.evaluate(() => scrollY);
+      check(avantH > 300, "on travaille plus bas dans la page");
       await orga.fill("#ji-nom", "Journée APA de Couvin (modifiée)"); await orga.click("#ji-save"); await admMsg("Informations enregistrées");
     });
 

@@ -268,6 +268,12 @@ table.edit tr.dirty td:first-child { box-shadow: inset 3px 0 0 var(--l3); }
 .row-acts { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
 .gen { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px 12px; align-items: end; }
 .impact { margin: 0; padding-left: 18px; }
+/* Message de l'espace organisateur : en bas de l'écran, sans faire défiler la page. */
+#adm-msg { position: fixed; z-index: 45; left: 50%; transform: translateX(-50%); bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  width: max-content; max-width: min(640px, calc(100vw - 32px)); margin: 0; padding: 10px 14px; border-radius: 8px; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--line-strong); border-left-width: 4px; box-shadow: 0 8px 24px rgba(0, 0, 0, .22); }
+#adm-msg:empty { display: none; }
+#adm-msg.ok { border-left-color: var(--ok); } #adm-msg.err { border-left-color: var(--full); }
 .code-box { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; }
 .code-box label.f { flex: 1 1 220px; }
 
@@ -599,7 +605,7 @@ table.list a:hover { text-decoration: underline; }
       <button class="btn small" type="button" id="adm-logout">Fermer l'espace</button>
     </aside>
     <div class="adm-main">
-      <p class="msg" id="adm-msg" role="status" aria-live="polite"></p>
+      <p class="msg" id="adm-msg" role="status" aria-live="polite" title="Cliquer pour fermer"></p>
       <div id="adm-view" class="adm-main"></div>
     </div>
   </div>
@@ -1951,7 +1957,13 @@ const admGet = () => { try { return sessionStorage.getItem("apa-admin"); } catch
 const admSet = v => { try { v ? sessionStorage.setItem("apa-admin", v) : sessionStorage.removeItem("apa-admin"); } catch {} };
 const slugify = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40);
 const toMin = t => minutes(t), toHM = m => String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
-function admMsg(t, kind) { const m = $("adm-msg"); m.textContent = t || ""; m.className = "msg " + (kind || ""); if (t) m.scrollIntoView({ block: "nearest" }); }
+// Le message s'affiche en bas de l'écran sans déplacer la page ; il disparaît seul ou d'un clic.
+let admMsgTimer;
+function admMsg(t, kind) {
+  const m = $("adm-msg"); m.textContent = t || ""; m.className = "msg " + (kind || "");
+  clearTimeout(admMsgTimer); if (t) admMsgTimer = setTimeout(() => { m.textContent = ""; }, kind === "err" ? 15000 : 6000);
+}
+$("adm-msg").addEventListener("click", () => { clearTimeout(admMsgTimer); $("adm-msg").textContent = ""; });
 async function admRpc(fn, args) {
   try { return await rpc(fn, { p_code_admin: ADM.code, ...args }); }
   catch (err) {
@@ -2003,7 +2015,11 @@ async function renderAdmView() {
   const j = ADM.list.find(x => x.id === ADM.sel); if (!j) { v.innerHTML = ""; return; }
   [ADM.detail, ADM.insts] = await Promise.all([admRpc("apa_admin_journee", { p_journee: j.id }), admRpc("apa_admin_institutions", { p_journee: j.id })]);
   if (!ADM.horaires) ADM.horaires = ADM.detail.tournantes.map(t => ({ debut: t.debut, fin: t.fin, demi: t.demi, inscrits: t.inscrits }));
+  const keep = ADM.keepScroll, y = scrollY; ADM.keepScroll = false;
   v.innerHTML = admJourneeHtml(j);
+  if (keep) scrollTo(0, y);                                    // après une modification : on reste au même endroit
+  else if (innerWidth <= 860) v.scrollIntoView({ block: "start" });   // téléphone : la liste est au-dessus, on montre la journée
+  else scrollTo(0, 0);
 }
 
 /* ---- Nouvelle journée ---- */
@@ -2153,7 +2169,7 @@ function admInstRow(i) {
 
 /* ---- Actions ---- */
 const admErr = err => admMsg(err.message || String(err), "err");
-const admReload = async (msg, kind) => { ADM.horaires = null; await admLoad(); if (msg) admMsg(msg, kind || "ok"); };
+const admReload = async (msg, kind) => { ADM.horaires = null; ADM.keepScroll = true; await admLoad(); if (msg) admMsg(msg, kind || "ok"); };
 const CODE_MOTS = ["tilleul", "maree", "citron", "falaise", "bouleau", "orage", "sapin", "riviere", "comete", "lavande", "granit", "colibri", "noisette", "brume", "cerise", "glacier", "hibou", "lagune"];
 const randInt = n => { try { return crypto.getRandomValues(new Uint32Array(1))[0] % n; } catch { return Math.floor(Math.random() * n); } };
 
