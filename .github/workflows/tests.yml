@@ -1,0 +1,48 @@
+name: Tests
+
+# Vérifie la base (pytest) et le parcours complet dans un navigateur (Playwright)
+# à chaque pull request et à chaque modification de main.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      APA_TEST_DSN: postgresql://postgres:postgres@localhost:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Outils Python
+        run: pip install "psycopg[binary]" pytest
+      - name: Tests de la base (schema.sql)
+        run: python -m pytest tests -q
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Navigateur de test
+        run: npm install --no-save playwright@1.48.2 && npx playwright install --with-deps chromium
+      - name: Parcours complet dans le navigateur
+        run: python tests/e2e/lancer.py
+      - name: Captures en cas d'échec
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: captures-echec
+          path: tests/e2e/resultats/

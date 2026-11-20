@@ -232,6 +232,45 @@ tr.pers-row .bcell { min-height: 30px; }
 .gbar i { display: block; height: 100%; background: var(--ok); }
 @media (prefers-reduced-motion: reduce) { .tgl { transition: none; } }
 
+/* Espace organisateur : liste des journées à gauche, éditeur à droite */
+.adm { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 18px; align-items: start; padding-block: 18px 60px; }
+@media (max-width: 860px) { .adm { grid-template-columns: 1fr; } }
+.adm-side { display: flex; flex-direction: column; gap: 10px; position: sticky; top: 12px; }
+@media (max-width: 860px) { .adm-side { position: static; } }
+.adm-list { display: flex; flex-direction: column; gap: 6px; }
+.adm-j { text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; cursor: pointer; font: inherit; color: var(--fg); display: flex; flex-direction: column; gap: 3px; }
+.adm-j:hover { border-color: var(--line-strong); }
+.adm-j[aria-current="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.adm-j b { font-weight: 500; }
+.adm-j small { color: var(--muted); font-size: 12px; }
+.adm-j .pills { display: flex; flex-wrap: wrap; gap: 4px; }
+.adm-main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.adm-sec { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.adm-sec > h3 { margin: 0; font-size: 15px; font-weight: 600; }
+.adm-sec > p.sub { font-size: 13px; }
+.adm-sec.danger { border-color: color-mix(in srgb, var(--full) 40%, var(--line)); }
+.adm-head { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline; justify-content: space-between; }
+.adm-head h2 { font-size: 22px; }
+textarea { font: 400 14px var(--f-body); color: var(--fg); background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 8px 10px; width: 100%; min-height: 64px; resize: vertical; }
+textarea:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+input[type=date], input[type=time] { font: 400 14px var(--f-body); color: var(--fg); background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 7px 10px; width: 100%; min-width: 0; }
+label.chk { display: inline-flex; gap: 8px; align-items: center; font-size: 14px; cursor: pointer; }
+label.chk input { width: 16px; height: 16px; accent-color: var(--accent); }
+table.edit { border-collapse: collapse; width: 100%; font-size: 13px; }
+table.edit th { text-align: left; font: 400 11px var(--f-mono); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); padding: 6px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+table.edit td { padding: 4px 6px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+table.edit td.n, table.edit th.n { text-align: right; font-variant-numeric: tabular-nums; }
+table.edit input { padding: 6px 8px; font-size: 13px; }
+table.edit input.w-s { width: 72px; } table.edit input.w-m { width: 110px; }
+table.edit tr.new td { background: var(--surface-2); }
+table.edit tr.warn td { background: var(--warn-soft); font-size: 13px; }
+table.edit tr.dirty td:first-child { box-shadow: inset 3px 0 0 var(--l3); }
+.row-acts { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
+.gen { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px 12px; align-items: end; }
+.impact { margin: 0; padding-left: 18px; }
+.code-box { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; }
+.code-box label.f { flex: 1 1 220px; }
+
 #pal-veil { position: fixed; inset: 0; z-index: 40; }
 .pal { position: fixed; z-index: 41; width: 340px; max-height: min(560px, calc(100vh - 24px)); display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px; box-shadow: 0 10px 30px rgba(0, 0, 0, .28), 0 2px 6px rgba(0, 0, 0, .12); overflow: hidden; }
 @media (max-width: 560px) { .pal { left: 0 !important; right: 0; bottom: 0; top: auto !important; width: auto; max-height: 80vh; border-radius: 14px 14px 0 0; padding-bottom: env(safe-area-inset-bottom, 0px); } }
@@ -344,7 +383,7 @@ table.list a:hover { text-decoration: underline; }
   <!-- ======== Menu des journées ======== -->
   <section id="home" hidden>
     <div class="events" id="events"><div class="empty-state">Chargement des journées…</div></div>
-    <p class="home-note">Les noms des participants ne sont visibles qu'avec le code d'accès de la journée.</p>
+    <p class="home-note">Les noms des participants ne sont visibles qu'avec le code d'accès de la journée. · <a class="back" href="#organisateur">Espace organisateur</a></p>
   </section>
 
   <form id="login" class="panel stack login" autocomplete="off" hidden>
@@ -414,6 +453,7 @@ table.list a:hover { text-decoration: underline; }
               <button class="btn small" type="button" id="inst-auto">Remplir automatiquement les cases vides</button>
               <button class="btn small danger" type="button" id="inst-clear">Tout vider</button>
               <button class="btn small primary" type="button" id="inst-pdf">Télécharger et verrouiller (PDF)</button>
+              <button class="btn small" type="button" id="inst-ics" title="Fichier agenda (.ics) : la journée avec le récapitulatif des inscriptions et le PDF du planning">📅 Ajouter à l'agenda</button>
             </div>
           </div>
           <div class="resa" id="inst-resa"></div>
@@ -542,6 +582,28 @@ table.list a:hover { text-decoration: underline; }
     </main>
   </div>
 </div>
+<!-- ======== Espace organisateur (…/#organisateur) ======== -->
+<section id="admin" class="wrap" hidden>
+  <form id="adm-login" class="panel stack login" autocomplete="off">
+    <h2>Espace organisateur</h2>
+    <p class="sub">Journées, codes d'accès, ateliers, horaires et institutions. Réservé à l'organisateur.</p>
+    <label class="f" for="adm-code"><span>Code organisateur</span><input type="password" id="adm-code" required autocomplete="current-password"></label>
+    <div class="actions"><button class="btn primary" type="submit" id="adm-login-btn">Ouvrir</button><span class="msg" id="adm-login-msg" role="status"></span></div>
+  </form>
+  <div class="adm" id="adm-app" hidden>
+    <aside class="adm-side">
+      <h2>Journées</h2>
+      <div class="adm-list" id="adm-list"></div>
+      <button class="btn primary small" type="button" id="adm-new">+ Nouvelle journée</button>
+      <button class="btn small" type="button" id="adm-pwd">Changer le code organisateur</button>
+      <button class="btn small" type="button" id="adm-logout">Fermer l'espace</button>
+    </aside>
+    <div class="adm-main">
+      <p class="msg" id="adm-msg" role="status" aria-live="polite"></p>
+      <div id="adm-view" class="adm-main"></div>
+    </div>
+  </div>
+</section>
 <div id="pal-veil" hidden></div>
 <div class="pal" id="pal" hidden role="dialog" aria-modal="true" aria-labelledby="pal-title"></div>
 
@@ -1039,7 +1101,7 @@ $("inst-save").addEventListener("click", async () => {
     // Le serveur revérifie toutes les places sous verrou : tout passe ou rien ne passe.
     await rpc("apa_enregistrer_lot", { p_journee: JOURNEE_ID, p_code: code, p_institution: currentInst, p_lignes: lignes });
     delete drafts[currentInst]; undoStack[currentInst] = [];
-    instMsg(`${INST[currentInst].nom} : ${lignes.length} participant${lignes.length > 1 ? "s" : ""} enregistré${lignes.length > 1 ? "s" : ""}.`, "ok");
+    instMsg(`${INST[currentInst].nom} : ${lignes.length} participant${lignes.length > 1 ? "s" : ""} enregistré${lignes.length > 1 ? "s" : ""}. Clique « 📅 Ajouter à l'agenda » pour mettre la journée dans ton agenda, avec le récapitulatif.`, "ok");
   } catch (err) {
     const hint = err.code === "P0001" ? " Une autre personne a pris ces places entre-temps : choisis une autre activité pour ces cases."
       : (err.code === "P0002" || err.code === "P0003") ? " Clique « Annuler mes modifications » pour voir la version à jour, puis refais tes changements." : "";
@@ -1416,6 +1478,75 @@ $("unlock-form").addEventListener("submit", async e => {
   } finally { $("unlock-btn").disabled = false; }
 });
 
+/* ---------- Ajouter à l'agenda (fichier .ics) ---------- */
+// Un événement pour la journée (de T1 à la dernière tournante, heure de Bruxelles), avec le récapitulatif
+// des inscriptions dans la description (lu par tous les agendas) et le PDF du planning en pièce jointe
+// (gardée par Outlook et l'agenda Apple ; Google Agenda l'ignore). Rappel la veille.
+const icsEsc = s => String(s).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
+function icsFold(line) {   // lignes de 75 octets maximum (norme iCalendar), sans couper un caractère accentué
+  const enc = new TextEncoder(); if (enc.encode(line).length <= 75) return line;
+  const out = []; let cur = "", n = 0;
+  for (const ch of line) { const b = enc.encode(ch).length; if (n + b > 75) { out.push(cur); cur = " "; n = 1; } cur += ch; n += b; }
+  out.push(cur); return out.join("\r\n");
+}
+const pageUrl = () => `${location.origin}${location.pathname}#${JOURNEE_ID}`;
+function recapText(inst, rows) {
+  const lab = v => v ? (v === PAUSE ? "Pause" : `${ACT[v]?.nom || "?"} (${ACT[v]?.lieu || ""})`) : "à compléter";
+  const line = (r, list) => {
+    const by = new Map(); for (const p of list) { const v = p.plan?.[r.key] || ""; if (!by.has(v)) by.set(v, []); by.get(v).push(p.nom); }
+    const parts = [...by.entries()];
+    return `T${r.n} ${plage(r)} : ` + (parts.length === 1 ? lab(parts[0][0]) : parts.map(([v, ns]) => `${lab(v)} : ${ns.join(", ")}`).join(" / "));
+  };
+  const L = [`${J.nom} · ${dateLong(J.date)}${J.lieu ? " · " + J.lieu : ""}`, `${inst.nom} : ${plural(rows.length, "participant")}`];
+  if (J.pause_midi) L.push(J.pause_midi);
+  for (const g of groupsOf(rows)) {
+    const ms = rows.filter(p => p.equipe === g);
+    L.push("", `${g} (${plural(ms.length, "résident")}) : ${ms.map(m => m.nom).join(", ")}`);
+    for (const r of ROTS) L.push(line(r, ms));
+  }
+  for (const p of rows.filter(p => !p.equipe)) { L.push("", p.nom); for (const r of ROTS) L.push(line(r, [p])); }
+  L.push("", `Planning en ligne : ${pageUrl()}`);
+  return L.join("\n");
+}
+function buildIcs(inst, rows, pdf) {
+  const d = J.date.replace(/-/g, ""), t = x => x.replace(":", "") + "00";
+  const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
+  const L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//APAESENCA//Inscriptions APA//FR", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
+    "BEGIN:VTIMEZONE", "TZID:Europe/Brussels",
+    "BEGIN:DAYLIGHT", "TZOFFSETFROM:+0100", "TZOFFSETTO:+0200", "TZNAME:CEST", "DTSTART:19700329T020000", "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU", "END:DAYLIGHT",
+    "BEGIN:STANDARD", "TZOFFSETFROM:+0200", "TZOFFSETTO:+0100", "TZNAME:CET", "DTSTART:19701025T030000", "RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU", "END:STANDARD",
+    "END:VTIMEZONE",
+    "BEGIN:VEVENT", `UID:${JOURNEE_ID}-${inst.id}@apaesenca`, `DTSTAMP:${stamp}`,
+    `DTSTART;TZID=Europe/Brussels:${d}T${t(ROTS[0].debut)}`, `DTEND;TZID=Europe/Brussels:${d}T${t(ROTS.at(-1).fin)}`,
+    `SUMMARY:${icsEsc(`${J.nom} · ${inst.nom}`)}`];
+  if (J.lieu) L.push(`LOCATION:${icsEsc(J.lieu)}`);
+  L.push(`DESCRIPTION:${icsEsc(recapText(inst, rows))}`, `URL:${pageUrl()}`);
+  if (pdf) L.push(`ATTACH;FMTTYPE=application/pdf;ENCODING=BASE64;VALUE=BINARY;X-FILENAME=${pdf.name};X-APPLE-FILENAME=${pdf.name}:${pdf.b64}`);
+  L.push("BEGIN:VALARM", "ACTION:DISPLAY", `DESCRIPTION:${icsEsc("Demain : " + J.nom)}`, "TRIGGER:-P1D", "END:VALARM", "END:VEVENT", "END:VCALENDAR");
+  return L.map(icsFold).join("\r\n") + "\r\n";
+}
+function downloadBlob(name, blob) {
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+$("inst-ics").addEventListener("click", async () => {
+  const id = currentInst, inst = INST[id]; if (!inst) return;
+  if (isDirty(id)) { instMsg("Enregistre d'abord tes modifications : l'agenda reprend le planning enregistré.", "err"); return; }
+  const rows = instPeople(id);
+  if (!rows.length || !ROTS.length) { instMsg("Aucun participant ou aucun horaire : rien à mettre dans l'agenda.", "err"); return; }
+  const btn = $("inst-ics"); btn.disabled = true; instMsg("Préparation du fichier agenda…");
+  let pdf = null;
+  try { const doc = await buildPlanningPdf(inst, rows); pdf = { name: `planning-${JOURNEE_ID}-${slug(inst.nom)}.pdf`, b64: doc.output("datauristring").split(",")[1] }; }
+  catch { pdf = null; }   // sans pièce jointe, le récapitulatif reste dans la description
+  try {
+    const nom = `${JOURNEE_ID}-${slug(inst.nom)}.ics`;
+    downloadBlob(nom, new Blob([buildIcs(inst, rows, pdf)], { type: "text/calendar;charset=utf-8" }));
+    const missing = rows.reduce((s, p) => s + (ROTS.length - filled(p.plan)), 0);
+    instMsg(`Fichier agenda téléchargé (${nom}) : ouvre-le pour ajouter la journée à ton agenda. Le récapitulatif des inscriptions est dans la description${pdf ? " et le planning PDF est joint (Google Agenda ne garde pas les pièces jointes)" : ""}.${missing ? ` Attention : ${plural(missing, "case")} encore à compléter.` : ""}`, missing ? "err" : "ok");
+  } catch (err) { instMsg("Le fichier agenda n'a pas pu être créé. Recharge la page et réessaie.", "err"); }
+  finally { btn.disabled = false; }
+});
+
 /* ---------- Planning PDF de l'institution ---------- */
 function loadScript(src) {
   return new Promise((ok, ko) => { const s = document.createElement("script"); s.src = src; s.onload = ok; s.onerror = () => ko(new Error(src)); document.head.appendChild(s); });
@@ -1431,11 +1562,132 @@ const INK = [23, 23, 23], MUTED = [107, 107, 107], RED = [196, 43, 43], REDSOFT 
 const slug = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase();
 
 function resetPdfConfirm() { const b = $("inst-pdf"); if (b.dataset.confirm) { delete b.dataset.confirm; b.textContent = locked(currentInst) ? "Télécharger le planning (PDF)" : "Télécharger et verrouiller (PDF)"; } }
+// Participants d'une institution, triés par groupe puis par nom (sans groupe en dernier).
+const instPeople = id => people.filter(p => p.institution === id).sort((a, b) => (!a.equipe - !b.equipe) || byNatural(a.equipe || "", b.equipe || "") || byName(a, b));
+// Planning PDF de l'institution (sert au téléchargement et à la pièce jointe de l'agenda).
+async function buildPlanningPdf(inst, rows) {
+  const jsPDF = await loadPdfLib();
+  const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+  const genere = new Date().toLocaleString("fr-BE", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+  const missing = rows.reduce((s, p) => s + (ROTS.length - filled(p.plan)), 0);
+  const cellTxt = a => !a ? "—" : a === PAUSE ? "Pause" : `${ACT[a]?.nom || "?"}\n${ACT[a]?.lieu || ""}`;
+  const fillFor = a => !a ? REDSOFT : a === PAUSE ? [240, 241, 245] : lieuRgb(ACT[a]?.lieu);
+  const header = (title, sub) => {
+    doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.setTextColor(...MUTED);
+    doc.text(`${J.nom} · ${dateLong(J.date)}`.toUpperCase(), 10, 10);
+    doc.setFontSize(16); doc.setTextColor(...INK); doc.text(title, 10, 18);
+    doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(...MUTED); doc.text(sub, 10, 24);
+  };
+
+  // 1) Vue d'ensemble : participants × tournantes
+  header(`Planning · ${inst.nom}`, [`${rows.length} participant${rows.length > 1 ? "s" : ""}`, rythme(), `généré le ${genere}`].filter(Boolean).join(" · "));
+  let y0 = 28;
+  if (missing) { doc.setTextColor(...RED); doc.setFont("helvetica", "bold"); doc.text(`Attention : ${missing} case${missing > 1 ? "s" : ""} pas encore remplie${missing > 1 ? "s" : ""} (en rouge).`, 10, 29); y0 = 32; }
+  const demis = [...new Set(ROTS.map(r => r.demi))];
+  doc.autoTable({
+    startY: y0, margin: { left: 8, right: 8 }, theme: "grid",
+    head: [
+      [{ content: "", styles: { fillColor: [255, 255, 255] } }, ...demis.map(d => ({ content: d, colSpan: ROTS.filter(r => r.demi === d).length, styles: { halign: "center" } }))],
+      ["Participant", ...ROTS.map(r => `T${r.n}\n${hm(r.debut)}`)],
+    ],
+    body: rows.map(p => [p.equipe ? `${p.nom}\n${p.equipe}` : p.nom, ...ROTS.map(r => cellTxt(p.plan?.[r.key]))]),
+    styles: { fontSize: 6.3, cellPadding: 0.9, valign: "middle", halign: "center", textColor: INK, lineColor: [221, 225, 236], lineWidth: 0.2, overflow: "linebreak" },
+    headStyles: { fillColor: HEAD, textColor: [255, 255, 255], fontStyle: "bold", fontSize: 7 },
+    columnStyles: { 0: { halign: "left", fontStyle: "bold", cellWidth: 30, fontSize: 7 } },
+    didParseCell: d => { if (d.section === "body" && d.column.index > 0) d.cell.styles.fillColor = fillFor(rows[d.row.index].plan?.[ROTS[d.column.index - 1].key]); },
+  });
+  const ly = doc.lastAutoTable.finalY + 5;
+  doc.setFontSize(7.5); doc.setFont("helvetica", "normal"); doc.setTextColor(...MUTED);
+  const leg = [...LIEUX.map(l => ["Lieu " + l, lieuRgb(l)]), ["Pause", [240, 241, 245]]];
+  leg.forEach(([t, c], i) => { doc.setFillColor(...c); doc.rect(10 + i * 26, ly - 3, 4, 4, "F"); doc.text(t, 16 + i * 26, ly); });
+  if (J.pause_midi) doc.text(J.pause_midi, 16 + leg.length * 26, ly);
+
+  // 2) Où sont mes participants ? (pour les accompagnants)
+  doc.addPage("a4", "landscape");
+  header(`Où sont les participants de ${inst.nom} ?`, "Pour les accompagnants : à chaque tournante, qui est dans quel lieu.");
+  const lieux = [...new Set(ACTIVITES.map(a => a.lieu))];
+  const where = (r, lieu) => ACTIVITES.filter(a => a.lieu === lieu).map(a => {
+    const ns = rows.filter(p => p.plan?.[r.key] === a.id).map(p => p.nom);
+    return ns.length ? `${a.nom} : ${ns.join(", ")}` : null;
+  }).filter(Boolean).join("\n");
+  doc.autoTable({
+    startY: 28, margin: { left: 8, right: 8 }, theme: "grid",
+    head: [["Tournante", ...lieux.map(l => "Lieu " + l), "Pause / non rempli"]],
+    body: ROTS.map(r => [`T${r.n}\n${plage(r)}`, ...lieux.map(l => where(r, l)),
+      [rows.filter(p => p.plan?.[r.key] === PAUSE).map(p => p.nom).join(", "), rows.filter(p => !p.plan?.[r.key]).map(p => p.nom + " (?)").join(", ")].filter(Boolean).join("\n")]),
+    styles: { fontSize: 7, cellPadding: 1.2, valign: "top", textColor: INK, lineColor: [221, 225, 236], lineWidth: 0.2 },
+    headStyles: { fillColor: HEAD, textColor: [255, 255, 255] },
+    columnStyles: { 0: { cellWidth: 24, fontStyle: "bold" } },
+    didParseCell: d => { if (d.section === "head" && d.column.index > 0 && d.column.index <= lieux.length) { d.cell.styles.fillColor = lieuRgb(lieux[d.column.index - 1]); d.cell.styles.textColor = INK; } },
+  });
+
+  // 2 bis) Planning par groupe : pour chaque éducateur·rice, où est son groupe à chaque tournante.
+  const grps = groupsOf(rows);
+  if (grps.length) {
+    doc.addPage("a4", "landscape");
+    header(`Planning par groupe · ${inst.nom}`, "Pour chaque éducateur·rice : l'activité de son groupe à chaque tournante.");
+    const grpCell = (g, r) => {
+      const ms = rows.filter(p => p.equipe === g), by = {};
+      for (const m of ms) (by[m.plan?.[r.key] || ""] ||= []).push(m.nom);
+      const keys = Object.keys(by);
+      if (keys.length === 1) return cellTxt(keys[0]);   // tout le groupe ensemble
+      return keys.map(a => `${a ? (a === PAUSE ? "Pause" : `${ACT[a]?.nom || "?"} (${ACT[a]?.lieu || ""})`) : "À compléter"} : ${by[a].join(", ")}`).join("\n");
+    };
+    doc.autoTable({
+      startY: 28, margin: { left: 8, right: 8 }, theme: "grid",
+      head: [["Tournante", ...grps.map(g => `${g}\n${plural(rows.filter(p => p.equipe === g).length, "résident")}`)]],
+      body: ROTS.map(r => [`T${r.n}\n${plage(r)}`, ...grps.map(g => grpCell(g, r))]),
+      styles: { fontSize: 7, cellPadding: 1.2, valign: "middle", textColor: INK, lineColor: [221, 225, 236], lineWidth: 0.2 },
+      headStyles: { fillColor: HEAD, textColor: [255, 255, 255] },
+      columnStyles: { 0: { cellWidth: 24, fontStyle: "bold" } },
+      didParseCell: d => {
+        if (d.section !== "body" || d.column.index === 0) return;
+        const ms = rows.filter(p => p.equipe === grps[d.column.index - 1]), vals = new Set(ms.map(m => m.plan?.[ROTS[d.row.index].key] || ""));
+        if (vals.size === 1) { d.cell.styles.fillColor = fillFor([...vals][0]); d.cell.styles.halign = "center"; d.cell.styles.fontStyle = "bold"; }
+      },
+    });
+  }
+
+  // 3) Une fiche par participant (4 par page, à découper)
+  const W = 210, H = 297, cw = 91, ch = 134, gx = (W - 2 * cw) / 3, gy = (H - 2 * ch) / 3;
+  rows.forEach((p, i) => {
+    if (i % 4 === 0) doc.addPage("a4", "portrait");
+    const x = gx + (i % 2) * (cw + gx), y = gy + (Math.floor(i / 2) % 2) * (ch + gy);
+    doc.setDrawColor(190, 196, 214); doc.setLineDashPattern([1.5, 1.5], 0); doc.rect(x, y, cw, ch); doc.setLineDashPattern([], 0);
+    doc.setFont("helvetica", "bold"); doc.setFontSize(7); doc.setTextColor(...MUTED); doc.text(`${J.nom} · ${jDate(J.date, { day: "numeric", month: "long" })}`.toUpperCase(), x + 4, y + 6);
+    doc.setFontSize(12); doc.setTextColor(...INK); doc.text(doc.splitTextToSize(p.nom, cw - 8)[0], x + 4, y + 12);
+    doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(...MUTED); doc.text([inst.nom, p.equipe].filter(Boolean).join(" · "), x + 4, y + 16.5);
+    const body = [];
+    ROTS.forEach((r, k) => {
+      if (k > 0 && r.demi !== ROTS[k - 1].demi) body.push([{ content: J.pause_midi || "Pause de midi", colSpan: 4, styles: { halign: "center", fontStyle: "italic", textColor: MUTED, fillColor: [255, 255, 255] } }]);
+      const a = p.plan?.[r.key];
+      body.push([`T${r.n}`, plage(r), !a ? "À compléter" : a === PAUSE ? "Pause / repos" : ACT[a]?.nom || "?", a && a !== PAUSE ? ACT[a]?.lieu || "" : ""]);
+    });
+    doc.autoTable({
+      startY: y + 19, margin: { left: x + 3 }, tableWidth: cw - 6, theme: "plain", pageBreak: "avoid",
+      body, styles: { fontSize: 7.5, cellPadding: { top: 0.9, bottom: 0.9, left: 1, right: 1 }, textColor: INK },
+      columnStyles: { 0: { cellWidth: 8, fontStyle: "bold" }, 1: { cellWidth: 21, textColor: MUTED }, 3: { cellWidth: 9, halign: "center", fontStyle: "bold" } },
+      didParseCell: d => {
+        if (d.cell.colSpan > 1) return;
+        const a = p.plan?.[d.row.raw?.[0]?.slice?.(1) || ""];
+        if (d.column.index >= 2) d.cell.styles.fillColor = fillFor(a);
+        if (!a && d.column.index === 2) d.cell.styles.textColor = RED;
+      },
+    });
+  });
+
+  const n = doc.getNumberOfPages();
+  for (let i = 1; i <= n; i++) {
+    doc.setPage(i); doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(...MUTED);
+    const pw = doc.internal.pageSize.getWidth(), ph = doc.internal.pageSize.getHeight();
+    doc.text(`${inst.nom} · page ${i}/${n}`, pw - 8, ph - 4, { align: "right" });
+  }
+  return doc;
+}
 $("inst-pdf").addEventListener("click", async () => {
   const id = currentInst, inst = INST[id]; if (!inst) return;
   if (isDirty(id)) { instMsg("Enregistre d'abord tes modifications : le PDF reprend le planning enregistré.", "err"); return; }
-  // Triés par groupe puis par nom (sans groupe en dernier).
-  const rows = people.filter(p => p.institution === id).sort((a, b) => (!a.equipe - !b.equipe) || byNatural(a.equipe || "", b.equipe || "") || byName(a, b));
+  const rows = instPeople(id);
   if (!rows.length) { instMsg("Aucun participant à mettre dans le planning.", "err"); return; }
   const btn = $("inst-pdf");
   // Premier clic : on explique que le planning sera verrouillé. Deuxième clic : on verrouille puis on télécharge.
@@ -1456,122 +1708,7 @@ $("inst-pdf").addEventListener("click", async () => {
   } catch (err) { btn.disabled = false; instMsg(err.message, "err"); return; }
   instMsg("Préparation du PDF…");
   try {
-    const jsPDF = await loadPdfLib();
-    const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
-    const genere = new Date().toLocaleString("fr-BE", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
-    const missing = rows.reduce((s, p) => s + (ROTS.length - filled(p.plan)), 0);
-    const cellTxt = a => !a ? "—" : a === PAUSE ? "Pause" : `${ACT[a]?.nom || "?"}\n${ACT[a]?.lieu || ""}`;
-    const fillFor = a => !a ? REDSOFT : a === PAUSE ? [240, 241, 245] : lieuRgb(ACT[a]?.lieu);
-    const header = (title, sub) => {
-      doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.setTextColor(...MUTED);
-      doc.text(`${J.nom} · ${dateLong(J.date)}`.toUpperCase(), 10, 10);
-      doc.setFontSize(16); doc.setTextColor(...INK); doc.text(title, 10, 18);
-      doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(...MUTED); doc.text(sub, 10, 24);
-    };
-
-    // 1) Vue d'ensemble : participants × tournantes
-    header(`Planning · ${inst.nom}`, [`${rows.length} participant${rows.length > 1 ? "s" : ""}`, rythme(), `généré le ${genere}`].filter(Boolean).join(" · "));
-    let y0 = 28;
-    if (missing) { doc.setTextColor(...RED); doc.setFont("helvetica", "bold"); doc.text(`Attention : ${missing} case${missing > 1 ? "s" : ""} pas encore remplie${missing > 1 ? "s" : ""} (en rouge).`, 10, 29); y0 = 32; }
-    const demis = [...new Set(ROTS.map(r => r.demi))];
-    doc.autoTable({
-      startY: y0, margin: { left: 8, right: 8 }, theme: "grid",
-      head: [
-        [{ content: "", styles: { fillColor: [255, 255, 255] } }, ...demis.map(d => ({ content: d, colSpan: ROTS.filter(r => r.demi === d).length, styles: { halign: "center" } }))],
-        ["Participant", ...ROTS.map(r => `T${r.n}\n${hm(r.debut)}`)],
-      ],
-      body: rows.map(p => [p.equipe ? `${p.nom}\n${p.equipe}` : p.nom, ...ROTS.map(r => cellTxt(p.plan?.[r.key]))]),
-      styles: { fontSize: 6.3, cellPadding: 0.9, valign: "middle", halign: "center", textColor: INK, lineColor: [221, 225, 236], lineWidth: 0.2, overflow: "linebreak" },
-      headStyles: { fillColor: HEAD, textColor: [255, 255, 255], fontStyle: "bold", fontSize: 7 },
-      columnStyles: { 0: { halign: "left", fontStyle: "bold", cellWidth: 30, fontSize: 7 } },
-      didParseCell: d => { if (d.section === "body" && d.column.index > 0) d.cell.styles.fillColor = fillFor(rows[d.row.index].plan?.[ROTS[d.column.index - 1].key]); },
-    });
-    const ly = doc.lastAutoTable.finalY + 5;
-    doc.setFontSize(7.5); doc.setFont("helvetica", "normal"); doc.setTextColor(...MUTED);
-    const leg = [...LIEUX.map(l => ["Lieu " + l, lieuRgb(l)]), ["Pause", [240, 241, 245]]];
-    leg.forEach(([t, c], i) => { doc.setFillColor(...c); doc.rect(10 + i * 26, ly - 3, 4, 4, "F"); doc.text(t, 16 + i * 26, ly); });
-    if (J.pause_midi) doc.text(J.pause_midi, 16 + leg.length * 26, ly);
-
-    // 2) Où sont mes participants ? (pour les accompagnants)
-    doc.addPage("a4", "landscape");
-    header(`Où sont les participants de ${inst.nom} ?`, "Pour les accompagnants : à chaque tournante, qui est dans quel lieu.");
-    const lieux = [...new Set(ACTIVITES.map(a => a.lieu))];
-    const where = (r, lieu) => ACTIVITES.filter(a => a.lieu === lieu).map(a => {
-      const ns = rows.filter(p => p.plan?.[r.key] === a.id).map(p => p.nom);
-      return ns.length ? `${a.nom} : ${ns.join(", ")}` : null;
-    }).filter(Boolean).join("\n");
-    doc.autoTable({
-      startY: 28, margin: { left: 8, right: 8 }, theme: "grid",
-      head: [["Tournante", ...lieux.map(l => "Lieu " + l), "Pause / non rempli"]],
-      body: ROTS.map(r => [`T${r.n}\n${plage(r)}`, ...lieux.map(l => where(r, l)),
-        [rows.filter(p => p.plan?.[r.key] === PAUSE).map(p => p.nom).join(", "), rows.filter(p => !p.plan?.[r.key]).map(p => p.nom + " (?)").join(", ")].filter(Boolean).join("\n")]),
-      styles: { fontSize: 7, cellPadding: 1.2, valign: "top", textColor: INK, lineColor: [221, 225, 236], lineWidth: 0.2 },
-      headStyles: { fillColor: HEAD, textColor: [255, 255, 255] },
-      columnStyles: { 0: { cellWidth: 24, fontStyle: "bold" } },
-      didParseCell: d => { if (d.section === "head" && d.column.index > 0 && d.column.index <= lieux.length) { d.cell.styles.fillColor = lieuRgb(lieux[d.column.index - 1]); d.cell.styles.textColor = INK; } },
-    });
-
-    // 2 bis) Planning par groupe : pour chaque éducateur·rice, où est son groupe à chaque tournante.
-    const grps = groupsOf(rows);
-    if (grps.length) {
-      doc.addPage("a4", "landscape");
-      header(`Planning par groupe · ${inst.nom}`, "Pour chaque éducateur·rice : l'activité de son groupe à chaque tournante.");
-      const grpCell = (g, r) => {
-        const ms = rows.filter(p => p.equipe === g), by = {};
-        for (const m of ms) (by[m.plan?.[r.key] || ""] ||= []).push(m.nom);
-        const keys = Object.keys(by);
-        if (keys.length === 1) return cellTxt(keys[0]);   // tout le groupe ensemble
-        return keys.map(a => `${a ? (a === PAUSE ? "Pause" : `${ACT[a]?.nom || "?"} (${ACT[a]?.lieu || ""})`) : "À compléter"} : ${by[a].join(", ")}`).join("\n");
-      };
-      doc.autoTable({
-        startY: 28, margin: { left: 8, right: 8 }, theme: "grid",
-        head: [["Tournante", ...grps.map(g => `${g}\n${plural(rows.filter(p => p.equipe === g).length, "résident")}`)]],
-        body: ROTS.map(r => [`T${r.n}\n${plage(r)}`, ...grps.map(g => grpCell(g, r))]),
-        styles: { fontSize: 7, cellPadding: 1.2, valign: "middle", textColor: INK, lineColor: [221, 225, 236], lineWidth: 0.2 },
-        headStyles: { fillColor: HEAD, textColor: [255, 255, 255] },
-        columnStyles: { 0: { cellWidth: 24, fontStyle: "bold" } },
-        didParseCell: d => {
-          if (d.section !== "body" || d.column.index === 0) return;
-          const ms = rows.filter(p => p.equipe === grps[d.column.index - 1]), vals = new Set(ms.map(m => m.plan?.[ROTS[d.row.index].key] || ""));
-          if (vals.size === 1) { d.cell.styles.fillColor = fillFor([...vals][0]); d.cell.styles.halign = "center"; d.cell.styles.fontStyle = "bold"; }
-        },
-      });
-    }
-
-    // 3) Une fiche par participant (4 par page, à découper)
-    const W = 210, H = 297, cw = 91, ch = 134, gx = (W - 2 * cw) / 3, gy = (H - 2 * ch) / 3;
-    rows.forEach((p, i) => {
-      if (i % 4 === 0) doc.addPage("a4", "portrait");
-      const x = gx + (i % 2) * (cw + gx), y = gy + (Math.floor(i / 2) % 2) * (ch + gy);
-      doc.setDrawColor(190, 196, 214); doc.setLineDashPattern([1.5, 1.5], 0); doc.rect(x, y, cw, ch); doc.setLineDashPattern([], 0);
-      doc.setFont("helvetica", "bold"); doc.setFontSize(7); doc.setTextColor(...MUTED); doc.text(`${J.nom} · ${jDate(J.date, { day: "numeric", month: "long" })}`.toUpperCase(), x + 4, y + 6);
-      doc.setFontSize(12); doc.setTextColor(...INK); doc.text(doc.splitTextToSize(p.nom, cw - 8)[0], x + 4, y + 12);
-      doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(...MUTED); doc.text([inst.nom, p.equipe].filter(Boolean).join(" · "), x + 4, y + 16.5);
-      const body = [];
-      ROTS.forEach((r, k) => {
-        if (k > 0 && r.demi !== ROTS[k - 1].demi) body.push([{ content: J.pause_midi || "Pause de midi", colSpan: 4, styles: { halign: "center", fontStyle: "italic", textColor: MUTED, fillColor: [255, 255, 255] } }]);
-        const a = p.plan?.[r.key];
-        body.push([`T${r.n}`, plage(r), !a ? "À compléter" : a === PAUSE ? "Pause / repos" : ACT[a]?.nom || "?", a && a !== PAUSE ? ACT[a]?.lieu || "" : ""]);
-      });
-      doc.autoTable({
-        startY: y + 19, margin: { left: x + 3 }, tableWidth: cw - 6, theme: "plain", pageBreak: "avoid",
-        body, styles: { fontSize: 7.5, cellPadding: { top: 0.9, bottom: 0.9, left: 1, right: 1 }, textColor: INK },
-        columnStyles: { 0: { cellWidth: 8, fontStyle: "bold" }, 1: { cellWidth: 21, textColor: MUTED }, 3: { cellWidth: 9, halign: "center", fontStyle: "bold" } },
-        didParseCell: d => {
-          if (d.cell.colSpan > 1) return;
-          const a = p.plan?.[d.row.raw?.[0]?.slice?.(1) || ""];
-          if (d.column.index >= 2) d.cell.styles.fillColor = fillFor(a);
-          if (!a && d.column.index === 2) d.cell.styles.textColor = RED;
-        },
-      });
-    });
-
-    const n = doc.getNumberOfPages();
-    for (let i = 1; i <= n; i++) {
-      doc.setPage(i); doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(...MUTED);
-      const pw = doc.internal.pageSize.getWidth(), ph = doc.internal.pageSize.getHeight();
-      doc.text(`${inst.nom} · page ${i}/${n}`, pw - 8, ph - 4, { align: "right" });
-    }
+    const doc = await buildPlanningPdf(inst, rows);
     const fichier = `planning-${JOURNEE_ID}-${slug(inst.nom)}.pdf`;
     doc.save(fichier);
     instMsg(`PDF téléchargé : ${fichier}. Le planning est verrouillé.`, "ok");
@@ -1807,6 +1944,343 @@ function show(view) {
 }
 document.querySelector("nav.tabs").addEventListener("click", e => { const b = e.target.closest("button"); if (b) show(b.dataset.view); });
 
+/* ================= ESPACE ORGANISATEUR ================= */
+// Tout passe par des fonctions SQL qui vérifient le code organisateur (gardé pour l'onglet en cours).
+const ADM = { code: null, list: [], sel: null, detail: null, insts: [], view: "journee", horaires: null, openInst: null };
+const admGet = () => { try { return sessionStorage.getItem("apa-admin"); } catch { return null; } };
+const admSet = v => { try { v ? sessionStorage.setItem("apa-admin", v) : sessionStorage.removeItem("apa-admin"); } catch {} };
+const slugify = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40);
+const toMin = t => minutes(t), toHM = m => String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
+function admMsg(t, kind) { const m = $("adm-msg"); m.textContent = t || ""; m.className = "msg " + (kind || ""); if (t) m.scrollIntoView({ block: "nearest" }); }
+async function admRpc(fn, args) {
+  try { return await rpc(fn, { p_code_admin: ADM.code, ...args }); }
+  catch (err) {
+    if (err.code === "28000") { admSet(null); ADM.code = null; $("adm-app").hidden = true; $("adm-login").hidden = false; $("adm-login-msg").textContent = "Code organisateur incorrect ou changé."; $("adm-login-msg").className = "msg err"; }
+    throw err;
+  }
+}
+async function startAdmin() {
+  $("back").hidden = false;
+  document.title = "Espace organisateur · APAESENCA";
+  $("eyebrow").textContent = "Organisateur"; $("title").textContent = "Espace organisateur";
+  $("subtitle").textContent = "Crée et modifie les journées, leurs codes d'accès, ateliers, horaires et institutions.";
+  $("admin").hidden = false;
+  ADM.code = admGet();
+  if (ADM.code) await admLoad(); else $("adm-code").focus();
+}
+$("adm-login").addEventListener("submit", async e => {
+  e.preventDefault();
+  ADM.code = $("adm-code").value; $("adm-login-btn").disabled = true;
+  try { await admLoad(); admSet(ADM.code); $("adm-code").value = ""; }
+  catch (err) { $("adm-login-msg").textContent = err.code === "28000" ? "Code organisateur incorrect." : err.message; $("adm-login-msg").className = "msg err"; }
+  finally { $("adm-login-btn").disabled = false; }
+});
+async function admLoad(sel) {
+  ADM.list = await admRpc("apa_admin_journees", {});
+  $("adm-login").hidden = true; $("adm-app").hidden = false;
+  if (sel !== undefined) ADM.sel = sel;
+  if (ADM.sel && !ADM.list.some(j => j.id === ADM.sel)) ADM.sel = null;
+  if (!ADM.sel && ADM.view === "journee") ADM.sel = ADM.list[0]?.id || null;
+  if (!ADM.sel && ADM.view === "journee") ADM.view = "nouvelle";
+  renderAdmList();
+  await renderAdmView();
+}
+function renderAdmList() {
+  $("adm-list").innerHTML = ADM.list.map(j => `<button type="button" class="adm-j" data-adm-j="${esc(j.id)}" aria-current="${ADM.view === "journee" && j.id === ADM.sel}">
+    <b>${esc(j.nom)}</b><small>${esc(dateLong(j.date))}</small>
+    <span class="pills">${j.ouverte ? `<span class="pill ok">ouverte</span>` : `<span class="pill">fermée</span>`}${j.visible ? "" : `<span class="pill warn">cachée</span>`}<span class="pill">${plural(j.nb_participants, "participant")}</span></span></button>`).join("")
+    || `<p class="sub">Aucune journée. Crée la première.</p>`;
+}
+$("adm-list").addEventListener("click", e => { const b = e.target.closest("[data-adm-j]"); if (!b) return; ADM.sel = b.dataset.admJ; ADM.view = "journee"; ADM.horaires = null; ADM.openInst = null; admMsg(""); renderAdmList(); renderAdmView(); });
+$("adm-new").addEventListener("click", () => { ADM.view = "nouvelle"; admMsg(""); renderAdmList(); renderAdmView(); });
+$("adm-pwd").addEventListener("click", () => { ADM.view = "code"; admMsg(""); renderAdmList(); renderAdmView(); });
+$("adm-logout").addEventListener("click", () => { admSet(null); ADM.code = null; $("adm-app").hidden = true; $("adm-login").hidden = false; $("adm-login-msg").textContent = ""; });
+
+async function renderAdmView() {
+  const v = $("adm-view");
+  if (ADM.view === "nouvelle") { v.innerHTML = admNewHtml(); return; }
+  if (ADM.view === "code") { v.innerHTML = admCodeHtml(); return; }
+  const j = ADM.list.find(x => x.id === ADM.sel); if (!j) { v.innerHTML = ""; return; }
+  [ADM.detail, ADM.insts] = await Promise.all([admRpc("apa_admin_journee", { p_journee: j.id }), admRpc("apa_admin_institutions", { p_journee: j.id })]);
+  if (!ADM.horaires) ADM.horaires = ADM.detail.tournantes.map(t => ({ debut: t.debut, fin: t.fin, demi: t.demi, inscrits: t.inscrits }));
+  v.innerHTML = admJourneeHtml(j);
+}
+
+/* ---- Nouvelle journée ---- */
+function admNewHtml() {
+  return `<section class="adm-sec"><h3>Nouvelle journée</h3>
+    <form id="adm-new-form" class="stack" autocomplete="off" novalidate>
+      <div class="form-grid">
+        <label class="f wide" for="nj-nom"><span>Nom de la journée <span class="req">*</span></span><input type="text" id="nj-nom" maxlength="120" placeholder="ex. Journée APA de Couvin" required></label>
+        <label class="f" for="nj-date"><span>Date <span class="req">*</span></span><input type="date" id="nj-date" required></label>
+        <label class="f" for="nj-lieu"><span>Lieu</span><input type="text" id="nj-lieu" maxlength="120" placeholder="ex. Couvin"></label>
+        <label class="f" for="nj-id"><span>Identifiant dans l'adresse <span class="req">*</span> <small>(…/#identifiant, ne change plus ensuite)</small></span><input type="text" id="nj-id" maxlength="40" placeholder="couvin-2027" required></label>
+        <label class="f" for="nj-src"><span>Ateliers et horaires</span><select id="nj-src"><option value="">Journée vide : je les créerai</option>${ADM.list.map(j => `<option value="${esc(j.id)}">Copier ceux de « ${esc(j.nom)} »</option>`).join("")}</select></label>
+      </div>
+      <div class="actions"><button class="btn primary" type="submit" id="nj-save">Créer la journée</button></div>
+    </form></section>`;
+}
+function suggestId() {
+  const d = $("nj-date")?.value, base = slugify($("nj-lieu").value || $("nj-nom").value).slice(0, 34);
+  if (!$("nj-id").dataset.touched) $("nj-id").value = base ? base + (d ? "-" + d.slice(0, 4) : "") : "";
+}
+
+/* ---- Code organisateur ---- */
+function admCodeHtml() {
+  return `<section class="adm-sec"><h3>Changer le code organisateur</h3>
+    <p class="sub">Ce code ouvre l'espace organisateur, les coordonnées des institutions et le déverrouillage des plannings. 8 caractères minimum.</p>
+    <form id="adm-code-form" class="stack" autocomplete="off">
+      <div class="form-grid three">
+        <label class="f" for="ac-old"><span>Code actuel</span><input type="password" id="ac-old" required autocomplete="current-password"></label>
+        <label class="f" for="ac-new"><span>Nouveau code</span><input type="password" id="ac-new" required minlength="8" autocomplete="new-password"></label>
+        <label class="f" for="ac-new2"><span>Nouveau code, encore</span><input type="password" id="ac-new2" required minlength="8" autocomplete="new-password"></label>
+      </div>
+      <div class="actions"><button class="btn primary" type="submit" id="ac-save">Changer le code</button></div>
+    </form></section>`;
+}
+
+/* ---- Une journée ---- */
+function admJourneeHtml(j) {
+  const d = ADM.detail, pi = placesInfo(j);
+  const lieux = [...new Set(d.ateliers.map(a => a.lieu))];
+  return `<div class="adm-head"><h2>${esc(j.nom)}</h2><a class="back" href="#${esc(j.id)}">Ouvrir la page de la journée →</a></div>
+  <p class="sub">${esc(dateLong(j.date))}${j.lieu ? " · " + esc(j.lieu) : ""} · ${plural(j.nb_institutions, "institution")} · ${plural(j.nb_participants, "participant")}${pi ? " · " + placesTxt(pi) : ""} · adresse : <code>#${esc(j.id)}</code></p>
+
+  <section class="adm-sec" id="sec-infos"><h3>Informations</h3>
+    <form id="adm-info" class="stack" autocomplete="off" novalidate>
+      <div class="form-grid">
+        <label class="f wide" for="ji-nom"><span>Nom <span class="req">*</span></span><input type="text" id="ji-nom" maxlength="120" value="${esc(j.nom)}" required></label>
+        <label class="f" for="ji-date"><span>Date <span class="req">*</span></span><input type="date" id="ji-date" value="${esc(j.date)}" required></label>
+        <label class="f" for="ji-lieu"><span>Lieu</span><input type="text" id="ji-lieu" maxlength="120" value="${esc(j.lieu)}"></label>
+        <label class="f" for="ji-max"><span>Places maximum <small>(vide = pas de limite${j.places_prises ? `, déjà ${j.places_prises} prises` : ""})</small></span><input type="number" id="ji-max" min="1" max="5000" value="${j.places_max ?? ""}" inputmode="numeric"></label>
+        <label class="f" for="ji-pause"><span>Pause de midi</span><input type="text" id="ji-pause" maxlength="200" value="${esc(j.pause_midi)}" placeholder="ex. Dîner pour tous à 12h05 · reprise à 12h50"></label>
+        <label class="f wide" for="ji-acces"><span>Mention d'accès <small>(affichée dans le menu)</small></span><input type="text" id="ji-acces" maxlength="200" value="${esc(j.acces)}" placeholder="ex. Réservé aux institutions de la région de Chimay"></label>
+        <label class="f wide" for="ji-desc"><span>Texte d'accueil <small>(sinon : le rythme des tournantes)</small></span><textarea id="ji-desc" maxlength="1000">${esc(j.description)}</textarea></label>
+      </div>
+      <label class="chk"><input type="checkbox" id="ji-visible"${j.visible ? " checked" : ""}> Afficher cette journée dans le menu d'accueil</label>
+      <div class="actions"><button class="btn primary" type="submit" id="ji-save">Enregistrer les informations</button></div>
+    </form></section>
+
+  <section class="adm-sec" id="sec-acces"><h3>Code d'accès</h3>
+    <p class="sub">${j.ouverte ? "✓ <b>Inscriptions ouvertes</b> : un code est défini. Il ne peut pas être relu ; tu peux le remplacer." : "Inscriptions <b>fermées</b> : la journée est dans le menu, mais personne ne peut entrer."} Évite le nom ou le lieu de la journée : ils sont visibles par tous.</p>
+    <form id="adm-acces" class="code-box" autocomplete="off">
+      <label class="f" for="ja-code"><span>${j.ouverte ? "Nouveau code" : "Code d'accès"} <small>(6 caractères minimum)</small></span><input type="text" id="ja-code" minlength="6" maxlength="60" spellcheck="false" autocomplete="off"></label>
+      <button class="btn small" type="button" id="ja-gen">Proposer un code</button>
+      <button class="btn small primary" type="submit" id="ja-save">${j.ouverte ? "Remplacer le code" : "Ouvrir les inscriptions"}</button>
+      ${j.ouverte ? `<button class="btn small danger" type="button" id="ja-close">Fermer les inscriptions</button>` : ""}
+    </form>
+    <p class="sub" id="ja-note" hidden></p></section>
+
+  <section class="adm-sec" id="sec-ateliers"><h3>Ateliers <span class="pill">${d.ateliers.length}</span></h3>
+    <p class="sub">Les ateliers d'un même lieu (plateau) sont proposés ensemble quand un groupe doit être divisé. « Pause / repos » existe toujours, sans limite.</p>
+    <div class="scroll"><table class="edit" id="adm-ateliers"><thead><tr><th>Atelier</th><th>Lieu</th><th class="n">Places</th><th class="n">Ordre</th><th class="n" title="Inscrits au maximum sur une tournante / total">Inscrits</th><th></th></tr></thead><tbody>
+    ${d.ateliers.map(a => `<tr data-at="${esc(a.id)}"><td><input type="text" data-f="nom" value="${esc(a.nom)}" maxlength="120" aria-label="Nom de l'atelier"></td>
+      <td><input type="text" class="w-s" data-f="lieu" value="${esc(a.lieu)}" maxlength="20" list="adm-lieux" aria-label="Lieu"></td>
+      <td class="n"><input type="number" class="w-s" data-f="cap" value="${a.cap}" min="1" max="500" aria-label="Places"></td>
+      <td class="n"><input type="number" class="w-s" data-f="ordre" value="${a.ordre}" aria-label="Ordre"></td>
+      <td class="n" title="${a.inscrits_max} au plus sur une tournante, ${a.inscrits} au total">${a.inscrits_max} · ${a.inscrits}</td>
+      <td><div class="row-acts"><button class="btn small primary" type="button" data-at-save disabled>Enregistrer</button><button class="btn small danger" type="button" data-at-del>Supprimer</button></div></td></tr>`).join("")}
+    <tr class="new" data-at=""><td><input type="text" data-f="nom" maxlength="120" placeholder="Nouvel atelier" aria-label="Nom du nouvel atelier"></td>
+      <td><input type="text" class="w-s" data-f="lieu" maxlength="20" list="adm-lieux" placeholder="${esc(lieux[0] || "P1")}" aria-label="Lieu du nouvel atelier"></td>
+      <td class="n"><input type="number" class="w-s" data-f="cap" min="1" max="500" placeholder="8" aria-label="Places du nouvel atelier"></td>
+      <td class="n"><input type="number" class="w-s" data-f="ordre" placeholder="auto" aria-label="Ordre du nouvel atelier"></td><td></td>
+      <td><div class="row-acts"><button class="btn small primary" type="button" data-at-add>+ Ajouter</button></div></td></tr>
+    </tbody></table></div><datalist id="adm-lieux">${lieux.map(l => `<option value="${esc(l)}">`).join("")}</datalist></section>
+
+  <section class="adm-sec" id="sec-horaires"><h3>Horaires <span class="pill">${plural(d.tournantes.length, "tournante")}</span></h3>
+    <p class="sub">Le générateur prépare un aperçu : rien n'est enregistré avant « Enregistrer les horaires ». Les inscriptions restent attachées au numéro (T1, T2…) ; si tu retires des tournantes, leurs inscriptions sont effacées après confirmation.</p>
+    ${admGenHtml()}
+    <div class="scroll"><table class="edit" id="adm-horaires"><thead><tr><th>Tournante</th><th>Début</th><th>Fin</th><th>Moment</th><th class="n">Inscrits</th><th></th></tr></thead><tbody>${admHorairesRows()}</tbody></table></div>
+    <div class="actions"><button class="btn small" type="button" id="h-add">+ Ajouter une tournante</button><button class="btn primary" type="button" id="h-save">Enregistrer les horaires</button><span class="msg" id="h-msg" role="status"></span></div>
+  </section>
+
+  <section class="adm-sec" id="sec-insts"><h3>Institutions <span class="pill">${ADM.insts.length}</span></h3>
+    ${ADM.insts.length ? `<div class="scroll"><table class="edit" id="adm-insts"><thead><tr><th>Institution</th><th>Responsable</th><th>Contact</th><th class="n">Places</th><th class="n">Noms</th><th class="n">Éduc.</th><th class="n">PMR</th><th></th></tr></thead><tbody>${ADM.insts.map(admInstRow).join("")}</tbody></table></div>` : `<p class="sub">Aucune institution inscrite. Elles s'inscrivent elles-mêmes depuis la page de la journée.</p>`}
+  </section>
+
+  <section class="adm-sec" id="sec-dup"><h3>Dupliquer cette journée</h3>
+    <p class="sub">Copie les informations, ateliers et horaires (sans institutions, inscriptions ni code d'accès).</p>
+    <form id="adm-dup" class="form-grid three" autocomplete="off" novalidate>
+      <label class="f" for="dup-nom"><span>Nom</span><input type="text" id="dup-nom" maxlength="120" value="${esc(j.nom)}"></label>
+      <label class="f" for="dup-date"><span>Date</span><input type="date" id="dup-date"></label>
+      <label class="f" for="dup-id"><span>Identifiant</span><input type="text" id="dup-id" maxlength="40" placeholder="${esc(slugify(j.lieu || j.nom))}-2028"></label>
+      <div class="actions wide"><button class="btn primary small" type="submit" id="dup-save">Dupliquer</button></div>
+    </form></section>
+
+  <section class="adm-sec danger" id="sec-del"><h3>Supprimer cette journée</h3>
+    <p class="sub">Possible seulement sans institution ni participant. Sinon, décoche « Afficher dans le menu » pour la cacher.</p>
+    <div class="actions"><button class="btn small danger" type="button" id="del-j">Supprimer « ${esc(j.nom)} »</button></div></section>`;
+}
+function admGenHtml() {
+  const h = ADM.horaires || [], first = h[0], second = h.find(t => t.demi !== first?.demi);
+  const dur = first ? toMin(first.fin) - toMin(first.debut) : 15;
+  const gap = h[1] && h[1].demi === first?.demi ? toMin(h[1].debut) - toMin(first.fin) : 5;
+  const nM = first ? h.filter(t => t.demi === first.demi).length : 7, nA = second ? h.filter(t => t.demi === second.demi).length : 8;
+  return `<form id="adm-gen" class="gen" autocomplete="off">
+    <label class="f" for="g-debut"><span>Début du matin</span><input type="time" id="g-debut" value="${esc(first?.debut || "09:45")}"></label>
+    <label class="f" for="g-dur"><span>Durée d'un atelier (min)</span><input type="number" id="g-dur" min="5" max="180" value="${dur}"></label>
+    <label class="f" for="g-gap"><span>Changement (min)</span><input type="number" id="g-gap" min="0" max="60" value="${gap}"></label>
+    <label class="f" for="g-nm"><span>Tournantes le matin</span><input type="number" id="g-nm" min="0" max="20" value="${nM}"></label>
+    <label class="f" for="g-reprise"><span>Reprise l'après-midi</span><input type="time" id="g-reprise" value="${esc(second?.debut || "12:50")}"></label>
+    <label class="f" for="g-na"><span>Tournantes l'après-midi</span><input type="number" id="g-na" min="0" max="20" value="${nA}"></label>
+    <button class="btn small" type="submit" id="g-go">Générer l'aperçu</button></form>`;
+}
+function admHorairesRows() {
+  const h = ADM.horaires || [], kept = ADM.detail.tournantes;
+  return h.map((t, i) => `<tr data-h="${i}"><td><b>T${i + 1}</b></td>
+    <td><input type="time" class="w-m" data-hf="debut" value="${esc(t.debut)}" aria-label="Début T${i + 1}"></td>
+    <td><input type="time" class="w-m" data-hf="fin" value="${esc(t.fin)}" aria-label="Fin T${i + 1}"></td>
+    <td><input type="text" class="w-m" data-hf="demi" value="${esc(t.demi)}" maxlength="30" list="adm-demis" aria-label="Moment T${i + 1}"></td>
+    <td class="n">${kept[i] ? kept[i].inscrits : "nouvelle"}</td>
+    <td><div class="row-acts">${i === h.length - 1 ? `<button class="btn small danger" type="button" data-h-del>Retirer</button>` : ""}</div></td></tr>`).join("")
+    + `<datalist id="adm-demis"><option value="Matin"><option value="Après-midi"></datalist>`
+    + (kept.length > h.length ? `<tr class="warn"><td colspan="6">⚠ ${plural(kept.length - h.length, "tournante retirée", "tournantes retirées")} (T${h.length + 1}–T${kept.length}) : leurs ${kept.slice(h.length).reduce((s, t) => s + t.inscrits, 0)} inscription(s) seront effacées à l'enregistrement.</td></tr>` : "");
+}
+function admInstRow(i) {
+  if (ADM.openInst === i.id) return `<tr data-inst="${i.id}" class="new"><td colspan="8"><form class="stack" data-inst-form autocomplete="off" novalidate>
+    <div class="form-grid"><label class="f" for="ie-nom"><span>Institution</span><input type="text" id="ie-nom" value="${esc(i.nom)}" maxlength="120"></label>
+    <label class="f" for="ie-resp"><span>Responsable</span><input type="text" id="ie-resp" value="${esc(i.responsable)}" maxlength="120"></label>
+    <label class="f" for="ie-mail"><span>E-mail</span><input type="email" id="ie-mail" value="${esc(i.email)}" maxlength="200"></label>
+    <label class="f" for="ie-tel"><span>Téléphone</span><input type="tel" id="ie-tel" value="${esc(i.telephone)}" maxlength="40"></label></div>
+    <div class="form-grid three"><label class="f" for="ie-places"><span>Places réservées <small>(${i.participants} noms encodés)</small></span><input type="number" id="ie-places" value="${i.places}" min="1"></label>
+    <label class="f" for="ie-educ"><span>Éducateurs</span><input type="number" id="ie-educ" value="${i.educateurs}" min="0"></label>
+    <label class="f" for="ie-pmr"><span>PMR</span><input type="number" id="ie-pmr" value="${i.pmr}" min="0"></label></div>
+    <div class="actions"><button class="btn small primary" type="submit">Enregistrer</button><button class="btn small" type="button" data-inst-cancel>Annuler</button></div></form></td></tr>`;
+  return `<tr data-inst="${i.id}"><td><b>${esc(i.nom)}</b>${i.verrouille_le ? ` <span class="pill lock">🔒 PDF</span>` : ""}</td><td>${esc(i.responsable)}</td>
+    <td>${esc(i.email)}${i.telephone ? `<br>${esc(i.telephone)}` : ""}</td><td class="n">${i.places}</td><td class="n">${i.participants}</td><td class="n">${i.educateurs}</td><td class="n">${i.pmr}</td>
+    <td><div class="row-acts"><button class="btn small" type="button" data-inst-edit>Modifier</button>${i.verrouille_le ? `<button class="btn small" type="button" data-inst-unlock>Déverrouiller</button>` : ""}<button class="btn small danger" type="button" data-inst-del>Supprimer</button></div></td></tr>`;
+}
+
+/* ---- Actions ---- */
+const admErr = err => admMsg(err.message || String(err), "err");
+const admReload = async (msg, kind) => { ADM.horaires = null; await admLoad(); if (msg) admMsg(msg, kind || "ok"); };
+const CODE_MOTS = ["tilleul", "maree", "citron", "falaise", "bouleau", "orage", "sapin", "riviere", "comete", "lavande", "granit", "colibri", "noisette", "brume", "cerise", "glacier", "hibou", "lagune"];
+const randInt = n => { try { return crypto.getRandomValues(new Uint32Array(1))[0] % n; } catch { return Math.floor(Math.random() * n); } };
+
+$("adm-view").addEventListener("input", e => {
+  if (["nj-nom", "nj-lieu", "nj-date"].includes(e.target.id)) suggestId();
+  if (e.target.id === "nj-id") e.target.dataset.touched = "1";
+  const tr = e.target.closest("tr[data-at]");
+  if (tr && tr.dataset.at) { tr.classList.add("dirty"); tr.querySelector("[data-at-save]").disabled = false; }
+  const h = e.target.closest("tr[data-h]");
+  if (h) ADM.horaires[+h.dataset.h][e.target.dataset.hf] = e.target.value;
+});
+
+$("adm-view").addEventListener("submit", async e => {
+  e.preventDefault();
+  const f = e.target, btn = f.querySelector("[type=submit]"); if (btn) btn.disabled = true;
+  const val = id => $(id).value.trim();
+  try {
+    if (f.id === "adm-new-form") {
+      const nom = val("nj-nom"), date = val("nj-date"), id = val("nj-id"), src = $("nj-src").value;
+      if (!nom || !date || !id) { admMsg("Indique le nom, la date et l'identifiant.", "err"); return; }
+      if (src) {
+        await admRpc("apa_admin_dupliquer_journee", { p_source: src, p_id: id, p_nom: nom, p_date: date });
+        const s = ADM.list.find(j => j.id === src);
+        await admRpc("apa_admin_enregistrer_journee", { p_id: id, p_nouvelle: false, p_data: { nom, date, lieu: val("nj-lieu"), description: s.description, acces: s.acces, pause_midi: s.pause_midi, places_max: s.places_max, visible: true } });
+      } else {
+        await admRpc("apa_admin_enregistrer_journee", { p_id: id, p_nouvelle: true, p_data: { nom, date, lieu: val("nj-lieu"), visible: true } });
+      }
+      ADM.view = "journee";
+      await admLoad(id);
+      admMsg(`« ${nom} » est créée${src ? " avec les ateliers et horaires copiés" : ""}. Étapes suivantes : ${src ? "vérifie les ateliers et horaires, puis " : "ajoute les ateliers, génère les horaires, puis "}ouvre les inscriptions avec un code d'accès.`, "ok");
+    }
+    if (f.id === "adm-code-form") {
+      if ($("ac-new").value !== $("ac-new2").value) { admMsg("Les deux nouveaux codes ne sont pas identiques.", "err"); return; }
+      await rpc("apa_admin_changer_code", { p_ancien: $("ac-old").value, p_nouveau: $("ac-new").value });
+      ADM.code = $("ac-new").value.trim(); admSet(ADM.code); f.reset();
+      admMsg("Code organisateur changé. Utilise le nouveau code à partir de maintenant.", "ok");
+    }
+    if (f.id === "adm-info") {
+      await admRpc("apa_admin_enregistrer_journee", { p_id: ADM.sel, p_nouvelle: false, p_data: { nom: val("ji-nom"), date: val("ji-date"), lieu: val("ji-lieu"),
+        places_max: val("ji-max"), pause_midi: val("ji-pause"), acces: val("ji-acces"), description: val("ji-desc"), visible: $("ji-visible").checked } });
+      await admReload("Informations enregistrées.");
+    }
+    if (f.id === "adm-acces") {
+      const c = val("ja-code");
+      if (c.length < 6) { admMsg("Le code doit faire au moins 6 caractères.", "err"); return; }
+      await admRpc("apa_admin_definir_code", { p_journee: ADM.sel, p_code: c });
+      await admReload(`Code enregistré : « ${c} ». Note-le maintenant : il ne pourra plus être affiché. Envoie-le aux institutions avec l'adresse …/#${ADM.sel}.`);
+    }
+    if (f.id === "adm-gen") {
+      const st = $("g-debut").value, dur = +$("g-dur").value, gap = +$("g-gap").value, nM = +$("g-nm").value, rep = $("g-reprise").value, nA = +$("g-na").value;
+      if (!st || dur < 5 || nM + nA < 1 || (nA && !rep)) { admMsg("Vérifie le générateur : début, durée (5 min minimum) et au moins une tournante.", "err"); return; }
+      const out = [], add = (start, n, demi) => { let t = toMin(start); for (let i = 0; i < n; i++) { out.push({ debut: toHM(t), fin: toHM(t + dur), demi }); t += dur + gap; } };
+      add(st, nM, "Matin"); if (nA) add(rep, nA, "Après-midi");
+      if (nM && nA && toMin(out[nM - 1].fin) > toMin(rep)) { admMsg("La reprise de l'après-midi commence avant la fin du matin.", "err"); return; }
+      if (toMin(out.at(-1).fin) >= 24 * 60) { admMsg("Les horaires dépassent minuit.", "err"); return; }
+      ADM.horaires = out;
+      $("adm-horaires").tBodies[0].innerHTML = admHorairesRows();
+      $("h-msg").textContent = `Aperçu : ${plural(out.length, "tournante")}, de ${hm(out[0].debut)} à ${hm(out.at(-1).fin)}. Vérifie, puis « Enregistrer les horaires ».`; $("h-msg").className = "msg";
+    }
+    if (f.id === "adm-dup") {
+      const id = val("dup-id"), date = val("dup-date"), nom = val("dup-nom");
+      if (!id || !date || !nom) { admMsg("Indique le nom, la date et l'identifiant de la copie.", "err"); return; }
+      await admRpc("apa_admin_dupliquer_journee", { p_source: ADM.sel, p_id: id, p_nom: nom, p_date: date });
+      await admLoad(id); admMsg(`Copie créée : « ${nom} ». Ses inscriptions sont fermées tant que tu ne lui donnes pas de code.`, "ok");
+    }
+    if (f.matches("[data-inst-form]")) {
+      const id = f.closest("tr").dataset.inst;
+      await admRpc("apa_admin_modifier_institution", { p_institution: id, p_nom: val("ie-nom"), p_responsable: val("ie-resp"), p_email: val("ie-mail"), p_telephone: val("ie-tel"),
+        p_places: +$("ie-places").value, p_educateurs: +$("ie-educ").value, p_pmr: +$("ie-pmr").value });
+      ADM.openInst = null; await admReload("Institution modifiée.");
+    }
+  } catch (err) { admErr(err); }
+  finally { if (btn) btn.disabled = false; }
+});
+
+$("adm-view").addEventListener("click", async e => {
+  const t = e.target, two = (b, label) => { if (b.dataset.confirm === "1") return true; b.dataset.confirm = "1"; b.dataset.label = b.textContent; b.textContent = label; setTimeout(() => { if (b.isConnected) { delete b.dataset.confirm; b.textContent = b.dataset.label; } }, 5000); return false; };
+  try {
+    if (t.id === "ja-gen") { $("ja-code").value = `${CODE_MOTS[randInt(CODE_MOTS.length)]}-${CODE_MOTS[randInt(CODE_MOTS.length)]}-${10 + randInt(90)}`; $("ja-code").focus(); return; }
+    if (t.id === "ja-close") { if (!two(t, "Confirmer : fermer ?")) return; await admRpc("apa_admin_definir_code", { p_journee: ADM.sel, p_code: "" }); await admReload("Inscriptions fermées : plus personne ne peut entrer avec l'ancien code."); return; }
+    const at = t.closest("tr[data-at]");
+    if (at && t.matches("[data-at-save], [data-at-add]")) {
+      const g = k => at.querySelector(`[data-f="${k}"]`).value.trim();
+      if (!g("nom") || !g("lieu") || !g("cap")) { admMsg("Indique le nom, le lieu et le nombre de places de l'atelier.", "err"); return; }
+      const id = await admRpc("apa_admin_enregistrer_atelier", { p_journee: ADM.sel, p_id: at.dataset.at || null, p_nom: g("nom"), p_lieu: g("lieu"), p_cap: +g("cap"), p_ordre: g("ordre") === "" ? null : +g("ordre") });
+      await admReload(at.dataset.at ? "Atelier enregistré." : `Atelier « ${g("nom")} » ajouté.`); $("adm-ateliers").querySelector(`tr[data-at="${CSS.escape(id)}"] input`)?.focus(); return;
+    }
+    if (at && t.matches("[data-at-del]")) {
+      const nom = at.querySelector('[data-f="nom"]').value;
+      if (t.dataset.confirm !== "1") {
+        const imp = await admRpc("apa_admin_impact", { p_journee: ADM.sel, p_activite: at.dataset.at, p_tournante_min: null });
+        at.parentElement.querySelectorAll("tr.warn").forEach(r => r.remove());
+        if (imp.inscriptions) {
+          at.insertAdjacentHTML("afterend", `<tr class="warn"><td colspan="6">⚠ <b>${plural(imp.inscriptions, "inscription")}</b> à « ${esc(nom)} » (${plural(imp.participants, "participant")}) seront effacées ; leurs cases redeviendront « à choisir » :
+            <ul class="impact">${imp.institutions.map(x => `<li>${esc(x.nom)} : ${x.n}${x.verrouillee ? " · 🔒 planning déjà téléchargé en PDF, préviens-les" : ""}</li>`).join("")}</ul></td></tr>`);
+          t.dataset.confirm = "1"; t.textContent = `Supprimer quand même`;
+        } else { t.dataset.confirm = "1"; t.textContent = "Confirmer la suppression"; }
+        return;
+      }
+      const n = await admRpc("apa_admin_supprimer_atelier", { p_journee: ADM.sel, p_id: at.dataset.at, p_confirmer: true });
+      await admReload(`Atelier « ${nom} » supprimé${n ? ` (${plural(n, "inscription effacée", "inscriptions effacées")})` : ""}.`); return;
+    }
+    if (t.id === "h-add") { const l = ADM.horaires.at(-1), d = l ? toMin(l.fin) - toMin(l.debut) : 15, s = l ? toMin(l.fin) + 5 : 585; ADM.horaires.push({ debut: toHM(s), fin: toHM(s + d), demi: l?.demi || "Matin" }); $("adm-horaires").tBodies[0].innerHTML = admHorairesRows(); return; }
+    if (t.matches("[data-h-del]")) { ADM.horaires.pop(); $("adm-horaires").tBodies[0].innerHTML = admHorairesRows(); return; }
+    if (t.id === "h-save") {
+      const kept = ADM.detail.tournantes, removed = kept.slice(ADM.horaires.length).reduce((s, x) => s + x.inscrits, 0);
+      if (removed && !two(t, `Confirmer : effacer ${removed} inscription(s) ?`)) return;
+      const n = await admRpc("apa_admin_enregistrer_horaires", { p_journee: ADM.sel, p_liste: ADM.horaires.map(({ debut, fin, demi }) => ({ debut, fin, demi })), p_confirmer: !!removed });
+      await admReload(`Horaires enregistrés (${plural(ADM.horaires?.length || 0, "tournante")})${n ? `, ${plural(n, "inscription effacée", "inscriptions effacées")}` : ""}.`); return;
+    }
+    const it = t.closest("tr[data-inst]");
+    if (it && t.matches("[data-inst-edit]")) { ADM.openInst = it.dataset.inst; $("adm-insts").tBodies[0].innerHTML = ADM.insts.map(admInstRow).join(""); $("ie-nom").focus(); return; }
+    if (it && t.matches("[data-inst-cancel]")) { ADM.openInst = null; $("adm-insts").tBodies[0].innerHTML = ADM.insts.map(admInstRow).join(""); return; }
+    if (it && t.matches("[data-inst-unlock]")) { await rpc("apa_deverrouiller", { p_code_admin: ADM.code, p_institution: it.dataset.inst }); await admReload("Planning déverrouillé : l'institution peut de nouveau le modifier."); return; }
+    if (it && t.matches("[data-inst-del]")) {
+      const i = ADM.insts.find(x => x.id === it.dataset.inst);
+      if (!two(t, `Supprimer avec ${plural(i.participants, "participant")} ?`)) return;
+      await admRpc("apa_admin_supprimer_institution", { p_institution: i.id }); await admReload(`« ${i.nom} » supprimée avec ses participants.`); return;
+    }
+    if (t.id === "del-j") {
+      const j = ADM.list.find(x => x.id === ADM.sel);
+      if (!two(t, `Confirmer : supprimer définitivement ?`)) return;
+      await admRpc("apa_admin_supprimer_journee", { p_journee: j.id }); ADM.sel = null; await admLoad(); admMsg(`« ${j.nom} » supprimée.`, "ok"); return;
+    }
+  } catch (err) { admErr(err); }
+});
+
 /* ================= MENU DES JOURNÉES ================= */
 // « 15 tournantes de 15 min, 5 min de changement » calculé depuis les horaires.
 function rythme() {
@@ -1861,6 +2335,7 @@ async function start() {
   try { list = await rpc("apa_journees", {}); }
   catch (err) { $("home").hidden = false; $("events").innerHTML = `<div class="empty-state">${esc(err.message)}</div>`; return; }
   if (!JOURNEE_ID) { $("home").hidden = false; renderHome(list); return; }
+  if (JOURNEE_ID === "organisateur") { startAdmin(); return; }
 
   J = list.find(j => j.id === JOURNEE_ID);
   if (!J) { location.replace(location.pathname + location.search); return; }   // lien périmé : retour au menu

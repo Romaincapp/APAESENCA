@@ -16,9 +16,11 @@ Adresse de la page : `https://romaincapp.github.io/APAESENCA/`. Tu peux envoyer 
 > ⚠ Les activités et horaires des trois journées sont **provisoires** : ce sont ceux de la
 > journée du 17 novembre, recopiés en attendant les vraies listes.
 
-- `site/index.html` : la page (menu des journées + inscriptions, un seul fichier).
+- `site/index.html` : la page (menu des journées, inscriptions, espace organisateur ; un seul fichier).
 - `supabase/schema.sql` : la base de données (journées, tables, sécurité, contrôle des places).
+- `tests/` : les tests automatiques (voir « Tests »).
 - `.github/workflows/deploy.yml` : publication automatique sur GitHub Pages.
+- `.github/workflows/tests.yml` : lance les tests à chaque pull request.
 
 ## Mise en place (une seule fois)
 
@@ -30,28 +32,13 @@ Le projet Supabase de la journée du 17 novembre est réutilisé.
    Au premier lancement, les anciennes tables du 17 novembre sont déplacées dans le schéma
    `archive_17_novembre` (rien n'est effacé, mais elles ne sont plus visibles depuis la page).
    Pour supprimer définitivement ces noms : `drop schema archive_17_novembre cascade;`
-2. **Ouvre chaque journée** en lui donnant un code d'accès (dans le SQL Editor, jamais dans
-   un fichier du dépôt). Tant qu'une journée n'a pas de code, elle apparaît dans le menu
-   comme « Bientôt ouvertes ».
-   ```sql
-   select public.apa_definir_code('marcinelle-2027',    'code-marcinelle');
-   select public.apa_definir_code('philippeville-2027', 'code-philippeville');
-   select public.apa_definir_code('pqr-2027',           'code-pqr');
-   ```
-   Le code de PQR ne se donne qu'aux institutions de la région de Chimay : sans lui, on ne
-   peut ni voir ni modifier les inscriptions de PQR. Un code donne accès à **sa** journée
-   seulement.
-3. Le **code organisateur** (pour toi seul, sert à déverrouiller) est commun à toutes les
-   journées. Celui du 17 novembre est conservé. Pour le changer :
-   ```sql
-   select public.apa_definir_code_admin('code-organisateur');
-   ```
-4. **Nombre maximum de participants** par journée (comme le « max » du Google Form).
-   Sans limite tant que rien n'est défini :
-   ```sql
-   update public.journees set places_max = 60 where id = 'marcinelle-2027';
-   ```
-5. Les **institutions s'inscrivent elles-mêmes** dans la page (plus besoin de Google Form
+2. **Le reste se fait dans l'espace organisateur** de la page (`…/APAESENCA/#organisateur`,
+   lien « Espace organisateur » en bas du menu), avec le code organisateur : journées,
+   codes d'accès, places maximum, ateliers, horaires, institutions. Plus besoin de SQL.
+   Le code organisateur du 17 novembre est conservé ; il se change depuis cet espace.
+   (Si tu n'as jamais défini de code organisateur : `select public.apa_definir_code_admin('…');`
+   une seule fois dans le SQL Editor.)
+3. Les **institutions s'inscrivent elles-mêmes** dans la page (plus besoin de Google Form
    ni de fichier SQL). Envoie-leur simplement l'adresse de la journée et son code.
 
 ### 2. Configuration GitHub
@@ -67,6 +54,41 @@ Chaque modification de `site/` poussée sur `main` redéploie la page automatiqu
 
 La clé publique sera visible dans la page, c'est normal : sans le code d'une journée, elle
 permet seulement de lire le menu (nom, date, lieu des journées), ni les noms ni les codes.
+
+## Espace organisateur (`…/#organisateur`)
+
+À gauche, la liste des journées (cachées comprises) ; à droite, la journée choisie :
+
+- **Nouvelle journée** : nom, date, lieu, identifiant dans l'adresse (proposé
+  automatiquement, ex. `couvin-2027`, ne change plus ensuite). On peut partir d'une journée
+  vide ou copier les ateliers et horaires d'une autre.
+- **Informations** : nom, date, lieu, places maximum (vide = pas de limite), pause de midi,
+  mention d'accès (ex. « Réservé aux institutions de la région de Chimay »), texte d'accueil,
+  afficher ou cacher la journée dans le menu.
+- **Code d'accès** : ouvrir les inscriptions avec un code (6 caractères minimum ; un code
+  qui contient le nom ou le lieu de la journée est refusé, car ils sont visibles par tous),
+  le remplacer, ou fermer les inscriptions. « Proposer un code » en invente un. Le code ne
+  peut plus être relu ensuite : note-le au moment de l'enregistrer.
+- **Ateliers** : ajouter, renommer, changer de lieu (plateau), de places ou d'ordre,
+  supprimer. Garde-fous :
+  - les places ne peuvent pas descendre sous le nombre d'inscrits d'une tournante ;
+  - supprimer un atelier qui a des inscrits affiche d'abord les institutions touchées
+    (en signalant celles qui ont déjà téléchargé leur PDF) et demande de confirmer ;
+    leurs cases redeviennent « à choisir ».
+- **Horaires** : un générateur (début, durée d'un atelier, changement, nombre de
+  tournantes le matin et l'après-midi, reprise) prépare un aperçu modifiable à la main,
+  enregistré seulement au clic. Les inscriptions restent attachées au numéro de tournante ;
+  retirer des tournantes qui ont des inscrits demande de confirmer.
+- **Institutions** : modifier les coordonnées et la réservation (même si le planning est
+  verrouillé), déverrouiller un planning, supprimer une institution avec ses participants.
+- **Dupliquer** la journée (infos, ateliers, horaires ; sans institutions ni code).
+- **Supprimer** la journée : seulement si elle n'a plus d'institution ni de participant.
+  Sinon, la cacher du menu.
+- **Changer le code organisateur** (8 caractères minimum, l'ancien est demandé).
+
+Si un éducateur a la page ouverte pendant une modification, sa page se met à jour toute
+seule ; s'il avait des changements non enregistrés sur une fiche touchée, l'enregistrement
+est refusé avec un message clair, sans rien écraser.
 
 ## Utilisation par les éducateurs
 
@@ -148,36 +170,24 @@ d'inscription, avec les totaux. Boutons **Exporter (CSV)**, **Copier toutes les 
 e-mail** (à coller en Cci) et **Supprimer** une institution avec ses participants. Les
 coordonnées ne sont lisibles qu'avec le code organisateur, jamais avec le code de la journée.
 
+**📅 Ajouter à l'agenda** : télécharge un fichier agenda (`.ics`) à ouvrir avec Outlook,
+Google Agenda, l'agenda Apple ou celui du téléphone. Il contient la journée (de la première à
+la dernière tournante, heure de Bruxelles), le lieu, le **récapitulatif des inscriptions**
+par groupe dans la description, le **planning PDF en pièce jointe** (gardée par Outlook et
+l'agenda Apple ; Google Agenda l'ignore) et un rappel la veille. Il reprend le planning
+enregistré.
+
 Onglet **Inscription individuelle** : pour une personne seule ou un ajout de dernière
 minute.
 
-## Horaires (provisoires, identiques pour les 3 journées)
+## Horaires
 
-| Matin | | Après-midi | |
-|---|---|---|---|
-| T1 | 9h45–10h00 | T8 | 12h50–13h05 |
-| T2 | 10h05–10h20 | T9 | 13h10–13h25 |
-| T3 | 10h25–10h40 | T10 | 13h30–13h45 |
-| T4 | 10h45–11h00 | T11 | 13h50–14h05 |
-| T5 | 11h05–11h20 | T12 | 14h10–14h25 |
-| T6 | 11h25–11h40 | T13 | 14h30–14h45 |
-| T7 | 11h45–12h00 | T14 | 14h50–15h05 |
-| | *Dîner 12h05* | T15 | 15h10–15h25 |
+Les trois journées de départ ont des horaires **provisoires** (ceux du 17 novembre :
+15 tournantes de 15 minutes de 9h45 à 15h25, dîner à 12h05). Ils se changent dans l'espace
+organisateur, section « Horaires ».
 
-Pour changer un horaire, une activité ou une capacité, modifie les listes dans
-`schema.sql` (section « Données de référence »), puis relance tout le script dans Supabase.
-Les inscriptions et les codes sont conservés. La page lit tout depuis la base : il n'y a pas
-besoin de la redéployer.
-
-**Ajouter une journée** : ajoute une ligne dans `insert into public.journees` (identifiant
-en minuscules, ex. `couvin-2027`), ajoute-la aux listes d'activités et de tournantes,
-relance le script, puis donne-lui un code avec `apa_definir_code`. Pour cacher une journée
-passée du menu : `update public.journees set visible = false where id = '…';`
-
-Changer le code d'une journée (SQL Editor) :
-```sql
-select public.apa_definir_code('marcinelle-2027', 'nouveau-code');
-```
+Relancer `schema.sql` ne touche plus aux journées, ateliers ni horaires : il ne les crée
+que sur une base vide. Tout ce que tu modifies dans l'espace organisateur est conservé.
 
 ## Comment ça marche
 
@@ -198,6 +208,37 @@ select public.apa_definir_code('marcinelle-2027', 'nouveau-code');
 - Une seule activité par tournante et par bénéficiaire (garanti par la base).
 - La page se met à jour toutes les 5 secondes.
 - Export CSV (ouvrable dans Excel) par bénéficiaire ou par activité.
+
+## Tests
+
+Deux séries de tests vérifient l'application à chaque pull request (onglet **Actions** de
+GitHub, coche verte ou croix rouge sur la pull request) :
+
+- **`tests/test_*.py` : la base de données** (179 tests). Chaque test part d'une base vide,
+  installe le vrai `schema.sql` et appelle les fonctions exactement comme la page, avec la
+  clé publique. Ils couvrent : installation, relance du script et migration depuis le
+  17 novembre ; création, modification, ouverture, fermeture, duplication, masquage et
+  suppression des journées ; ateliers et horaires, y compris après des inscriptions ;
+  inscriptions des institutions, places, groupes, conflits entre deux personnes,
+  verrouillage ; sécurité (chaque fonction de l'organisateur refusée sans le bon code,
+  fonctions internes et tables inaccessibles, cloisonnement entre journées).
+- **`tests/e2e/parcours.cjs` : le parcours complet dans un vrai navigateur**, à deux en
+  même temps (organisatrice et éducatrice) : créer une journée, ses ateliers, ses horaires
+  et son code ; inscrire une institution ; envoyer un groupe de 8 dans un atelier de 4 ;
+  enregistrer ; fichier agenda ; puis l'organisatrice modifie et supprime après les
+  inscriptions, et l'éducatrice voit les changements ; verrouillage PDF ; dupliquer,
+  supprimer, cacher ; changer le code organisateur ; contraste des écrans en clair et en
+  sombre, et affichage sur téléphone.
+
+Pour les lancer sur un ordinateur (PostgreSQL, Python et Node.js installés) :
+```bash
+pip install "psycopg[binary]" pytest
+APA_TEST_DSN=postgresql://postgres:motdepasse@localhost:5432/postgres python -m pytest tests -q
+npm install --no-save playwright && npx playwright install chromium
+APA_TEST_DSN=postgresql://postgres:motdepasse@localhost:5432/postgres python tests/e2e/lancer.py
+```
+Les tests créent puis suppriment leur propre base temporaire : ils ne touchent jamais la
+base Supabase.
 
 ## À savoir
 
